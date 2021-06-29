@@ -5,7 +5,6 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.monster.EntityMob;
 
 public class TargetPredicate {
    public static final TargetPredicate DEFAULT = new TargetPredicate();
@@ -88,7 +87,7 @@ public class TargetPredicate {
                }
             }
 
-            if (!this.includeHidden && baseEntity instanceof EntityMob && !((EntityMob)baseEntity).getEntitySenses().canSee(targetEntity)) {
+            if (!this.includeHidden && !baseEntity.getEntitySenses().canSee(targetEntity)) {
                return false;
             }
          }

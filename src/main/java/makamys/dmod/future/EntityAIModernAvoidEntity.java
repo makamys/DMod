@@ -29,6 +29,18 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
             return p_82704_1_.isEntityAlive();
         }
     };
+    
+    public final IEntitySelector field_98218_a = new IEntitySelector()
+    {
+        private static final String __OBFID = "CL_00001575";
+        /**
+         * Return whether the specified entity is applicable to this filter.
+         */
+        public boolean isEntityApplicable(Entity p_82704_1_)
+        {
+            return p_82704_1_.isEntityAlive() && EntityAIModernAvoidEntity.this.mob.getEntitySenses().canSee(p_82704_1_);
+        }
+    };
 	
 	   protected final EntityCreature mob;
 	   private final double slowSpeed;
@@ -39,7 +51,7 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 	   protected final PathNavigate fleeingEntityNavigation;
 	   protected final Class classToFleeFrom;
 	   protected final Predicate extraInclusionSelector;
-	   protected final Predicate inclusionSelector;
+	   protected final Predicate<EntityLiving> inclusionSelector;
 	   private final TargetPredicate withinRangePredicate;
 
 	   public EntityAIModernAvoidEntity(EntityCreature mob, Class fleeFromType, float distance, double slowSpeed, double fastSpeed) {
@@ -61,7 +73,7 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 	      this.withinRangePredicate = (new TargetPredicate()).setBaseMaxDistance((double)distance).setPredicate(inclusionSelector.and(extraInclusionSelector));
 	   }
 
-	   public EntityAIModernAvoidEntity(EntityCreature fleeingEntity, Class classToFleeFrom, float fleeDistance, double fleeSlowSpeed, double fleeFastSpeed, Predicate inclusionSelector) {
+	   public EntityAIModernAvoidEntity(EntityCreature fleeingEntity, Class classToFleeFrom, float fleeDistance, double fleeSlowSpeed, double fleeFastSpeed, Predicate<EntityLiving> inclusionSelector) {
 	      this(fleeingEntity, classToFleeFrom, (livingEntity) -> {
 	         return true;
 	      }, fleeDistance, fleeSlowSpeed, fleeFastSpeed, inclusionSelector);
@@ -75,20 +87,21 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 			if (this.targetEntity == null) {
 				return false;
 			} else {
-				Vec3d vec3d = TargetFinder.findTargetAwayFrom(this.mob, 16, 7, this.targetEntity.getPos());
+				Vec3 vec3d = RandomPositionGenerator.findRandomTargetBlockAwayFrom(this.mob, 16, 7,
+						Vec3.createVectorHelper(this.targetEntity.posX, this.targetEntity.posY, this.targetEntity.posZ));
 				if (vec3d == null) {
 					return false;
-				} else if (this.targetEntity.squaredDistanceTo(vec3d.x, vec3d.y, vec3d.z) < this.targetEntity
-						.squaredDistanceTo(this.mob)) {
+				} else if (this.targetEntity.getDistanceSq(vec3d.xCoord, vec3d.yCoord, vec3d.zCoord) < this.targetEntity
+						.getDistanceSqToEntity(this.mob)) {
 					return false;
 				} else {
-					this.fleePath = this.fleeingEntityNavigation.findPathTo(vec3d.x, vec3d.y, vec3d.z, 0);
+					this.fleePath = this.fleeingEntityNavigation.getPathToXYZ(vec3d.xCoord, vec3d.yCoord, vec3d.zCoord);
 					return this.fleePath != null;
 				}
 			}
 	   }
-	   
-	   /*public boolean shouldExecute() {
+	   /*
+	   public boolean shouldExecute2() {
 		if (this.classToFleeFrom == EntityPlayer.class) {
 			if (this.mob instanceof EntityTameable && ((EntityTameable) this.mob).isTamed()) {
 				return false;
