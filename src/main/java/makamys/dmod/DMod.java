@@ -22,14 +22,14 @@ public class DMod
     {
     	instance = this;
         
-        EntityRegistry.registerModEntity(TestEntity.class, "test", 0, instance, 64, 1, true);
+        EntityRegistry.registerModEntity(EntityFox.class, "fox", 0, instance, 64, 1, true);
         
         int eggID = 0;
         while(EntityList.getStringFromID(eggID) != null) {
         	eggID++;
         }
         
-        EntityList.IDtoClassMapping.put(eggID, TestEntity.class);
+        EntityList.IDtoClassMapping.put(eggID, EntityFox.class);
 		EntityList.entityEggs.put(eggID, new EntityEggInfo(eggID, 0xFF8000, 0));
     }
 }
