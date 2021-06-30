@@ -106,6 +106,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	      //XXXthis.moveControl = new FoxEntity.FoxMoveControl();
 	      //this.setPathfindingPenalty(PathNodeType.DANGER_OTHER, 0.0F);
 	      //this.setPathfindingPenalty(PathNodeType.DAMAGE_OTHER, 0.0F);
+	      this.setSize(0.6F, 0.7F);
 	      this.setCanPickUpLoot(true);
 	      initGoals();
 	   }

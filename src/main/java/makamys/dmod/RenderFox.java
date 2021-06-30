@@ -10,9 +10,9 @@ import net.minecraft.util.ResourceLocation;
 public class RenderFox extends RenderLiving
 {
     private static final ResourceLocation texture = new ResourceLocation("textures/entity/fox/fox.png");
-    private static final ResourceLocation sleepingTexture = new ResourceLocation("textures/entity/fox/fox_sleeping.png");
+    private static final ResourceLocation sleepingTexture = new ResourceLocation("textures/entity/fox/fox_sleep.png");
     private static final ResourceLocation snowTexture = new ResourceLocation("textures/entity/fox/snow_fox.png");
-    private static final ResourceLocation sleepingSnowTexture = new ResourceLocation("textures/entity/fox/snow_fox_sleeping.png");
+    private static final ResourceLocation sleepingSnowTexture = new ResourceLocation("textures/entity/fox/snow_fox_sleep.png");
 
     public RenderFox(ModelBase p_i1252_1_, float p_i1252_2_)
     {
