@@ -1,22 +1,29 @@
 package makamys.dmod;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Lists;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.UUID;
 
+import makamys.dmod.future.AnimalEntityEmulator;
+import makamys.dmod.future.AnimalEntityFutured;
 import makamys.dmod.future.DiveJumpingGoal;
 import makamys.dmod.future.EntityAIModernAvoidEntity;
+import makamys.dmod.future.EntityAnimalFuture;
 import makamys.dmod.future.EntityLivingFutured;
 import makamys.dmod.future.ItemStackFuture;
 import makamys.dmod.future.ModernEntityLookHelper;
 import makamys.dmod.future.PassiveEntityEmulator;
+import net.minecraft.block.BlockColored;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -37,6 +44,7 @@ import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.ai.RandomPositionGenerator;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityTameable;
@@ -45,20 +53,27 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 
-public class FoxEntity extends EntityAnimal implements EntityLivingFutured {
-	   /*private static final TrackedData TYPE;
-	   private static final TrackedData FOX_FLAGS;
-	   private static final TrackedData OWNER;
-	   private static final TrackedData OTHER_TRUSTED;*/
-	   private static final Predicate PICKABLE_DROP_FILTER;
-	   private static final Predicate JUST_ATTACKED_SOMETHING_FILTER;
-	   private static final Predicate CHICKEN_AND_RABBIT_FILTER;
-	   private static final Predicate NOTICEABLE_PLAYER_FILTER;
+public class FoxEntity extends EntityAnimalFuture {
+		private static final int OWNER = 18;
+		private static final int OTHER_TRUSTED = 19;
+		private static final int TYPE = 20;
+		private static final int FOX_FLAGS = 21;
+		/*private static final TrackedData<Integer> TYPE;
+		private static final TrackedData<Byte> FOX_FLAGS;
+		private static final TrackedData<Optional<UUID>> OWNER;
+		private static final TrackedData<Optional<UUID>> OTHER_TRUSTED;*/
+	   private static final Predicate<EntityItem> PICKABLE_DROP_FILTER;
+	   private static final Predicate<Entity> JUST_ATTACKED_SOMETHING_FILTER;
+	   private static final Predicate<Entity> CHICKEN_AND_RABBIT_FILTER;
+	   private static final Predicate<Entity> NOTICEABLE_PLAYER_FILTER;
 	   /*private Goal followChickenAndRabbitGoal;
 	   private Goal followBabyTurtleGoal;
 	   private Goal followFishGoal;*/
@@ -80,6 +95,15 @@ public class FoxEntity extends EntityAnimal implements EntityLivingFutured {
 	      this.setCanPickUpLoot(true);
 	      initGoals();
 	   }
+	   
+	protected void entityInit() {
+		super.entityInit();
+		this.dataWatcher.addObject(OWNER, String.valueOf(""));
+		this.dataWatcher.addObject(OTHER_TRUSTED, String.valueOf(""));
+		this.dataWatcher.addObject(TYPE, Byte.valueOf((byte) 0));
+		this.dataWatcher.addObject(FOX_FLAGS, Byte.valueOf((byte) 0));
+	}
+
 /*
 	   protected void initDataTracker() {
 	      super.initDataTracker();
@@ -283,7 +307,7 @@ public class FoxEntity extends EntityAnimal implements EntityLivingFutured {
 */
 	   }
 
-	   protected void eat(PlayerEntity player, ItemStack stack) {
+	   public void eat(EntityPlayer player, ItemStack stack) {
 	      if (this.isBreedingItem(stack)) {
 	         this.playSound(this.getEatSound(stack), 1.0F, 1.0F);
 	      }
@@ -291,71 +315,75 @@ public class FoxEntity extends EntityAnimal implements EntityLivingFutured {
 	      super.eat(player, stack);
 	   }
 
-	   protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
-	      return this.isBaby() ? dimensions.height * 0.85F : 0.4F;
+	   public float getEyeHeight() {
+	      return this.isChild() ? this.height * 0.85F : 0.4F;
 	   }
 
 	   public FoxEntity.Type getFoxType() {
-	      return FoxEntity.Type.fromId((Integer)this.dataTracker.get(TYPE));
+	      return FoxEntity.Type.fromId(dataWatcher.getWatchableObjectByte(TYPE));
 	   }
 
 	   private void setType(FoxEntity.Type type) {
-	      this.dataTracker.set(TYPE, type.getId());
+	      this.dataWatcher.updateObject(TYPE, Byte.valueOf((byte)type.getId()));
 	   }
 
-	   private List getTrustedUuids() {
-	      List list = Lists.newArrayList();
-	      list.add(((Optional)this.dataTracker.get(OWNER)).orElse((Object)null));
-	      list.add(((Optional)this.dataTracker.get(OTHER_TRUSTED)).orElse((Object)null));
+	   private List<UUID> getTrustedUuids() {
+	      List<UUID> list = Lists.newArrayList();
+	      list.add(DUtil.UUIDorNullFromString(this.dataWatcher.getWatchableObjectString(OWNER)));
+	      list.add(DUtil.UUIDorNullFromString(this.dataWatcher.getWatchableObjectString(OTHER_TRUSTED)));
 	      return list;
 	   }
 
 	   private void addTrustedUuid(@Nullable UUID uuid) {
-	      if (((Optional)this.dataTracker.get(OWNER)).isPresent()) {
-	         this.dataTracker.set(OTHER_TRUSTED, Optional.ofNullable(uuid));
+	      if (!this.dataWatcher.getWatchableObjectString(OWNER).isEmpty()) {
+	         this.dataWatcher.updateObject(OTHER_TRUSTED, uuid.toString());
 	      } else {
-	         this.dataTracker.set(OWNER, Optional.ofNullable(uuid));
+	         this.dataWatcher.updateObject(OWNER, uuid.toString());
 	      }
-
 	   }
+	   
+	/**
+	 * (abstract) Protected helper method to write subclass entity data to NBT.
+	 */
+	public void writeEntityToNBT(NBTTagCompound tag) {
+		super.writeEntityToNBT(tag);
+		List<UUID> list = this.getTrustedUuids();
+		NBTTagList listTag = new NBTTagList();
+		Iterator<UUID> var4 = list.iterator();
 
-	   public void writeCustomDataToTag(CompoundTag tag) {
-	      super.writeCustomDataToTag(tag);
-	      List list = this.getTrustedUuids();
-	      ListTag listTag = new ListTag();
-	      Iterator var4 = list.iterator();
+		while (var4.hasNext()) {
+			UUID uUID = var4.next();
+			if (uUID != null) {
+				listTag.appendTag(new NBTTagString(uUID.toString()));
+			}
+		}
 
-	      while(var4.hasNext()) {
-	         UUID uUID = (UUID)var4.next();
-	         if (uUID != null) {
-	            listTag.add(NbtHelper.fromUuid(uUID));
-	         }
-	      }
+		tag.setTag("Trusted", listTag);
+		tag.setBoolean("Sleeping", this.isSleeping());
+		tag.setString("Type", this.getFoxType().getKey());
+		tag.setBoolean("Sitting", this.isSitting());
+		tag.setBoolean("Crouching", this.isInSneakingPose());
+	}
 
-	      tag.put("Trusted", listTag);
-	      tag.putBoolean("Sleeping", this.isSleeping());
-	      tag.putString("Type", this.getFoxType().getKey());
-	      tag.putBoolean("Sitting", this.isSitting());
-	      tag.putBoolean("Crouching", this.isInSneakingPose());
-	   }
-
-	   public void readCustomDataFromTag(CompoundTag tag) {
-	      super.readCustomDataFromTag(tag);
-	      ListTag listTag = tag.getList("Trusted", 11);
-
-	      for(int i = 0; i < listTag.size(); ++i) {
-	         this.addTrustedUuid(NbtHelper.toUuid(listTag.get(i)));
+	/**
+	 * (abstract) Protected helper method to read subclass entity data from NBT.
+	 */
+	public void readEntityFromNBT(NBTTagCompound tag) {
+		super.readEntityFromNBT(tag);
+		NBTTagList listTag = tag.getTagList("Trusted", DConstants.NBT_TYPE_STRING);
+		
+		for(int i = 0; i < listTag.tagCount(); ++i) {
+	         this.addTrustedUuid(UUID.fromString(listTag.getStringTagAt(i)));
 	      }
 
 	      this.setSleeping(tag.getBoolean("Sleeping"));
 	      this.setType(FoxEntity.Type.byName(tag.getString("Type")));
 	      this.setSitting(tag.getBoolean("Sitting"));
 	      this.setCrouching(tag.getBoolean("Crouching"));
-	      if (this.world instanceof ServerWorld) {
+	      if (this.worldObj instanceof WorldServer) {
 	         this.addTypeSpecificGoals();
 	      }
-
-	   }
+	}
 
 	   public boolean isSitting() {
 	      return this.getFoxFlag(1);
@@ -391,17 +419,19 @@ public class FoxEntity extends EntityAnimal implements EntityLivingFutured {
 
 	   private void setFoxFlag(int mask, boolean value) {
 	      if (value) {
-	         this.dataTracker.set(FOX_FLAGS, (byte)((Byte)this.dataTracker.get(FOX_FLAGS) | mask));
+	         this.dataWatcher.updateObject(FOX_FLAGS, (byte)((Byte)this.dataWatcher.getWatchableObjectByte(FOX_FLAGS) | mask));
 	      } else {
-	         this.dataTracker.set(FOX_FLAGS, (byte)((Byte)this.dataTracker.get(FOX_FLAGS) & ~mask));
+	         this.dataWatcher.updateObject(FOX_FLAGS, (byte)((Byte)this.dataWatcher.getWatchableObjectByte(FOX_FLAGS) & ~mask));
 	      }
 
 	   }
 
 	   private boolean getFoxFlag(int bitmask) {
-	      return ((Byte)this.dataTracker.get(FOX_FLAGS) & bitmask) != 0;
+	      return ((Byte)this.dataWatcher.getWatchableObjectByte(FOX_FLAGS) & bitmask) != 0;
 	   }
-
+	   
+	   // TODO for dispenser support
+	   /*
 	   public boolean canEquip(ItemStack stack) {
 	      EquipmentSlot equipmentSlot = MobEntity.getPreferredEquipmentSlot(stack);
 	      if (!this.getEquippedStack(equipmentSlot).isEmpty()) {
@@ -410,7 +440,7 @@ public class FoxEntity extends EntityAnimal implements EntityLivingFutured {
 	         return equipmentSlot == EquipmentSlot.MAINHAND && super.canEquip(stack);
 	      }
 	   }
-
+*/
 	   public boolean canPickupItem(ItemStack stack) {
 	      Item item = stack.getItem();
 	      ItemStack itemStack = this.getEquippedStack(EquipmentSlot.MAINHAND);
