@@ -4,6 +4,8 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.command.IEntitySelector;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 
 public class TargetPredicate {
@@ -15,7 +17,7 @@ public class TargetPredicate {
    private boolean ignoreEntityTargetRules;
    private boolean useDistanceScalingFactor = true;
    private Predicate predicate;
-
+   
    public TargetPredicate setBaseMaxDistance(double baseMaxDistance) {
       this.baseMaxDistance = baseMaxDistance;
       return this;

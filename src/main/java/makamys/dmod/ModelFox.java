@@ -139,7 +139,7 @@ public class ModelFox extends ModelBase
            this.torso.setRotationPoint(0.0F, 16.0F + foxEntity.getBodyRotationHeightOffset(h), -6.0F);
            this.head.setRotationPoint(-1.0F, 16.5F + i, -3.0F);
            this.head.rotateAngleY = 0.0F;
-        } else if (foxEntity.isSleeping()) {
+        } else if (foxEntity.isPlayerSleeping()) {
            this.torso.rotateAngleZ = -1.5707964F;
            this.torso.setRotationPoint(0.0F, 21.0F, -6.0F);
            this.tail.rotateAngleX = -2.6179938F;
@@ -237,12 +237,12 @@ public class ModelFox extends ModelBase
     	
     	FoxEntity foxEntity = (FoxEntity)p_78087_7_;
     	
-        if (!foxEntity.isSleeping() && !foxEntity.isWalking() && !foxEntity.isInSneakingPose()) {
+        if (!foxEntity.isPlayerSleeping() && !foxEntity.isWalking() && !foxEntity.isInSneakingPose()) {
             this.head.rotateAngleX = j * 0.017453292F;
             this.head.rotateAngleY = i * 0.017453292F;
          }
 
-         if (foxEntity.isSleeping()) {
+         if (foxEntity.isPlayerSleeping()) {
             this.head.rotateAngleX = 0.0F;
             this.head.rotateAngleY = -2.0943952F;
             this.head.rotateAngleZ = MathHelper.cos(h * 0.027F) / 22.0F;

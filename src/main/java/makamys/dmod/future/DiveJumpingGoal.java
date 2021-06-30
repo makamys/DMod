@@ -1,9 +1,10 @@
 package makamys.dmod.future;
 
+import makamys.dmod.constants.AIMutex;
 import net.minecraft.entity.ai.EntityAIBase;
 
 public abstract class DiveJumpingGoal extends EntityAIBase {
 	public DiveJumpingGoal() {
-		setMutexBits(1 | 4); // move, jump
+		setMutexBits(AIMutex.MOVE | AIMutex.JUMP);
 	}
 }

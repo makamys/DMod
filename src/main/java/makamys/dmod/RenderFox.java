@@ -25,9 +25,9 @@ public class RenderFox extends RenderLiving
     protected ResourceLocation getEntityTexture(FoxEntity foxEntity)
     {
         if (foxEntity.getFoxType() == FoxEntity.Type.RED) {
-            return foxEntity.isSleeping() ? sleepingTexture : texture;
+            return foxEntity.isPlayerSleeping() ? sleepingTexture : texture;
          } else {
-            return foxEntity.isSleeping() ? sleepingSnowTexture : snowTexture;
+            return foxEntity.isPlayerSleeping() ? sleepingSnowTexture : snowTexture;
          }
     }
 

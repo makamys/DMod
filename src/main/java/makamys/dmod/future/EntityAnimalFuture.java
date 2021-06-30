@@ -54,4 +54,16 @@ public abstract class EntityAnimalFuture extends EntityAnimal implements EntityL
 	public String getEatSound(ItemStack stack) {
 		return "SoundEvents.ENTITY_GENERIC_EAT"; // TODO
 	}
+	
+   public int getLookPitchSpeed() {
+	      return 40;
+	   }
+
+	   public int getBodyYawSpeed() {
+	      return 75;
+	   }
+
+	   public int getLookYawSpeed() {
+	      return 10;
+	   }
 }
