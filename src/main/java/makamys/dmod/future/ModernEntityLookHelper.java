@@ -7,6 +7,7 @@ import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.util.MathHelper;
 
 /** shouldStayHorizontal is the only new thing */
+// TODO move this into a mixin to not redistribute so much Mojang code?
 public class ModernEntityLookHelper extends EntityLookHelper
 {
     private EntityLiving entity;

@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Lists;
 
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -51,6 +52,7 @@ import net.minecraft.entity.ai.EntityAIRestrictSun;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.item.EntityItem;
@@ -95,14 +97,11 @@ public class FoxEntity extends EntityAnimalFuture {
 	   private float extraRollingHeight;
 	   private float lastExtraRollingHeight;
 	   private int eatingTime;
-	   
-	   //XXXprivate FoxLookControl lookControl;
-	   //XXXprivate FoxMoveControl moveControl;
 
 	   public FoxEntity(World world) {
 	      super(world);
-	      //XXXthis.lookControl = new FoxEntity.FoxLookControl();
-	      //XXXthis.moveControl = new FoxEntity.FoxMoveControl();
+	      ReflectionHelper.setPrivateValue(EntityLiving.class, this, new FoxEntity.FoxLookControl(), "jumpHelper", "field_70767_i");
+	      ReflectionHelper.setPrivateValue(EntityLiving.class, this, new FoxEntity.FoxMoveControl(), "moveHelper", "field_70765_h");
 	      //this.setPathfindingPenalty(PathNodeType.DANGER_OTHER, 0.0F);
 	      //this.setPathfindingPenalty(PathNodeType.DAMAGE_OTHER, 0.0F);
 	      this.setSize(0.6F, 0.7F);
@@ -760,25 +759,26 @@ public class FoxEntity extends EntityAnimalFuture {
 	         this.fox.stopActions();
 	         super.start();
 	      }
-	   }
+	   }*/
 
-	   public class FoxLookControl extends LookControl {
+	   public class FoxLookControl extends ModernEntityLookHelper {
 	      public FoxLookControl() {
 	         super(FoxEntity.this);
 	      }
 
-	      public void tick() {
+	      @Override
+	      public void onUpdateLook() {
 	         if (!FoxEntity.this.isSleeping()) {
-	            super.tick();
+	            super.onUpdateLook();
 	         }
-
 	      }
 
+	      @Override
 	      protected boolean shouldStayHorizontal() {
 	         return !FoxEntity.this.isChasing() && !FoxEntity.this.isInSneakingPose() && !FoxEntity.this.isRollingHead() & !FoxEntity.this.isWalking();
 	      }
 	   }
-
+/*
 	   public class JumpChasingGoal extends DiveJumpingGoal {
 	      public boolean canStart() {
 	         if (!FoxEntity.this.isFullyCrouched()) {
@@ -1360,21 +1360,22 @@ public class FoxEntity extends EntityAnimalFuture {
 	         }
 
 	      }
-	   }
+	   }*/
 
-	   class FoxMoveControl extends MoveControl {
+	   class FoxMoveControl extends EntityMoveHelper {
 	      public FoxMoveControl() {
 	         super(FoxEntity.this);
 	      }
 
-	      public void tick() {
+	      @Override
+	      public void onUpdateMoveHelper() {
 	         if (FoxEntity.this.wantsToPickupItem()) {
-	            super.tick();
+	            super.onUpdateMoveHelper();
 	         }
 
 	      }
 	   }
-
+/*
 	   class PickupItemGoal extends EntityAIBase {
 	      public PickupItemGoal() {
 	         this.setControls(EnumSet.of(Goal.Control.MOVE));
