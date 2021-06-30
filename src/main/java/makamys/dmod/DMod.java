@@ -1,6 +1,9 @@
 package makamys.dmod;
 
+import net.minecraft.client.model.ModelWolf;
+import net.minecraft.client.renderer.entity.RenderWolf;
 import net.minecraft.entity.EntityList;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -23,7 +26,7 @@ public class DMod
     	instance = this;
         
         EntityRegistry.registerModEntity(FoxEntity.class, "fox", 0, instance, 64, 1, true);
-        //EntityRegistry.
+        RenderingRegistry.registerEntityRenderingHandler(FoxEntity.class, new RenderFox(new ModelFox(), 0.4F));
         
         int eggID = 0;
         while(EntityList.getStringFromID(eggID) != null) {
