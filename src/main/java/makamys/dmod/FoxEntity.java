@@ -185,6 +185,8 @@ public class FoxEntity extends EntityAnimalFuture {
 	               ItemStack itemStack2 = ItemStackFuture.finishUsing(itemStack, this.worldObj, this);
 	               if (!ItemStackFuture.isEmpty(itemStack2)) {
 	                  this.setCurrentItemOrArmor(0, itemStack2);
+	               } else {
+	            	   this.setCurrentItemOrArmor(0, null);
 	               }
 
 	               this.eatingTime = 0;
