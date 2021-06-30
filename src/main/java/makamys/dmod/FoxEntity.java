@@ -139,12 +139,12 @@ public class FoxEntity extends EntityAnimalFuture {
 		 //XXXthis.tasks.addTask(1, new FoxEntity.StopWanderingGoal());
 		 //XXXthis.tasks.addTask(2, new FoxEntity.EscapeWhenNotAggressiveGoal(2.2D));
 		 //XXXthis.tasks.addTask(3, new FoxEntity.MateGoal(1.0D));
-	      this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityPlayer.class, 16.0F, 1.6D, 1.4D, (livingEntity) -> {
+	      /*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityPlayer.class, 16.0F, 1.6D, 1.4D, (livingEntity) -> {
 	         return NOTICEABLE_PLAYER_FILTER.test(livingEntity) && !this.canTrust(livingEntity.getUniqueID()) && !this.isAggressive();
 	      }));
 	      this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityWolf.class, 8.0F, 1.6D, 1.4D, (livingEntity) -> {
 	         return !((EntityWolf)livingEntity).isTamed() && !this.isAggressive();
-	      }));
+	      }));*/
 	      /*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, PolarBearEntity.class, 8.0F, 1.6D, 1.4D, (livingEntity) -> {
 	         return !this.isAggressive();
 	      }));*/
@@ -594,6 +594,11 @@ public class FoxEntity extends EntityAnimalFuture {
 	      super.setAttackTarget(target);
 	   }
 	   // TODO
+	    /*
+	     * inspo:
+	      Called when the mob is falling. Calculates and applies fall damage.
+	     
+	    protected void fall(float p_70069_1_) {}*/
 /*
 	   protected int computeFallDamage(float fallDistance, float damageMultiplier) {
 	      return MathHelper.ceil((fallDistance - 5.0F) * damageMultiplier);
@@ -602,6 +607,11 @@ public class FoxEntity extends EntityAnimalFuture {
 	   private void stopSleeping() {
 	      this.setSleeping(false);
 	   }
+	   
+	    public boolean isAIEnabled()
+	    {
+	        return true;
+	    }
 
 	   private void stopActions() {
 	      this.setRollingHead(false);
