@@ -206,9 +206,6 @@ public class ModelFox extends ModelBase
         else
         {*/
             this.head.render(p_78088_7_);
-            this.rightEar.render(p_78088_7_);
-            this.leftEar.render(p_78088_7_);
-            this.nose.render(p_78088_7_);
             this.torso.render(p_78088_7_);
             this.rightBackLeg.render(p_78088_7_);
             this.leftBackLeg.render(p_78088_7_);
