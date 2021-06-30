@@ -25,6 +25,7 @@ import makamys.dmod.etfuturum.BlockPos;
 import makamys.dmod.future.AnimalEntityEmulator;
 import makamys.dmod.future.AnimalEntityFutured;
 import makamys.dmod.future.DiveJumpingGoal;
+import makamys.dmod.future.EntityAIAttackOnCollideFuture;
 import makamys.dmod.future.EntityAIModernAvoidEntity;
 import makamys.dmod.future.EntityAnimalFuture;
 import makamys.dmod.future.EntityFuture;
@@ -154,7 +155,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	    //XXXthis.tasks.addTask(5, new FoxEntity.MoveToHuntGoal());
 	    //XXXthis.tasks.addTask(6, new FoxEntity.JumpChasingGoal());
 	    //XXXthis.tasks.addTask(6, new FoxEntity.AvoidDaylightGoal(1.25D));
-	    //XXXthis.tasks.addTask(7, new FoxEntity.AttackGoal(1.2000000476837158D, true));
+	    this.tasks.addTask(7, new FoxEntity.AttackGoal(1.2000000476837158D, true));
 	    //XXXthis.tasks.addTask(7, new FoxEntity.DelayedCalmDownGoal());
 	    //XXXthis.tasks.addTask(8, new FoxEntity.FollowParentGoal(this, 1.25D));
 	      //this.tasks.addTask(9, new FoxEntity.GoToVillageGoal(32, 200));
@@ -695,6 +696,16 @@ public class FoxEntity extends EntityAnimalFuture {
 
 	      return true;
 	   }
+	   
+	   @Override
+		public boolean attackEntityAsMob(Entity p_70652_1_) {
+			boolean result = super.attackEntityAsMob(p_70652_1_);
+			if(result) {
+				FoxEntity.this.playSound(DMod.MODID + ":entity.fox.bite", 1.0F, 1.0F);
+			}
+			return result;
+		}
+	   
 	   // TODO
 /*
 	   @SideOnly(Side.CLIENT)
@@ -1300,32 +1311,24 @@ public class FoxEntity extends EntityAnimalFuture {
 	         }
 	      }
 	   }
-
+*/
 	   class AttackGoal extends EntityAIAttackOnCollide {
 	      public AttackGoal(double speed, boolean pauseWhenIdle) {
 	         super(FoxEntity.this, speed, pauseWhenIdle);
 	      }
-
-	      protected void attack(LivingEntity target, double squaredDistance) {
-	         double d = this.getSquaredMaxAttackDistance(target);
-	         if (squaredDistance <= d && this.method_28347()) {
-	            this.method_28346();
-	            this.mob.tryAttack(target);
-	            FoxEntity.this.playSound(entity.fox.bite, 1.0F, 1.0F);
-	         }
-
-	      }
-
-	      public void start() {
+	      
+	      @Override
+	      public void startExecuting() {
 	         FoxEntity.this.setRollingHead(false);
-	         super.start();
+	         super.startExecuting();
 	      }
 
-	      public boolean canStart() {
-	         return !FoxEntity.this.isSitting() && !FoxEntity.this.isPlayerSleeping() && !FoxEntity.this.isInSneakingPose() && !FoxEntity.this.isWalking() && super.canStart();
+	      @Override
+	      public boolean shouldExecute() {
+	         return !FoxEntity.this.isSitting() && !FoxEntity.this.isPlayerSleeping() && !FoxEntity.this.isInSneakingPose() && !FoxEntity.this.isWalking() && super.shouldExecute();
 	      }
 	   }
-
+/*
 	   class MoveToHuntGoal extends EntityAIBase {
 	      public MoveToHuntGoal() {
 	         this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
