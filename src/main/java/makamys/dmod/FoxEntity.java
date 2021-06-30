@@ -93,8 +93,8 @@ public class FoxEntity extends EntityAnimalFuture {
 	   private static final Predicate<Entity> JUST_ATTACKED_SOMETHING_FILTER;
 	   private static final Predicate<Entity> CHICKEN_AND_RABBIT_FILTER;
 	   private static final Predicate<Entity> NOTICEABLE_PLAYER_FILTER;
-	   /*private Goal followChickenAndRabbitGoal;
-	   private Goal followBabyTurtleGoal;
+	   private EntityAIBase followChickenAndRabbitGoal;
+	   /*private Goal followBabyTurtleGoal;
 	   private Goal followFishGoal;*/
 	   private float headRollProgress;
 	   private float lastHeadRollProgress;
@@ -131,10 +131,10 @@ public class FoxEntity extends EntityAnimalFuture {
 	   }
 */
 	   protected void initGoals() {
-	      /*this.followChickenAndRabbitGoal = new FollowTargetGoal(this, AnimalEntity.class, 10, false, false, (livingEntity) -> {
-	         return livingEntity instanceof ChickenEntity || livingEntity instanceof RabbitEntity;
-	      });
-	      this.followBabyTurtleGoal = new FollowTargetGoal(this, TurtleEntity.class, 10, false, false, TurtleEntity.BABY_TURTLE_ON_LAND_FILTER);
+		    this.followChickenAndRabbitGoal = new EntityAINearestAttackableTarget(this, EntityLiving.class, 10, false, false, (livingEntity) -> {
+		    	return livingEntity instanceof EntityChicken /*|| livingEntity instanceof EntityRabbit*/;
+		    });
+	      /*this.followBabyTurtleGoal = new FollowTargetGoal(this, TurtleEntity.class, 10, false, false, TurtleEntity.BABY_TURTLE_ON_LAND_FILTER);
 	      this.followFishGoal = new FollowTargetGoal(this, FishEntity.class, 20, false, false, (livingEntity) -> {
 	         return livingEntity instanceof SchoolingFishEntity;
 	      });*/
@@ -311,18 +311,15 @@ public class FoxEntity extends EntityAnimalFuture {
 	   }
 
 	   private void addTypeSpecificGoals() {
-		   // TODO
-		   /*
 	      if (this.getFoxType() == FoxEntity.Type.RED) {
 	         this.targetTasks.addTask(4, this.followChickenAndRabbitGoal);
-	         this.targetTasks.addTask(4, this.followBabyTurtleGoal);
-	         this.targetTasks.addTask(6, this.followFishGoal);
+	         //this.targetTasks.addTask(4, this.followBabyTurtleGoal);
+	         //this.targetTasks.addTask(6, this.followFishGoal);
 	      } else {
-	         this.targetTasks.addTask(4, this.followFishGoal);
+	         //this.targetTasks.addTask(4, this.followFishGoal);
 	         this.targetTasks.addTask(6, this.followChickenAndRabbitGoal);
-	         this.targetTasks.addTask(6, this.followBabyTurtleGoal);
+	         //this.targetTasks.addTask(6, this.followBabyTurtleGoal);
 	      }
-*/
 	   }
 
 	   public void eat(EntityPlayer player, ItemStack stack) {
