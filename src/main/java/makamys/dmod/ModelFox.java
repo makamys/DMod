@@ -211,7 +211,6 @@ public class ModelFox extends ModelBase
             this.leftBackLeg.render(p_78088_7_);
             this.rightFrontLeg.render(p_78088_7_);
             this.leftFrontLeg.render(p_78088_7_);
-            this.tail.render(p_78088_7_);
         //}
     }
 
