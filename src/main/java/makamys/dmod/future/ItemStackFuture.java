@@ -19,9 +19,9 @@ public class ItemStackFuture {
 	}
 	
 	public static boolean isEmpty(ItemStack dis) {
-		/*if (this == EMPTY) {
+		if (dis == null) {
 			return true;
-		} else */if (dis.getItem() != null/* && dis.getItem() != Items.AIR*/) {
+		} else if (dis.getItem() != null/* && dis.getItem() != Items.AIR*/) {
 			return dis.stackSize <= 0;
 		} else {
 			return true;

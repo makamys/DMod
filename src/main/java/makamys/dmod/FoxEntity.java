@@ -216,7 +216,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	   }
 
 	   private boolean canEat(ItemStack stack) {
-	      return stack.getItem() instanceof ItemFood && this.getAttackTarget() == null && this.onGround && !this.isSleeping();
+	      return stack != null && stack.getItem() instanceof ItemFood && this.getAttackTarget() == null && this.onGround && !this.isSleeping();
 	   }
 
 	   protected void initEquipment() {
@@ -267,6 +267,7 @@ public class FoxEntity extends EntityAnimalFuture {
 
 		protected void applyEntityAttributes() {
 			super.applyEntityAttributes();
+			this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
 			this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0D);
 			this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.30000001192092896D);
 			this.getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(32D);
