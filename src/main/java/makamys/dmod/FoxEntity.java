@@ -73,7 +73,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.client.event.sound.SoundEvent;
 
 public class FoxEntity extends EntityAnimalFuture {
 		private static final int OWNER = 18;
@@ -170,7 +169,7 @@ public class FoxEntity extends EntityAnimalFuture {
 
 	   @Override
 	   public String getEatSound(ItemStack stack) {
-	      return "SoundEvents.ENTITY_FOX_EAT"; // TODO
+	      return DMod.MODID + ":entity.fox.eat";
 	   }
 	   
 	   public void onLivingUpdate() {
@@ -206,7 +205,7 @@ public class FoxEntity extends EntityAnimalFuture {
 
 	      super.onLivingUpdate();
 	      if (this.isAggressive() && this.rand.nextFloat() < 0.05F) {
-	         this.playSound("SoundEvents.ENTITY_FOX_AGGRO", 1.0F, 1.0F); //TODO
+	         this.playSound(DMod.MODID + ":entity.fox.aggro", 1.0F, 1.0F); //TODO
 	      }
 
 	   }
@@ -469,7 +468,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	         EntityItem EntityItem = new EntityItem(this.worldObj, this.posX + rv.xCoord, this.posY + 1.0D, this.posZ + rv.zCoord, stack);
 	         EntityItem.delayBeforeCanPickup = 40;
 	         EntityItem.func_145799_b(getUniqueID().toString()); // is this OK?
-	         this.playSound("SoundEvents.ENTITY_FOX_SPIT", 1.0F, 1.0F); // TODO
+	         this.playSound(DMod.MODID + ":entity.fox.spit", 1.0F, 1.0F); // TODO
 	         this.worldObj.spawnEntityInWorld(EntityItem);
 	      }
 	   }
@@ -629,7 +628,7 @@ public class FoxEntity extends EntityAnimalFuture {
 
 	   public void playLivingSound() {
 	      String soundEvent = this.getLivingSound();
-	      if (soundEvent.equals("SoundEvents.ENTITY_FOX_SCREECH")) {
+	      if (soundEvent.equals(DMod.MODID + ":entity.fox.screech")) {
 	         this.playSound(soundEvent, 2.0F, this.getSoundPitch());
 	      } else {
 	         super.playLivingSound();
@@ -638,25 +637,25 @@ public class FoxEntity extends EntityAnimalFuture {
 
 	   protected String getLivingSound() {
 	      if (this.isSleeping()) {
-	         return "SoundEvents.ENTITY_FOX_SLEEP";
+	         return DMod.MODID + ":entity.fox.sleep";
 	      } else {
 	         if (!this.worldObj.isDaytime() && this.rand.nextFloat() < 0.1F) {
 	            List list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getBoundingBox().expand(16.0D, 16.0D, 16.0D));
 	            if (list.isEmpty()) {
-	               return "SoundEvents.ENTITY_FOX_SCREECH";
+	               return DMod.MODID + ":entity.fox.screech";
 	            }
 	         }
 
-	         return "SoundEvents.ENTITY_FOX_AMBIENT";
+	         return DMod.MODID + ":entity.fox.ambient";
 	      }
 	   }
 
 	   protected String getHurtSound() {
-	      return "SoundEvents.ENTITY_FOX_HURT";
+	      return DMod.MODID + ":entity.fox.hurt";
 	   }
 
 	   protected String getDeathSound() {
-	      return "SoundEvents.ENTITY_FOX_DEATH";
+	      return DMod.MODID + ":entity.fox.death";
 	   }
 
 	   private boolean canTrust(UUID uuid) {
@@ -983,7 +982,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	               ++this.timer;
 	            }
 	         } else if (!this.hasReached() && FoxEntity.this.random.nextFloat() < 0.05F) {
-	            FoxEntity.this.playSound(SoundEvents.ENTITY_FOX_SNIFF, 1.0F, 1.0F);
+	            FoxEntity.this.playSound(DMod.MODID + ":entity.fox.sniff", 1.0F, 1.0F);
 	         }
 
 	         super.tick();
@@ -1006,7 +1005,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	                  Block.dropStack(FoxEntity.this.worldObj, this.targetPos, new ItemStack(Items.SWEET_BERRIES, j));
 	               }
 
-	               FoxEntity.this.playSound(SoundEvents.ITEM_SWEET_BERRIES_PICK_FROM_BUSH, 1.0F, 1.0F);
+	               FoxEntity.this.playSound("item.sweet_berries.pick_from_bush", 1.0F, 1.0F);
 	               FoxEntity.this.worldObj.setBlockState(this.targetPos, (BlockState)blockState.with(SweetBerryBushBlock.AGE, 1), 2);
 	            }
 	         }
@@ -1235,7 +1234,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	            this.lastAttackedTime = this.friend.getLastAttackedTime();
 	         }
 
-	         FoxEntity.this.playSound(SoundEvents.ENTITY_FOX_AGGRO, 1.0F, 1.0F);
+	         FoxEntity.this.playSound(entity.fox.aggro, 1.0F, 1.0F);
 	         FoxEntity.this.setAggressive(true);
 	         FoxEntity.this.stopSleeping();
 	         super.start();
@@ -1301,7 +1300,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	         if (squaredDistance <= d && this.method_28347()) {
 	            this.method_28346();
 	            this.mob.tryAttack(target);
-	            FoxEntity.this.playSound(SoundEvents.ENTITY_FOX_BITE, 1.0F, 1.0F);
+	            FoxEntity.this.playSound(entity.fox.bite, 1.0F, 1.0F);
 	         }
 
 	      }
