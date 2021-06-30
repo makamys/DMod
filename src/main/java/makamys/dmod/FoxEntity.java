@@ -100,7 +100,7 @@ public class FoxEntity extends EntityAnimalFuture {
 
 	   public FoxEntity(World world) {
 	      super(world);
-	      ReflectionHelper.setPrivateValue(EntityLiving.class, this, new FoxEntity.FoxLookControl(), "jumpHelper", "field_70767_i");
+	      ReflectionHelper.setPrivateValue(EntityLiving.class, this, new FoxEntity.FoxLookControl(), "lookHelper", "field_70749_g");
 	      ReflectionHelper.setPrivateValue(EntityLiving.class, this, new FoxEntity.FoxMoveControl(), "moveHelper", "field_70765_h");
 	      //this.setPathfindingPenalty(PathNodeType.DANGER_OTHER, 0.0F);
 	      //this.setPathfindingPenalty(PathNodeType.DAMAGE_OTHER, 0.0F);
@@ -159,7 +159,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	      this.tasks.addTask(10, new EntityAILeapAtTarget(this, 0.4F));
 	      this.tasks.addTask(11, new EntityAIWander(this, 1.0D));
 	    //XXXthis.tasks.addTask(11, new FoxEntity.PickupItemGoal());
-	    //XXXthis.tasks.addTask(12, new FoxEntity.LookAtEntityGoal(this, EntityPlayer.class, 24.0F));
+	    this.tasks.addTask(12, new FoxEntity.LookAtEntityGoal(this, EntityPlayer.class, 24.0F));
 	    //XXXthis.tasks.addTask(13, new FoxEntity.SitDownAndLookAroundGoal());
 	    //XXXthis.targetTasks.addTask(3, new FoxEntity.DefendFriendGoal(EntityLiving.class, false, false, (livingEntity) -> {
 	    //XXXreturn JUST_ATTACKED_SOMETHING_FILTER.test(livingEntity) && !this.canTrust(livingEntity.getUniqueID());
@@ -724,21 +724,23 @@ public class FoxEntity extends EntityAnimalFuture {
 	         return !entity.isSneaking() && EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(entity);
 	      };
 	   }
-/*
+
 	   class LookAtEntityGoal extends EntityAIWatchClosest {
 	      public LookAtEntityGoal(EntityLiving fox, Class targetType, float range) {
 	         super(fox, targetType, range);
 	      }
 
-	      public boolean canStart() {
-	         return super.canStart() && !FoxEntity.this.isWalking() && !FoxEntity.this.isRollingHead();
+	      @Override
+	      public boolean shouldExecute() {
+	         return super.shouldExecute() && !FoxEntity.this.isWalking() && !FoxEntity.this.isRollingHead();
 	      }
 
-	      public boolean shouldContinue() {
-	         return super.shouldContinue() && !FoxEntity.this.isWalking() && !FoxEntity.this.isRollingHead();
+	      @Override
+	      public boolean continueExecuting() {
+	         return super.continueExecuting() && !FoxEntity.this.isWalking() && !FoxEntity.this.isRollingHead();
 	      }
 	   }
-
+/*
 	   class FollowParentGoal extends EntityAIFollowParent {
 	      private final FoxEntity fox;
 
