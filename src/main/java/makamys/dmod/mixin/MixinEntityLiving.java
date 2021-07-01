@@ -32,7 +32,7 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
 
 	@Inject(method = "onLivingUpdate", at = @At("HEAD"), cancellable = true)
 	public void preOnLivingUpdate(CallbackInfo ci) {
-		if(EntityAnimalFuture.class.isInstance(this.getClass())) {
+		if(EntityAnimalFuture.class.isInstance(this)) {
 			ci.cancel();
 			EntityLiving dis = ((EntityLiving)(Object)this);
 			
