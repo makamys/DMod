@@ -139,7 +139,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	      this.followFishGoal = new FollowTargetGoal(this, FishEntity.class, 20, false, false, (livingEntity) -> {
 	         return livingEntity instanceof SchoolingFishEntity;
 	      });*/
-	      //XXXthis.tasks.addTask(0, new FoxEntity.FoxSwimGoal());
+	      this.tasks.addTask(0, new FoxEntity.FoxSwimGoal());
 		 //XXXthis.tasks.addTask(1, new FoxEntity.StopWanderingGoal());
 		 //XXXthis.tasks.addTask(2, new FoxEntity.EscapeWhenNotAggressiveGoal(2.2D));
 		 //XXXthis.tasks.addTask(3, new FoxEntity.MateGoal(1.0D));
@@ -882,7 +882,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	         }
 
 	      }
-	   }
+	   }*/
 
 	   class FoxSwimGoal extends EntityAISwimming {
 	      public FoxSwimGoal() {
@@ -897,9 +897,9 @@ public class FoxEntity extends EntityAnimalFuture {
 	      
 	      @Override
 	      public boolean shouldExecute() {
-	         return FoxEntity.this.isTouchingWater() && FoxEntity.this.getFluidHeight(FluidTags.WATER) > 0.25D || FoxEntity.this.isInLava();
+	    	  return super.shouldExecute();
 	      }
-	   }*/
+	   }
 
 	   /*class GoToVillageGoal extends net.minecraft.entity.ai.goal.GoToVillageGoal {
 	      public GoToVillageGoal(int unused, int searchRange) {
