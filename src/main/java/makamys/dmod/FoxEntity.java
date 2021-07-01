@@ -140,7 +140,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	         return livingEntity instanceof SchoolingFishEntity;
 	      });*/
 	      this.tasks.addTask(0, new FoxEntity.FoxSwimGoal());
-		 //XXXthis.tasks.addTask(1, new FoxEntity.StopWanderingGoal());
+		  this.tasks.addTask(1, new FoxEntity.StopWanderingGoal());
 		 //XXXthis.tasks.addTask(2, new FoxEntity.EscapeWhenNotAggressiveGoal(2.2D));
 		 //XXXthis.tasks.addTask(3, new FoxEntity.MateGoal(1.0D));
 	      /*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityPlayer.class, 16.0F, 1.6D, 1.4D, (livingEntity) -> {
@@ -933,35 +933,40 @@ public class FoxEntity extends EntityAnimalFuture {
 	      public boolean canStart() {
 	         return !FoxEntity.this.isAggressive() && super.canStart();
 	      }
-	   }
+	   }*/
 
 	   class StopWanderingGoal extends EntityAIBase {
 	      int timer;
 
 	      public StopWanderingGoal() {
-	         this.setControls(EnumSet.of(Goal.Control.LOOK, Goal.Control.JUMP, Goal.Control.MOVE));
+	    	  setMutexBits(AIMutex.LOOK | AIMutex.JUMP | AIMutex.MOVE);
 	      }
 
-	      public boolean canStart() {
+	      @Override
+	      public boolean shouldExecute() {
 	         return FoxEntity.this.isWalking();
 	      }
 
-	      public boolean shouldContinue() {
-	         return this.canStart() && this.timer > 0;
+	      @Override
+	      public boolean continueExecuting() {
+	         return this.shouldExecute() && this.timer > 0;
 	      }
 
-	      public void start() {
+	      @Override
+	      public void startExecuting() {
 	         this.timer = 40;
 	      }
 
-	      public void stop() {
+	      @Override
+	      public void resetTask() {
 	         FoxEntity.this.setWalking(false);
 	      }
-
-	      public void tick() {
+	      
+	      @Override
+	      public void updateTask() {
 	         --this.timer;
 	      }
-	   }*/
+	   }
 	   
 	   // implement IEntityAdditionalSpawnData?
 	   public static class FoxData extends PassiveEntityEmulator.PassiveData {
