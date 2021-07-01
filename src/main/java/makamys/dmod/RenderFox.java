@@ -70,7 +70,8 @@ public class RenderFox extends RenderLiving
             
             GL11.glRotatef((float)MathHelper.todeg * mf.head.rotateAngleY, 0f, 1f, 0f);
             GL11.glRotatef((float)MathHelper.todeg * mf.head.rotateAngleX, 1f, 0f, 0f);
-            GL11.glTranslatef(0f, 0.3f, -0.35f);
+            GL11.glTranslatef(0.03f, 0.3f, -0.35f);
+            GL11.glScalef(0.7f, 0.7f, 0.7f);
             
             
             //GL11.glRotatef(p_77029_1_.ticksExisted / 0.1F, 1.0F, 0F, 0F);
