@@ -667,11 +667,13 @@ public class FoxEntity extends EntityAnimalFuture {
 	   }
 
 	   public void onDeath(DamageSource source) {
-	      ItemStack itemStack = this.getEquipmentInSlot(0);
-	      if (itemStack != null) {
-	         this.dropItem(itemStack);
-	         this.setCurrentItemOrArmor(0, null);
-	      }
+		   if(!this.worldObj.isRemote) {
+		      ItemStack itemStack = this.getEquipmentInSlot(0);
+		      if (itemStack != null) {
+		    	 this.entityDropItem(itemStack, 0.0F);
+		         this.setCurrentItemOrArmor(0, null);
+		      }
+		   }
 
 	      super.onDeath(source);
 	   }
