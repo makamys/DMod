@@ -503,7 +503,7 @@ public class FoxEntity extends EntityAnimalFuture {
 
 	   public void onUpdate() {
 	      super.onUpdate();
-	      if (this.isClientWorld()) {
+	      if (this.worldObj.isRemote) {
 	         boolean bl = this.inWater;
 	         if (bl || this.getAttackTarget() != null || this.worldObj.isThundering()) {
 	            this.stopSleeping();
@@ -1081,7 +1081,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	            this.chooseNewAngle();
 	         }
 
-	         FoxEntity.this.getLookHelper().setLookPosition(FoxEntity.this.posX + this.lookX, FoxEntity.this.getEyeHeight(), FoxEntity.this.posZ + this.lookZ, (float)FoxEntity.this.getBodyYawSpeed(), (float)FoxEntity.this.getLookPitchSpeed());
+	         FoxEntity.this.getLookHelper().setLookPosition(FoxEntity.this.posX + this.lookX, FoxEntity.this.posY + FoxEntity.this.getEyeHeight(), FoxEntity.this.posZ + this.lookZ, (float)FoxEntity.this.getBodyYawSpeed(), (float)FoxEntity.this.getLookPitchSpeed());
 	      }
 
 	      private void chooseNewAngle() {
