@@ -259,10 +259,10 @@ public class FoxEntity extends EntityAnimalFuture {
 							Math.random() * 0.1D + 0.1D, 0.0D));
 					vec3d.rotateAroundX(-this.rotationPitch * 0.017453292F);
 					vec3d.rotateAroundY(-this.rotationYaw * 0.017453292F);
-					// TODO
-					/*this.worldObj.spawnParticle(new ItemStackParticleEffect(ParticleTypes.ITEM, itemStack),
-							this.posX + this.getRotationVector().x / 2.0D, this.posY,
-							this.posZ + this.getRotationVector().z / 2.0D, vec3d.x, vec3d.y + 0.05D, vec3d.z);*/
+					Vec3 rv = EntityFuture.getRotationVector(this);
+					this.worldObj.spawnParticle(DUtil.getItemStackParticleName(itemStack),
+							this.posX + rv.xCoord / 2.0D, this.posY,
+							this.posZ + rv.zCoord / 2.0D, vec3d.xCoord, vec3d.yCoord + 0.05D, vec3d.zCoord);
 				}
 			}
 		} else {
