@@ -26,6 +26,7 @@ import makamys.dmod.future.AnimalEntityEmulator;
 import makamys.dmod.future.AnimalEntityFutured;
 import makamys.dmod.future.DiveJumpingGoal;
 import makamys.dmod.future.EntityAIAttackOnCollideFuture;
+import makamys.dmod.future.EntityAIFleeSunModern;
 import makamys.dmod.future.EntityAIModernAvoidEntity;
 import makamys.dmod.future.EntityAnimalFuture;
 import makamys.dmod.future.EntityFuture;
@@ -48,6 +49,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAIFleeSun;
 import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAIMate;
@@ -154,7 +156,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	      }));*/
 	    //XXXthis.tasks.addTask(5, new FoxEntity.MoveToHuntGoal());
 	    //XXXthis.tasks.addTask(6, new FoxEntity.JumpChasingGoal());
-	    //XXXthis.tasks.addTask(6, new FoxEntity.AvoidDaylightGoal(1.25D));
+	    this.tasks.addTask(6, new FoxEntity.AvoidDaylightGoal(1.25D));
 	    this.tasks.addTask(7, new FoxEntity.AttackGoal(1.2000000476837158D, true));
 	    //XXXthis.tasks.addTask(7, new FoxEntity.DelayedCalmDownGoal());
 	    //XXXthis.tasks.addTask(8, new FoxEntity.FollowParentGoal(this, 1.25D));
@@ -1192,17 +1194,18 @@ public class FoxEntity extends EntityAnimalFuture {
 	      public boolean test(Object entity) {
 	         return this.test((LivingEntity)entity);
 	      }*/
-	   }/*
+	   }
 
-	   class AvoidDaylightGoal extends EntityAIRestrictSun {
+	   class AvoidDaylightGoal extends EntityAIFleeSunModern {
 	      private int timer = 100;
 
 	      public AvoidDaylightGoal(double speed) {
 	         super(FoxEntity.this, speed);
 	      }
 
-	      public boolean canStart() {
-	         if (!FoxEntity.this.isPlayerSleeping() && this.mob.getTarget() == null) {
+	      @Override
+	      public boolean shouldExecute() {
+	         if (!FoxEntity.this.isPlayerSleeping() && FoxEntity.this.getAttackTarget() == null) {
 	            if (FoxEntity.this.worldObj.isThundering()) {
 	               return true;
 	            } else if (this.timer > 0) {
@@ -1210,21 +1213,25 @@ public class FoxEntity extends EntityAnimalFuture {
 	               return false;
 	            } else {
 	               this.timer = 100;
-	               BlockPos blockPos = this.mob.getBlockPos();
-	               return FoxEntity.this.worldObj.isDay() && FoxEntity.this.worldObj.isSkyVisible(blockPos) && !((ServerWorld)FoxEntity.this.world).isNearOccupiedPointOfInterest(blockPos) && this.targetShadedPos();
+	               return FoxEntity.this.worldObj.isDaytime() && FoxEntity.this.worldObj.canBlockSeeTheSky(
+	            		   MathHelper.floor_double(posX),
+	            		   MathHelper.floor_double(posY),
+	            		   MathHelper.floor_double(posZ)) /*&& !((WorldServer)FoxEntity.this.worldObj).isNearOccupiedPointOfInterest(blockPos)*/
+	            		   && this.targetShadedPos();
 	            }
 	         } else {
 	            return false;
 	         }
 	      }
 
-	      public void start() {
+	      @Override
+	      public void startExecuting() {
 	         FoxEntity.this.stopActions();
-	         super.start();
+	         super.startExecuting();
 	      }
 	   }
 
-	   class DefendFriendGoal extends EntityAINearestAttackableTarget {
+/*	   class DefendFriendGoal extends EntityAINearestAttackableTarget {
 	      @Nullable
 	      private LivingEntity offender;
 	      private LivingEntity friend;
