@@ -35,7 +35,7 @@ public class EntityViewEmulator {
 	               }
 
 	               livingEntity2 = (Entity)var13.next();
-	            } while(!(livingEntity2 instanceof EntityLiving && targetPredicate.test(entity, (EntityLiving)livingEntity2)));
+	            } while(!(livingEntity2 instanceof EntityLivingBase && targetPredicate.test(entity, (EntityLivingBase)livingEntity2)));
 
 	            e = livingEntity2.getDistanceSq(x, y, z);
 	         } while(d != -1.0D && e >= d);

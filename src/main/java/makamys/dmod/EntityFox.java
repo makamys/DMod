@@ -148,12 +148,12 @@ public class EntityFox extends EntityAnimalFuture {
 		  this.tasks.addTask(1, new EntityFox.AIStopWandering());
 		  this.tasks.addTask(2, new EntityFox.AIEscapeWhenNotAggressive(2.2D));
 		  this.tasks.addTask(3, new EntityFox.AIMate(1.0D));
-	      /*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityPlayer.class, 16.0F, 1.6D, 1.4D, (livingEntity) -> {
+	      this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityPlayer.class, 16.0F, 1.6D, 1.4D, (livingEntity) -> {
 	         return NOTICEABLE_PLAYER_FILTER.test(livingEntity) && !this.canTrust(livingEntity.getUniqueID()) && !this.isAggressive();
 	      }));
 	      this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityWolf.class, 8.0F, 1.6D, 1.4D, (livingEntity) -> {
 	         return !((EntityWolf)livingEntity).isTamed() && !this.isAggressive();
-	      }));*/
+	      }));
 	      /*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, PolarBearEntity.class, 8.0F, 1.6D, 1.4D, (livingEntity) -> {
 	         return !this.isAggressive();
 	      }));*/
@@ -230,6 +230,7 @@ public class EntityFox extends EntityAnimalFuture {
 	      return stack != null && stack.getItem() instanceof ItemFood && this.getAttackTarget() == null && this.onGround && !this.isPlayerSleeping();
 	   }
 
+	   // TODO it would be nice to have this configurable
 	   protected void initEquipment() {
 	      if (this.rand.nextFloat() < 0.2F) {
 	         float f = this.rand.nextFloat();

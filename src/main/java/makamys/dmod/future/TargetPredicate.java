@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 
 public class TargetPredicate {
    public static final TargetPredicate DEFAULT = new TargetPredicate();
@@ -53,7 +54,7 @@ public class TargetPredicate {
       return this;
    }
 
-   public boolean test(@Nullable EntityLiving baseEntity, EntityLiving targetEntity) {
+   public boolean test(@Nullable EntityLiving baseEntity, EntityLivingBase targetEntity) {
       if (baseEntity == targetEntity) {
          return false;
       /*} else if (targetEntity.isSpectator()) {

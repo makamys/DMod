@@ -7,6 +7,7 @@ import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
@@ -51,7 +52,7 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 	   protected final PathNavigate fleeingEntityNavigation;
 	   protected final Class classToFleeFrom;
 	   protected final Predicate extraInclusionSelector;
-	   protected final Predicate<EntityLiving> inclusionSelector;
+	   protected final Predicate<EntityLivingBase> inclusionSelector;
 	   private final TargetPredicate withinRangePredicate;
 
 	   public EntityAIModernAvoidEntity(EntityCreature mob, Class fleeFromType, float distance, double slowSpeed, double fastSpeed) {
@@ -73,17 +74,18 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 	      this.withinRangePredicate = (new TargetPredicate()).setBaseMaxDistance((double)distance).setPredicate(inclusionSelector.and(extraInclusionSelector));
 	   }
 
-	   public EntityAIModernAvoidEntity(EntityCreature fleeingEntity, Class classToFleeFrom, float fleeDistance, double fleeSlowSpeed, double fleeFastSpeed, Predicate<EntityLiving> inclusionSelector) {
+	   public EntityAIModernAvoidEntity(EntityCreature fleeingEntity, Class classToFleeFrom, float fleeDistance, double fleeSlowSpeed, double fleeFastSpeed, Predicate<EntityLivingBase> inclusionSelector) {
 	      this(fleeingEntity, classToFleeFrom, (livingEntity) -> {
 	         return true;
 	      }, fleeDistance, fleeSlowSpeed, fleeFastSpeed, inclusionSelector);
 	   }
 
+	   @Override
 	   public boolean shouldExecute() {
 		   this.targetEntity = EntityViewEmulator.getClosestEntityIncludingUngeneratedChunks(this.mob.worldObj,
 				   this.classToFleeFrom,
 					this.withinRangePredicate, this.mob, this.mob.posX, this.mob.posY, this.mob.posZ,
-					this.mob.getBoundingBox().expand((double) this.fleeDistance, 3.0D, (double) this.fleeDistance));
+					this.mob.boundingBox.expand((double) this.fleeDistance, 3.0D, (double) this.fleeDistance));
 			if (this.targetEntity == null) {
 				return false;
 			} else {
@@ -100,56 +102,23 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 				}
 			}
 	   }
-	   /*
-	   public boolean shouldExecute2() {
-		if (this.classToFleeFrom == EntityPlayer.class) {
-			if (this.mob instanceof EntityTameable && ((EntityTameable) this.mob).isTamed()) {
-				return false;
-			}
 
-			this.targetEntity = this.mob.worldObj.getClosestPlayerToEntity(this.mob, (double) this.fleeDistance);
-
-			if (this.targetEntity == null) {
-				return false;
-			}
-		} else {
-			List list = this.mob.worldObj.selectEntitiesWithinAABB(this.classToFleeFrom,
-					this.mob.boundingBox.expand((double) this.fleeDistance, 3.0D, (double) this.fleeDistance),
-					this.field_98218_a);
-
-			if (list.isEmpty()) {
-				return false;
-			}
-
-			this.targetEntity = (Entity) list.get(0);
-		}
-
-		Vec3 vec3 = RandomPositionGenerator.findRandomTargetBlockAwayFrom(this.mob, 16, 7,
-				Vec3.createVectorHelper(this.targetEntity.posX, this.targetEntity.posY, this.targetEntity.posZ));
-
-		if (vec3 == null) {
-			return false;
-		} else if (this.targetEntity.getDistanceSq(vec3.xCoord, vec3.yCoord, vec3.zCoord) < this.targetEntity
-				.getDistanceSqToEntity(this.mob)) {
-			return false;
-		} else {
-			this.fleePath = this.fleeingEntityNavigation.getPathToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord);
-			return this.fleePath == null ? false : this.fleePath.isDestinationSame(vec3);
-		}
-	}*/
-/*
-	   public boolean shouldContinue() {
+	   @Override
+	   public boolean continueExecuting() {
 	      return !this.fleeingEntityNavigation.noPath();
 	   }
 
-	   public void start() {
+	   @Override
+	   public void startExecuting() {
 	      this.fleeingEntityNavigation.setPath(this.fleePath, this.slowSpeed);
 	   }
 
-	   public void stop() {
+	   @Override
+	   public void resetTask() {
 	      this.targetEntity = null;
 	   }
 
+	   @Override
 	   public void updateTask() {
 	      if (this.mob.getDistanceSqToEntity(this.targetEntity) < 49.0D) {
 	         this.mob.getNavigator().setSpeed(this.fastSpeed);
@@ -157,5 +126,5 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 	         this.mob.getNavigator().setSpeed(this.slowSpeed);
 	      }
 
-	   }*/
+	   }
 	}
