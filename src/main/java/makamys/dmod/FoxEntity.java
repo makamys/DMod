@@ -63,6 +63,7 @@ import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityChicken;
@@ -76,6 +77,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -144,7 +146,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	      this.tasks.addTask(0, new FoxEntity.FoxSwimGoal());
 		  this.tasks.addTask(1, new FoxEntity.StopWanderingGoal());
 		  this.tasks.addTask(2, new FoxEntity.EscapeWhenNotAggressiveGoal(2.2D));
-		 //XXXthis.tasks.addTask(3, new FoxEntity.MateGoal(1.0D));
+		  this.tasks.addTask(3, new FoxEntity.MateGoal(1.0D));
 	      /*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityPlayer.class, 16.0F, 1.6D, 1.4D, (livingEntity) -> {
 	         return NOTICEABLE_PLAYER_FILTER.test(livingEntity) && !this.canTrust(livingEntity.getUniqueID()) && !this.isAggressive();
 	      }));
@@ -546,7 +548,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	   }
 
 	   public boolean isBreedingItem(ItemStack stack) {
-	      return false; // return stack.getItem() == Items.SWEET_BERRIES; // TODO
+	      return stack.getItem() == Items.wheat; // return stack.getItem() == Items.SWEET_BERRIES; // TODO
 	   }
 /*
 	   protected void onPlayerSpawnedChild(PlayerEntity player, MobEntity child) {
@@ -1285,57 +1287,60 @@ public class FoxEntity extends EntityAnimalFuture {
 	         FoxEntity.this.stopSleeping();
 	         super.start();
 	      }
-	   }
+	   }*/
 
 	   class MateGoal extends EntityAIMate {
 	      public MateGoal(double chance) {
 	         super(FoxEntity.this, chance);
 	      }
 
-	      public void start() {
-	         ((FoxEntity)this.animal).stopActions();
-	         ((FoxEntity)this.mate).stopActions();
-	         super.start();
+	      @Override
+	      public void startExecuting() {
+	         ((FoxEntity)this.theAnimal).stopActions();
+	         ((FoxEntity)this.targetMate).stopActions();
+	         super.startExecuting();
 	      }
 
-	      protected void breed() {
-	         ServerWorld serverWorld = (ServerWorld)this.world;
-	         FoxEntity foxEntity = (FoxEntity)this.animal.createChild(serverWorld, this.mate);
+	      @Override
+	      protected void spawnBaby() {
+	         WorldServer serverWorld = (WorldServer)FoxEntity.this.worldObj;
+	         FoxEntity foxEntity = (FoxEntity)this.theAnimal.createChild(this.targetMate);
 	         if (foxEntity != null) {
-	            ServerPlayerEntity serverPlayerEntity = this.animal.getLovingPlayer();
-	            ServerPlayerEntity serverPlayerEntity2 = this.mate.getLovingPlayer();
-	            ServerPlayerEntity serverPlayerEntity3 = serverPlayerEntity;
+	            EntityPlayer serverPlayerEntity = this.theAnimal.func_146083_cb();
+	            EntityPlayer serverPlayerEntity2 = this.targetMate.func_146083_cb();
+	            EntityPlayer serverPlayerEntity3 = serverPlayerEntity;
 	            if (serverPlayerEntity != null) {
-	               foxEntity.addTrustedUuid(serverPlayerEntity.getUuid());
+	               foxEntity.addTrustedUuid(serverPlayerEntity.getUniqueID());
 	            } else {
 	               serverPlayerEntity3 = serverPlayerEntity2;
 	            }
 
 	            if (serverPlayerEntity2 != null && serverPlayerEntity != serverPlayerEntity2) {
-	               foxEntity.addTrustedUuid(serverPlayerEntity2.getUuid());
+	               foxEntity.addTrustedUuid(serverPlayerEntity2.getUniqueID());
+	            }
+	            
+	            if (serverPlayerEntity3 != null)
+	            {
+	            	serverPlayerEntity3.triggerAchievement(StatList.field_151186_x);
 	            }
 
-	            if (serverPlayerEntity3 != null) {
-	               serverPlayerEntity3.incrementStat(Stats.ANIMALS_BRED);
-	               Criteria.BRED_ANIMALS.trigger(serverPlayerEntity3, this.animal, this.mate, foxEntity);
-	            }
-
-	            this.animal.setBreedingAge(6000);
-	            this.mate.setBreedingAge(6000);
-	            this.animal.resetLoveTicks();
-	            this.mate.resetLoveTicks();
-	            foxEntity.setBreedingAge(-24000);
-	            foxEntity.refreshPositionAndAngles(this.animal.getX(), this.animal.getY(), this.animal.getZ(), 0.0F, 0.0F);
-	            serverWorld.spawnEntityAndPassengers(foxEntity);
-	            this.worldObj.sendEntityStatus(this.animal, (byte)18);
-	            if (this.worldObj.getGameRules().getBoolean(GameRules.DO_MOB_LOOT)) {
-	               this.worldObj.spawnEntity(new ExperienceOrbEntity(this.worldObj, this.animal.getX(), this.animal.getY(), this.animal.getZ(), this.animal.rand.nextInt(7) + 1));
+	            this.theAnimal.setGrowingAge(6000);
+	            this.targetMate.setGrowingAge(6000);
+	            this.theAnimal.resetInLove();
+	            this.targetMate.resetInLove();
+	            foxEntity.setGrowingAge(-24000);
+	            foxEntity.setLocationAndAngles(this.theAnimal.posX, this.theAnimal.posY, this.theAnimal.posZ, 0.0F, 0.0F);
+	            FoxEntity.this.worldObj.spawnEntityInWorld(foxEntity);
+	            FoxEntity.this.worldObj.setEntityState(this.theAnimal, (byte)18);
+	            if (FoxEntity.this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
+	            {
+	                FoxEntity.this.worldObj.spawnEntityInWorld(new EntityXPOrb(FoxEntity.this.worldObj, this.theAnimal.posX, this.theAnimal.posY, this.theAnimal.posZ, FoxEntity.this.rand.nextInt(7) + 1));
 	            }
 
 	         }
 	      }
 	   }
-*/
+
 	   class AttackGoal extends EntityAIAttackOnCollide {
 	      public AttackGoal(double speed, boolean pauseWhenIdle) {
 	         super(FoxEntity.this, speed, pauseWhenIdle);

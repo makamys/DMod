@@ -20,7 +20,6 @@ public abstract class EntityAnimalFuture extends EntityAnimal implements EntityL
 	@Override
 	public boolean interact(EntityPlayer player) {
 	      ItemStack itemStack = player.inventory.getCurrentItem();
-	      AnimalEntityFutured disF = (AnimalEntityFutured)this;
 	      if (this.isBreedingItem(itemStack)) {
 	         int i = this.getGrowingAge();
 	         if (!this.worldObj.isRemote && i == 0 && this.canEat()) {
