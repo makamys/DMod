@@ -32,9 +32,9 @@ public class RenderFox extends RenderLiving
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
      */
-    protected ResourceLocation getEntityTexture(FoxEntity foxEntity)
+    protected ResourceLocation getEntityTexture(EntityFox foxEntity)
     {
-        if (foxEntity.getFoxType() == FoxEntity.Type.RED) {
+        if (foxEntity.getFoxType() == EntityFox.Type.RED) {
             return foxEntity.isPlayerSleeping() ? sleepingTexture : texture;
          } else {
             return foxEntity.isPlayerSleeping() ? sleepingSnowTexture : snowTexture;
@@ -46,15 +46,15 @@ public class RenderFox extends RenderLiving
      */
     protected ResourceLocation getEntityTexture(Entity p_110775_1_)
     {
-        return this.getEntityTexture((FoxEntity)p_110775_1_);
+        return this.getEntityTexture((EntityFox)p_110775_1_);
     }
     
     protected void renderEquippedItems(EntityLivingBase p_77029_1_, float p_77029_2_)
     {
-        this.renderEquippedItems((FoxEntity)p_77029_1_, p_77029_2_);
+        this.renderEquippedItems((EntityFox)p_77029_1_, p_77029_2_);
     }
     
-    protected void renderEquippedItems(FoxEntity p_77029_1_, float p_77029_2_)
+    protected void renderEquippedItems(EntityFox p_77029_1_, float p_77029_2_)
     {
         GL11.glColor3f(1.0F, 1.0F, 1.0F);
         super.renderEquippedItems(p_77029_1_, p_77029_2_);

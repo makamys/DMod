@@ -66,7 +66,7 @@ public class ModelFox extends ModelBase
      */
     public void setLivingAnimations(EntityLivingBase p_78086_1_, float f, float g, float h)
     {
-        FoxEntity foxEntity = (FoxEntity)p_78086_1_;
+        EntityFox foxEntity = (EntityFox)p_78086_1_;
 
         /*if (entitywolf.isAngry())
         {
@@ -234,7 +234,7 @@ public class ModelFox extends ModelBase
         this.rightWing.rotateAngleZ = p_78087_3_;
         this.leftWing.rotateAngleZ = -p_78087_3_;*/
     	
-    	FoxEntity foxEntity = (FoxEntity)p_78087_7_;
+    	EntityFox foxEntity = (EntityFox)p_78087_7_;
     	
         if (!foxEntity.isPlayerSleeping() && !foxEntity.isWalking() && !foxEntity.isInSneakingPose()) {
             this.head.rotateAngleX = j * 0.017453292F;

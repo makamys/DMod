@@ -29,15 +29,15 @@ public class DMod
     {
     	instance = this;
         
-        EntityRegistry.registerModEntity(FoxEntity.class, "fox", 0, instance, 64, 1, true);
-        RenderingRegistry.registerEntityRenderingHandler(FoxEntity.class, new RenderFox(new ModelFox(), 0.4F));
+        EntityRegistry.registerModEntity(EntityFox.class, "fox", 0, instance, 64, 1, true);
+        RenderingRegistry.registerEntityRenderingHandler(EntityFox.class, new RenderFox(new ModelFox(), 0.4F));
         
         int eggID = 0;
         while(EntityList.getStringFromID(eggID) != null) {
         	eggID++;
         }
         
-        EntityList.IDtoClassMapping.put(eggID, FoxEntity.class);
+        EntityList.IDtoClassMapping.put(eggID, EntityFox.class);
 		EntityList.entityEggs.put(eggID, new EntityEggInfo(eggID, 0xFF8000, 0));
 		
 		registerCompatItems();
