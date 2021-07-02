@@ -1,12 +1,9 @@
 package makamys.dmod;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.util.MathHelper;
 
 public class ModelFox extends ModelBase
@@ -67,54 +64,6 @@ public class ModelFox extends ModelBase
     public void setLivingAnimations(EntityLivingBase p_78086_1_, float f, float g, float h)
     {
         EntityFox foxEntity = (EntityFox)p_78086_1_;
-
-        /*if (entitywolf.isAngry())
-        {
-            this.wolfTail.rotateAngleY = 0.0F;
-        }
-        else
-        {
-            this.wolfTail.rotateAngleY = MathHelper.cos(p_78086_2_ * 0.6662F) * 1.4F * p_78086_3_;
-        }
-
-        if (entitywolf.isSitting())
-        {
-            this.wolfMane.setRotationPoint(-1.0F, 16.0F, -3.0F);
-            this.wolfMane.rotateAngleX = ((float)Math.PI * 2F / 5F);
-            this.wolfMane.rotateAngleY = 0.0F;
-            this.wolfBody.setRotationPoint(0.0F, 18.0F, 0.0F);
-            this.wolfBody.rotateAngleX = ((float)Math.PI / 4F);
-            this.wolfTail.setRotationPoint(-1.0F, 21.0F, 6.0F);
-            this.wolfLeg1.setRotationPoint(-2.5F, 22.0F, 2.0F);
-            this.wolfLeg1.rotateAngleX = ((float)Math.PI * 3F / 2F);
-            this.wolfLeg2.setRotationPoint(0.5F, 22.0F, 2.0F);
-            this.wolfLeg2.rotateAngleX = ((float)Math.PI * 3F / 2F);
-            this.wolfLeg3.rotateAngleX = 5.811947F;
-            this.wolfLeg3.setRotationPoint(-2.49F, 17.0F, -4.0F);
-            this.wolfLeg4.rotateAngleX = 5.811947F;
-            this.wolfLeg4.setRotationPoint(0.51F, 17.0F, -4.0F);
-        }
-        else
-        {
-            this.wolfBody.setRotationPoint(0.0F, 14.0F, 2.0F);
-            this.wolfBody.rotateAngleX = ((float)Math.PI / 2F);
-            this.wolfMane.setRotationPoint(-1.0F, 14.0F, -3.0F);
-            this.wolfMane.rotateAngleX = this.wolfBody.rotateAngleX;
-            this.wolfTail.setRotationPoint(-1.0F, 12.0F, 8.0F);
-            this.wolfLeg1.setRotationPoint(-2.5F, 16.0F, 7.0F);
-            this.wolfLeg2.setRotationPoint(0.5F, 16.0F, 7.0F);
-            this.wolfLeg3.setRotationPoint(-2.5F, 16.0F, -4.0F);
-            this.wolfLeg4.setRotationPoint(0.5F, 16.0F, -4.0F);
-            this.wolfLeg1.rotateAngleX = MathHelper.cos(p_78086_2_ * 0.6662F) * 1.4F * p_78086_3_;
-            this.wolfLeg2.rotateAngleX = MathHelper.cos(p_78086_2_ * 0.6662F + (float)Math.PI) * 1.4F * p_78086_3_;
-            this.wolfLeg3.rotateAngleX = MathHelper.cos(p_78086_2_ * 0.6662F + (float)Math.PI) * 1.4F * p_78086_3_;
-            this.wolfLeg4.rotateAngleX = MathHelper.cos(p_78086_2_ * 0.6662F) * 1.4F * p_78086_3_;
-        }
-
-        this.wolfHeadMain.rotateAngleZ = entitywolf.getInterestedAngle(p_78086_4_) + entitywolf.getShakeAngle(p_78086_4_, 0.0F);
-        this.wolfMane.rotateAngleZ = entitywolf.getShakeAngle(p_78086_4_, -0.08F);
-        this.wolfBody.rotateAngleZ = entitywolf.getShakeAngle(p_78086_4_, -0.16F);
-        this.wolfTail.rotateAngleZ = entitywolf.getShakeAngle(p_78086_4_, -0.2F);*/
         
         this.torso.rotateAngleX = 1.5707964F;
         this.tail.rotateAngleX = -0.05235988F;
@@ -220,20 +169,7 @@ public class ModelFox extends ModelBase
      * "far" arms and legs can swing at most.
      */
     public void setRotationAngles(float p_78087_1_, float p_78087_2_, float h, float i, float j, float p_78087_6_, Entity p_78087_7_)
-    {
-    	/*
-        this.head.rotateAngleX = p_78087_5_ / (180F / (float)Math.PI);
-        this.head.rotateAngleY = p_78087_4_ / (180F / (float)Math.PI);
-        this.bill.rotateAngleX = this.head.rotateAngleX;
-        this.bill.rotateAngleY = this.head.rotateAngleY;
-        this.chin.rotateAngleX = this.head.rotateAngleX;
-        this.chin.rotateAngleY = this.head.rotateAngleY;
-        this.body.rotateAngleX = ((float)Math.PI / 2F);
-        this.rightLeg.rotateAngleX = MathHelper.cos(p_78087_1_ * 0.6662F) * 1.4F * p_78087_2_;
-        this.leftLeg.rotateAngleX = MathHelper.cos(p_78087_1_ * 0.6662F + (float)Math.PI) * 1.4F * p_78087_2_;
-        this.rightWing.rotateAngleZ = p_78087_3_;
-        this.leftWing.rotateAngleZ = -p_78087_3_;*/
-    	
+    {	
     	EntityFox foxEntity = (EntityFox)p_78087_7_;
     	
         if (!foxEntity.isPlayerSleeping() && !foxEntity.isWalking() && !foxEntity.isInSneakingPose()) {
