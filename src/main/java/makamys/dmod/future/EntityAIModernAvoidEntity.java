@@ -1,27 +1,21 @@
 package makamys.dmod.future;
 
-import java.util.List;
 import java.util.function.Predicate;
 
+import makamys.dmod.constants.AIMutex;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.RandomPositionGenerator;
-import net.minecraft.entity.passive.EntityTameable;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.Vec3;
-import scala.NotImplementedError;
 
 public class EntityAIModernAvoidEntity extends EntityAIBase {
     public static final IEntitySelector alive = new IEntitySelector()
     {
-        private static final String __OBFID = "CL_00001575";
         /**
          * Return whether the specified entity is applicable to this filter.
          */
@@ -33,7 +27,6 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
     
     public final IEntitySelector field_98218_a = new IEntitySelector()
     {
-        private static final String __OBFID = "CL_00001575";
         /**
          * Return whether the specified entity is applicable to this filter.
          */
@@ -50,18 +43,18 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 	   protected final float fleeDistance;
 	   protected PathEntity fleePath;
 	   protected final PathNavigate fleeingEntityNavigation;
-	   protected final Class classToFleeFrom;
-	   protected final Predicate extraInclusionSelector;
+	   protected final Class<?> classToFleeFrom;
+	   protected final Predicate<EntityLivingBase> extraInclusionSelector;
 	   protected final Predicate<EntityLivingBase> inclusionSelector;
 	   private final TargetPredicate withinRangePredicate;
 
-	   public EntityAIModernAvoidEntity(EntityCreature mob, Class fleeFromType, float distance, double slowSpeed, double fastSpeed) {
+	   public EntityAIModernAvoidEntity(EntityCreature mob, Class<?> fleeFromType, float distance, double slowSpeed, double fastSpeed) {
 	      this(mob, fleeFromType, (livingEntity) -> {
 		         return true;
 		      }, distance, slowSpeed, fastSpeed, EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR::test);
 	   }
 
-	   public EntityAIModernAvoidEntity(EntityCreature mob, Class fleeFromType, Predicate extraInclusionSelector, float distance, double slowSpeed, double fastSpeed, Predicate inclusionSelector) {
+	   public EntityAIModernAvoidEntity(EntityCreature mob, Class<?> fleeFromType, Predicate<EntityLivingBase> extraInclusionSelector, float distance, double slowSpeed, double fastSpeed, Predicate<EntityLivingBase> inclusionSelector) {
 	      this.mob = mob;
 	      this.classToFleeFrom = fleeFromType;
 	      this.extraInclusionSelector = extraInclusionSelector;
@@ -70,11 +63,11 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 	      this.fastSpeed = fastSpeed;
 	      this.inclusionSelector = inclusionSelector;
 	      this.fleeingEntityNavigation = mob.getNavigator();
-	      this.setMutexBits(1); //this.setControls(EnumSet.of(Goal.Control.MOVE));
+	      this.setMutexBits(AIMutex.MOVE);
 	      this.withinRangePredicate = (new TargetPredicate()).setBaseMaxDistance((double)distance).setPredicate(inclusionSelector.and(extraInclusionSelector));
 	   }
 
-	   public EntityAIModernAvoidEntity(EntityCreature fleeingEntity, Class classToFleeFrom, float fleeDistance, double fleeSlowSpeed, double fleeFastSpeed, Predicate<EntityLivingBase> inclusionSelector) {
+	   public EntityAIModernAvoidEntity(EntityCreature fleeingEntity, Class<?> classToFleeFrom, float fleeDistance, double fleeSlowSpeed, double fleeFastSpeed, Predicate<EntityLivingBase> inclusionSelector) {
 	      this(fleeingEntity, classToFleeFrom, (livingEntity) -> {
 	         return true;
 	      }, fleeDistance, fleeSlowSpeed, fleeFastSpeed, inclusionSelector);

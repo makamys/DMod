@@ -96,9 +96,9 @@ public class EntityFox extends EntityAnimalFuture {
 		private static final TrackedData<Optional<UUID>> OWNER;
 		private static final TrackedData<Optional<UUID>> OTHER_TRUSTED;*/
 	   private static final Predicate<EntityItem> PICKABLE_DROP_FILTER;
-	   private static final Predicate<Entity> JUST_ATTACKED_SOMETHING_FILTER;
-	   private static final Predicate<Entity> CHICKEN_AND_RABBIT_FILTER;
-	   private static final Predicate<Entity> NOTICEABLE_PLAYER_FILTER;
+	   private static final Predicate<EntityLivingBase> JUST_ATTACKED_SOMETHING_FILTER;
+	   private static final Predicate<EntityLivingBase> CHICKEN_AND_RABBIT_FILTER;
+	   private static final Predicate<EntityLivingBase> NOTICEABLE_PLAYER_FILTER;
 	   private EntityAIBase followChickenAndRabbitTask;
 	   /*private Goal followBabyTurtleGoal;
 	   private Goal followFishGoal;*/
