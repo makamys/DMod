@@ -1,5 +1,7 @@
 package makamys.dmod;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -132,35 +134,41 @@ public class ModelFox extends ModelBase
     public void render(Entity p_78088_1_, float p_78088_2_, float p_78088_3_, float p_78088_4_, float p_78088_5_, float p_78088_6_, float p_78088_7_)
     {
         this.setRotationAngles(p_78088_2_, p_78088_3_, p_78088_4_, p_78088_5_, p_78088_6_, p_78088_7_, p_78088_1_);
-
-        /*if (this.isChild)
+        
+        float childHeadYOffset = 8.0F;
+        float childHeadZOffset = 3.35F;
+        float invertedChildHeadScale = 2.0F;
+        float invertedChildBodyScale = 2.0F;
+        float childBodyYOffset = 24.0F;
+        
+        if (this.isChild)
         {
-            float f6 = 2.0F;
             GL11.glPushMatrix();
-            GL11.glTranslatef(0.0F, 5.0F * p_78088_7_, 2.0F * p_78088_7_);
+            float g = 1.5F / invertedChildHeadScale;
+            GL11.glScalef(g, g, g);
+            GL11.glTranslatef(0.0F, childHeadYOffset / 16F, childHeadZOffset / 16F);
             this.head.render(p_78088_7_);
-            this.bill.render(p_78088_7_);
-            this.chin.render(p_78088_7_);
             GL11.glPopMatrix();
             GL11.glPushMatrix();
-            GL11.glScalef(1.0F / f6, 1.0F / f6, 1.0F / f6);
-            GL11.glTranslatef(0.0F, 24.0F * p_78088_7_, 0.0F);
-            this.body.render(p_78088_7_);
-            this.rightLeg.render(p_78088_7_);
-            this.leftLeg.render(p_78088_7_);
-            this.rightWing.render(p_78088_7_);
-            this.leftWing.render(p_78088_7_);
+            g = 1.0F / invertedChildBodyScale;
+            GL11.glScalef(g, g, g);
+            GL11.glTranslatef(0.0F, childBodyYOffset / 16F, 0.0F);
+            this.torso.render(p_78088_7_);
+            this.rightBackLeg.render(p_78088_7_);
+            this.leftBackLeg.render(p_78088_7_);
+            this.rightFrontLeg.render(p_78088_7_);
+            this.leftFrontLeg.render(p_78088_7_);
             GL11.glPopMatrix();
         }
         else
-        {*/
+        {
             this.head.render(p_78088_7_);
             this.torso.render(p_78088_7_);
             this.rightBackLeg.render(p_78088_7_);
             this.leftBackLeg.render(p_78088_7_);
             this.rightFrontLeg.render(p_78088_7_);
             this.leftFrontLeg.render(p_78088_7_);
-        //}
+        }
     }
 
     /**

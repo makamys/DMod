@@ -62,20 +62,18 @@ public class RenderFox extends RenderLiving
             GL11.glPushMatrix();
             float f1;
             
+            if(this.mainModel.isChild) {
+                GL11.glScalef(0.75F, 0.75F, 0.75F);
+                GL11.glTranslatef(0.0f, 0.5f, 0.20937499403953552f);
+            }
+            
             ModelFox mf = (ModelFox)mainModel;
             GL11.glTranslatef(mf.head.rotationPointX/16f, mf.head.rotationPointY/16f, mf.head.rotationPointZ/16f);
             
             GL11.glRotatef((float)MathHelper.todeg * mf.head.rotateAngleY, 0f, 1f, 0f);
             GL11.glRotatef((float)MathHelper.todeg * mf.head.rotateAngleX, 1f, 0f, 0f);
-            GL11.glTranslatef(0f, 0.3f, -0.35f);
             
-            if (this.mainModel.isChild)
-            {
-                f1 = 0.5F;
-                GL11.glTranslatef(0.0F, 0.625F, 0.0F);
-                GL11.glRotatef(-20.0F, -1.0F, 0.0F, 0.0F);
-                GL11.glScalef(f1, f1, f1);
-            }
+            GL11.glTranslatef(0f, 0.3f, -0.35f);
 
             if (itemstack.getItem() instanceof ItemBlock && RenderBlocks.renderItemIn3d(Block.getBlockFromItem(itemstack.getItem()).getRenderType()))
             {
