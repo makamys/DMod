@@ -158,7 +158,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	    //XXXthis.tasks.addTask(6, new FoxEntity.JumpChasingGoal());
 	    this.tasks.addTask(6, new FoxEntity.AvoidDaylightGoal(1.25D));
 	    this.tasks.addTask(7, new FoxEntity.AttackGoal(1.2000000476837158D, true));
-	    //XXXthis.tasks.addTask(7, new FoxEntity.DelayedCalmDownGoal());
+	    this.tasks.addTask(7, new FoxEntity.DelayedCalmDownGoal());
 	    //XXXthis.tasks.addTask(8, new FoxEntity.FollowParentGoal(this, 1.25D));
 	      //this.tasks.addTask(9, new FoxEntity.GoToVillageGoal(32, 200));
 	      // TODO
@@ -1061,7 +1061,7 @@ public class FoxEntity extends EntityAnimalFuture {
 
 	      @Override
 	      public boolean shouldExecute() {
-	         return FoxEntity.this.getEntityToAttack() == null && FoxEntity.this.rand.nextFloat() < 0.02F && !FoxEntity.this.isPlayerSleeping() && FoxEntity.this.getAttackTarget() == null && FoxEntity.this.getNavigator().noPath() && !this.canCalmDown() && !FoxEntity.this.isChasing() && !FoxEntity.this.isInSneakingPose();
+	         return FoxEntity.this.getEntityToAttack() == null && FoxEntity.this.rand.nextFloat() < 0.02F && !FoxEntity.this.isPlayerSleeping() && FoxEntity.this.getAttackTarget() == null && FoxEntity.this.getNavigator().noPath() && !this.canNotCalmDown() && !FoxEntity.this.isChasing() && !FoxEntity.this.isInSneakingPose();
 	      }
 
 	      @Override
@@ -1100,52 +1100,56 @@ public class FoxEntity extends EntityAnimalFuture {
 	         this.timer = 80 + FoxEntity.this.rand.nextInt(20);
 	      }
 	   }
-/*
+
 	   class DelayedCalmDownGoal extends FoxEntity.CalmDownGoal {
 	      private int timer;
 
 	      public DelayedCalmDownGoal() {
 	         super(null);
 	         this.timer = FoxEntity.this.rand.nextInt(140);
-	         this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK, Goal.Control.JUMP));
+	         this.setMutexBits(AIMutex.MOVE | AIMutex.LOOK | AIMutex.JUMP);
 	      }
 
-	      public boolean canStart() {
-	         if (FoxEntity.this.sidewaysSpeed == 0.0F && FoxEntity.this.upwardSpeed == 0.0F && FoxEntity.this.forwardSpeed == 0.0F) {
-	            return this.canNotCalmDown() || FoxEntity.this.isPlayerSleeping();
+	      @Override
+	      public boolean shouldExecute() {
+	         if (FoxEntity.this.moveStrafing == 0.0F && FoxEntity.this.onGround && FoxEntity.this.moveForward == 0.0F) {
+	            return this.canCalmDown() || FoxEntity.this.isPlayerSleeping();
 	         } else {
 	            return false;
 	         }
 	      }
 
-	      public boolean shouldContinue() {
-	         return this.canNotCalmDown();
+	      @Override
+	      public boolean continueExecuting() {
+	         return this.canCalmDown();
 	      }
 
-	      private boolean canNotCalmDown() {
+	      private boolean canCalmDown() {
 	         if (this.timer > 0) {
 	            --this.timer;
 	            return false;
 	         } else {
-	            return FoxEntity.this.worldObj.isDay() && this.isAtFavoredLocation() && !this.canCalmDown();
+	            return FoxEntity.this.worldObj.isDaytime() && this.isAtFavoredLocation() && !this.canNotCalmDown();
 	         }
 	      }
 
-	      public void stop() {
+	      @Override
+	      public void resetTask() {
 	         this.timer = FoxEntity.this.rand.nextInt(140);
 	         FoxEntity.this.stopActions();
 	      }
 
-	      public void start() {
+	      @Override
+	      public void startExecuting() {
 	         FoxEntity.this.setSitting(false);
 	         FoxEntity.this.setCrouching(false);
 	         FoxEntity.this.setRollingHead(false);
 	         FoxEntity.this.setJumping(false);
 	         FoxEntity.this.setSleeping(true);
-	         FoxEntity.this.getNavigation().stop();
-	         FoxEntity.this.getMoveControl().moveTo(FoxEntity.this.posX, FoxEntity.this.posY, FoxEntity.this.posZ, 0.0D);
+	         FoxEntity.this.getNavigator().clearPathEntity();
+	         FoxEntity.this.getMoveHelper().setMoveTo(FoxEntity.this.posX, FoxEntity.this.posY, FoxEntity.this.posZ, 0.0D);
 	      }
-	   }*/
+	   }
 
 	   abstract class CalmDownGoal extends EntityAIBase  {
 	      private final TargetPredicate WORRIABLE_ENTITY_PREDICATE;
@@ -1160,7 +1164,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	        		 FoxEntity.this.getBlockPathWeight(blockPos.getX(), blockPos.getY(), blockPos.getZ()) >= 0.0F;
 	      }
 
-	      protected boolean canCalmDown() {
+	      protected boolean canNotCalmDown() {
 	    	  //return !F.worldObj.selectEntitiesWithinAABB(EntityLivingBase.class, this.boundingBox.expand(20.0D, 8.0D, 20.0D), attackEntitySelector);
 	         return !EntityViewEmulator.getTargets(FoxEntity.this.worldObj, EntityLivingBase.class, this.WORRIABLE_ENTITY_PREDICATE, FoxEntity.this, FoxEntity.this.boundingBox.expand(12.0D, 6.0D, 12.0D)).isEmpty();
 	      }
