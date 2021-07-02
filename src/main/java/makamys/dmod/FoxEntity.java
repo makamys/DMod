@@ -141,7 +141,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	      });*/
 	      this.tasks.addTask(0, new FoxEntity.FoxSwimGoal());
 		  this.tasks.addTask(1, new FoxEntity.StopWanderingGoal());
-		 //XXXthis.tasks.addTask(2, new FoxEntity.EscapeWhenNotAggressiveGoal(2.2D));
+		  this.tasks.addTask(2, new FoxEntity.EscapeWhenNotAggressiveGoal(2.2D));
 		 //XXXthis.tasks.addTask(3, new FoxEntity.MateGoal(1.0D));
 	      /*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityPlayer.class, 16.0F, 1.6D, 1.4D, (livingEntity) -> {
 	         return NOTICEABLE_PLAYER_FILTER.test(livingEntity) && !this.canTrust(livingEntity.getUniqueID()) && !this.isAggressive();
@@ -924,16 +924,16 @@ public class FoxEntity extends EntityAnimalFuture {
 	      }
 	   }*/
 
-	   /*class EscapeWhenNotAggressiveGoal extends EntityAIPanic {
+	   class EscapeWhenNotAggressiveGoal extends EntityAIPanic {
 	      public EscapeWhenNotAggressiveGoal(double speed) {
 	         super(FoxEntity.this, speed);
 	      }
 	      
 	      @Override
-	      public boolean canStart() {
-	         return !FoxEntity.this.isAggressive() && super.canStart();
+	      public boolean shouldExecute() {
+	         return !FoxEntity.this.isAggressive() && super.shouldExecute();
 	      }
-	   }*/
+	   }
 
 	   class StopWanderingGoal extends EntityAIBase {
 	      int timer;
