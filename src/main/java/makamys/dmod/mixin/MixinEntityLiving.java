@@ -46,7 +46,7 @@ public abstract class MixinEntityLiving extends EntityLivingBase {
 
 		         while(iterator.hasNext()) {
 		        	 EntityItem entityitem = (EntityItem)iterator.next();
-		            if (!entityitem.isDead && entityitem.getEntityItem() != null) {
+		            if (!entityitem.isDead && entityitem.getEntityItem() != null && entityitem.delayBeforeCanPickup <= 0) {
 		               this.loot(entityitem);
 		            }
 		         }
