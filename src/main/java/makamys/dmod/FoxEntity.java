@@ -1207,7 +1207,11 @@ public class FoxEntity extends EntityAnimalFuture {
 	      public boolean shouldExecute() {
 	         if (!FoxEntity.this.isPlayerSleeping() && FoxEntity.this.getAttackTarget() == null) {
 	            if (FoxEntity.this.worldObj.isThundering()) {
-	               return true;
+	               return FoxEntity.this.worldObj.canBlockSeeTheSky(
+	            		   MathHelper.floor_double(posX),
+	            		   MathHelper.floor_double(posY),
+	            		   MathHelper.floor_double(posZ)) /*&& !((WorldServer)FoxEntity.this.worldObj).isNearOccupiedPointOfInterest(blockPos)*/
+	            		   && this.targetShadedPos();
 	            } else if (this.timer > 0) {
 	               --this.timer;
 	               return false;
