@@ -19,6 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import java.util.UUID;
 
+import makamys.dmod.api.FutureRegistry;
 import makamys.dmod.constants.AIMutex;
 import makamys.dmod.constants.NBTType;
 import makamys.dmod.etfuturum.BlockPos;
@@ -548,7 +549,7 @@ public class FoxEntity extends EntityAnimalFuture {
 	   }
 
 	   public boolean isBreedingItem(ItemStack stack) {
-	      return stack.getItem() == Items.wheat; // return stack.getItem() == Items.SWEET_BERRIES; // TODO
+	      return FutureRegistry.instance.isFoxBreedingItem(stack);
 	   }
 /*
 	   protected void onPlayerSpawnedChild(PlayerEntity player, MobEntity child) {

@@ -4,11 +4,15 @@ import net.minecraft.client.model.ModelWolf;
 import net.minecraft.client.renderer.entity.RenderWolf;
 import net.minecraft.entity.EntityList;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
+import ganymedes01.etfuturum.ModBlocks;
+import ganymedes01.etfuturum.ModItems;
+import makamys.dmod.api.FutureRegistry;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 
 @Mod(modid = DMod.MODID, version = DMod.VERSION)
@@ -35,5 +39,13 @@ public class DMod
         
         EntityList.IDtoClassMapping.put(eggID, FoxEntity.class);
 		EntityList.entityEggs.put(eggID, new EntityEggInfo(eggID, 0xFF8000, 0));
+		
+		registerCompatItems();
+    }
+    
+    public void registerCompatItems() {
+    	if(Loader.isModLoaded("etfuturum")) {
+    		FutureRegistry.instance.registerFoxBreedingItem(is -> is.getItem() == ModItems.sweet_berries);
+    	}
     }
 }
