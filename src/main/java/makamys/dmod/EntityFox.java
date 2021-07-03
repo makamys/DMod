@@ -156,21 +156,21 @@ public class EntityFox extends EntityAnimalFuture {
 	      /*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, PolarBearEntity.class, 8.0F, 1.6D, 1.4D, (livingEntity) -> {
 	         return !this.isAggressive();
 	      }));*/
-	    //XXXthis.tasks.addTask(5, new FoxEntity.MoveToHuntGoal());
-	    //XXXthis.tasks.addTask(6, new FoxEntity.JumpChasingGoal());
+	    this.tasks.addTask(5, new EntityFox.AIMoveToHunt());
+	    //XXXthis.tasks.addTask(6, new EntityFox.JumpChasingGoal());
 	    this.tasks.addTask(6, new EntityFox.AIAvoidDaylight(1.25D));
 	    this.tasks.addTask(7, new EntityFox.AIAttack(1.2000000476837158D, true));
 	    this.tasks.addTask(7, new EntityFox.AIDelayedCalmDown());
-	    //XXXthis.tasks.addTask(8, new FoxEntity.FollowParentGoal(this, 1.25D));
-	      //this.tasks.addTask(9, new FoxEntity.GoToVillageGoal(32, 200));
+	    //XXXthis.tasks.addTask(8, new EntityFox.FollowParentGoal(this, 1.25D));
+	      //this.tasks.addTask(9, new EntityFox.GoToVillageGoal(32, 200));
 	      // TODO
-	      //this.tasks.addTask(10, new FoxEntity.EatSweetBerriesGoal(1.2000000476837158D, 12, 2));
+	      //this.tasks.addTask(10, new EntityFox.EatSweetBerriesGoal(1.2000000476837158D, 12, 2));
 	      this.tasks.addTask(10, new EntityAILeapAtTarget(this, 0.4F));
 	      this.tasks.addTask(11, new EntityAIWander(this, 1.0D));
-	    //XXXthis.tasks.addTask(11, new FoxEntity.PickupItemGoal());
+	    //XXXthis.tasks.addTask(11, new EntityFox.PickupItemGoal());
 	    this.tasks.addTask(12, new EntityFox.AILookAtEntity(this, EntityPlayer.class, 24.0F));
 	    this.tasks.addTask(13, new EntityFox.AISitDownAndLookAround());
-	    //XXXthis.targetTasks.addTask(3, new FoxEntity.DefendFriendGoal(EntityLiving.class, false, false, (livingEntity) -> {
+	    //XXXthis.targetTasks.addTask(3, new EntityFox.DefendFriendGoal(EntityLiving.class, false, false, (livingEntity) -> {
 	    //XXXreturn JUST_ATTACKED_SOMETHING_FILTER.test(livingEntity) && !this.canTrust(livingEntity.getUniqueID());
 	       //XXX}));
 	   }
@@ -286,9 +286,9 @@ public class EntityFox extends EntityAnimalFuture {
 		}
 	   
 	   public EntityFox createChild(EntityAgeable passiveEntity) {
-	      EntityFox foxEntity = new EntityFox(this.worldObj);
-	      foxEntity.setType(this.rand.nextBoolean() ? this.getFoxType() : ((EntityFox)passiveEntity).getFoxType());
-	      return foxEntity;
+	      EntityFox EntityFox = new EntityFox(this.worldObj);
+	      EntityFox.setType(this.rand.nextBoolean() ? this.getFoxType() : ((EntityFox)passiveEntity).getFoxType());
+	      return EntityFox;
 	   }
 
 	   public IEntityLivingData onSpawnWithEgg(IEntityLivingData entityData){
@@ -553,7 +553,7 @@ public class EntityFox extends EntityAnimalFuture {
 	   }
 /*
 	   protected void onPlayerSpawnedChild(PlayerEntity player, MobEntity child) {
-	      ((FoxEntity)child).addTrustedUuid(player.getUuid());
+	      ((EntityFox)child).addTrustedUuid(player.getUuid());
 	   }
 */
 	   public boolean isChasing() {
@@ -683,7 +683,7 @@ public class EntityFox extends EntityAnimalFuture {
 	      super.onDeath(source);
 	   }
 
-	   public static boolean canJumpChase(EntityFox fox, EntityLiving chasedEntity) {
+	   public static boolean canJumpChase(EntityFox fox, EntityLivingBase chasedEntity) {
 	      double d = chasedEntity.posZ - fox.posZ;
 	      double e = chasedEntity.posX - fox.posX;
 	      double f = d / e;
@@ -724,10 +724,10 @@ public class EntityFox extends EntityAnimalFuture {
 */
 
 	   static {
-	      /*TYPE = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.INTEGER);
-	      FOX_FLAGS = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.BYTE);
-	      OWNER = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
-	      OTHER_TRUSTED = DataTracker.registerData(FoxEntity.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);*/
+	      /*TYPE = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.INTEGER);
+	      FOX_FLAGS = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.BYTE);
+	      OWNER = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
+	      OTHER_TRUSTED = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);*/
 	      PICKABLE_DROP_FILTER = (EntityItem) -> {
 	         return !EntityItemFuture.cannotPickUp(EntityItem) && EntityItem.isEntityAlive();
 	      };
@@ -764,9 +764,9 @@ public class EntityFox extends EntityAnimalFuture {
 	   }
 /*
 	   class FollowParentGoal extends EntityAIFollowParent {
-	      private final FoxEntity fox;
+	      private final EntityFox fox;
 
-	      public FollowParentGoal(FoxEntity fox, double speed) {
+	      public FollowParentGoal(EntityFox fox, double speed) {
 	         super(fox, speed);
 	         this.fox = fox;
 	      }
@@ -805,19 +805,19 @@ public class EntityFox extends EntityAnimalFuture {
 /*
 	   public class JumpChasingGoal extends DiveJumpingGoal {
 	      public boolean canStart() {
-	         if (!FoxEntity.this.isFullyCrouched()) {
+	         if (!EntityFox.this.isFullyCrouched()) {
 	            return false;
 	         } else {
-	            LivingEntity livingEntity = FoxEntity.this.getTarget();
+	            LivingEntity livingEntity = EntityFox.this.getTarget();
 	            if (livingEntity != null && livingEntity.isAlive()) {
 	               if (livingEntity.getMovementDirection() != livingEntity.getHorizontalFacing()) {
 	                  return false;
 	               } else {
-	                  boolean bl = FoxEntity.canJumpChase(FoxEntity.this, livingEntity);
+	                  boolean bl = EntityFox.canJumpChase(EntityFox.this, livingEntity);
 	                  if (!bl) {
-	                     FoxEntity.this.getNavigation().findPathTo((Entity)livingEntity, 0);
-	                     FoxEntity.this.setCrouching(false);
-	                     FoxEntity.this.setRollingHead(false);
+	                     EntityFox.this.getNavigation().findPathTo((Entity)livingEntity, 0);
+	                     EntityFox.this.setCrouching(false);
+	                     EntityFox.this.setRollingHead(false);
 	                  }
 
 	                  return bl;
@@ -829,10 +829,10 @@ public class EntityFox extends EntityAnimalFuture {
 	      }
 
 	      public boolean shouldContinue() {
-	         LivingEntity livingEntity = FoxEntity.this.getTarget();
+	         LivingEntity livingEntity = EntityFox.this.getTarget();
 	         if (livingEntity != null && livingEntity.isAlive()) {
-	            double d = FoxEntity.this.getVelocity().y;
-	            return (d * d >= 0.05000000074505806D || Math.abs(FoxEntity.this.pitch) >= 15.0F || !FoxEntity.this.onGround) && !FoxEntity.this.isWalking();
+	            double d = EntityFox.this.getVelocity().y;
+	            return (d * d >= 0.05000000074505806D || Math.abs(EntityFox.this.pitch) >= 15.0F || !EntityFox.this.onGround) && !EntityFox.this.isWalking();
 	         } else {
 	            return false;
 	         }
@@ -843,47 +843,47 @@ public class EntityFox extends EntityAnimalFuture {
 	      }
 
 	      public void start() {
-	         FoxEntity.this.setJumping(true);
-	         FoxEntity.this.setChasing(true);
-	         FoxEntity.this.setRollingHead(false);
-	         LivingEntity livingEntity = FoxEntity.this.getTarget();
-	         FoxEntity.this.getLookControl().lookAt(livingEntity, 60.0F, 30.0F);
-	         Vec3d vec3d = (new Vec3d(livingEntity.getX() - FoxEntity.this.posX, livingEntity.getY() - FoxEntity.this.posY, livingEntity.getZ() - FoxEntity.this.posZ)).normalize();
-	         FoxEntity.this.setVelocity(FoxEntity.this.getVelocity().add(vec3d.x * 0.8D, 0.9D, vec3d.z * 0.8D));
-	         FoxEntity.this.getNavigation().stop();
+	         EntityFox.this.setJumping(true);
+	         EntityFox.this.setChasing(true);
+	         EntityFox.this.setRollingHead(false);
+	         LivingEntity livingEntity = EntityFox.this.getTarget();
+	         EntityFox.this.getLookControl().lookAt(livingEntity, 60.0F, 30.0F);
+	         Vec3d vec3d = (new Vec3d(livingEntity.getX() - EntityFox.this.posX, livingEntity.getY() - EntityFox.this.posY, livingEntity.getZ() - EntityFox.this.posZ)).normalize();
+	         EntityFox.this.setVelocity(EntityFox.this.getVelocity().add(vec3d.x * 0.8D, 0.9D, vec3d.z * 0.8D));
+	         EntityFox.this.getNavigation().stop();
 	      }
 
 	      public void stop() {
-	         FoxEntity.this.setCrouching(false);
-	         FoxEntity.this.extraRollingHeight = 0.0F;
-	         FoxEntity.this.lastExtraRollingHeight = 0.0F;
-	         FoxEntity.this.setRollingHead(false);
-	         FoxEntity.this.setChasing(false);
+	         EntityFox.this.setCrouching(false);
+	         EntityFox.this.extraRollingHeight = 0.0F;
+	         EntityFox.this.lastExtraRollingHeight = 0.0F;
+	         EntityFox.this.setRollingHead(false);
+	         EntityFox.this.setChasing(false);
 	      }
 
 	      public void tick() {
-	         LivingEntity livingEntity = FoxEntity.this.getTarget();
+	         LivingEntity livingEntity = EntityFox.this.getTarget();
 	         if (livingEntity != null) {
-	            FoxEntity.this.getLookControl().lookAt(livingEntity, 60.0F, 30.0F);
+	            EntityFox.this.getLookControl().lookAt(livingEntity, 60.0F, 30.0F);
 	         }
 
-	         if (!FoxEntity.this.isWalking()) {
-	            Vec3d vec3d = FoxEntity.this.getVelocity();
-	            if (vec3d.y * vec3d.y < 0.029999999329447746D && FoxEntity.this.pitch != 0.0F) {
-	               FoxEntity.this.pitch = MathHelper.lerpAngle(FoxEntity.this.pitch, 0.0F, 0.2F);
+	         if (!EntityFox.this.isWalking()) {
+	            Vec3d vec3d = EntityFox.this.getVelocity();
+	            if (vec3d.y * vec3d.y < 0.029999999329447746D && EntityFox.this.pitch != 0.0F) {
+	               EntityFox.this.pitch = MathHelper.lerpAngle(EntityFox.this.pitch, 0.0F, 0.2F);
 	            } else {
 	               double d = Math.sqrt(Entity.squaredHorizontalLength(vec3d));
 	               double e = Math.signum(-vec3d.y) * Math.acos(d / vec3d.length()) * 57.2957763671875D;
-	               FoxEntity.this.pitch = (float)e;
+	               EntityFox.this.pitch = (float)e;
 	            }
 	         }
 
-	         if (livingEntity != null && FoxEntity.this.distanceTo(livingEntity) <= 2.0F) {
-	            FoxEntity.this.tryAttack(livingEntity);
-	         } else if (FoxEntity.this.pitch > 0.0F && FoxEntity.this.onGround && (float)FoxEntity.this.getVelocity().y != 0.0F && FoxEntity.this.worldObj.getBlockState(FoxEntity.this.getBlockPos()).isOf(Blocks.SNOW)) {
-	            FoxEntity.this.pitch = 60.0F;
-	            FoxEntity.this.setTarget((LivingEntity)null);
-	            FoxEntity.this.setWalking(true);
+	         if (livingEntity != null && EntityFox.this.distanceTo(livingEntity) <= 2.0F) {
+	            EntityFox.this.tryAttack(livingEntity);
+	         } else if (EntityFox.this.pitch > 0.0F && EntityFox.this.onGround && (float)EntityFox.this.getVelocity().y != 0.0F && EntityFox.this.worldObj.getBlockState(EntityFox.this.getBlockPos()).isOf(Blocks.SNOW)) {
+	            EntityFox.this.pitch = 60.0F;
+	            EntityFox.this.setTarget((LivingEntity)null);
+	            EntityFox.this.setWalking(true);
 	         }
 
 	      }
@@ -908,11 +908,11 @@ public class EntityFox extends EntityAnimalFuture {
 
 	   /*class GoToVillageGoal extends net.minecraft.entity.ai.goal.GoToVillageGoal {
 	      public GoToVillageGoal(int unused, int searchRange) {
-	         super(FoxEntity.this, searchRange);
+	         super(EntityFox.this, searchRange);
 	      }
 
 	      public void start() {
-	         FoxEntity.this.stopActions();
+	         EntityFox.this.stopActions();
 	         super.start();
 	      }
 
@@ -925,7 +925,7 @@ public class EntityFox extends EntityAnimalFuture {
 	      }
 
 	      private boolean canGoToVillage() {
-	         return !FoxEntity.this.isPlayerSleeping() && !FoxEntity.this.isSitting() && !FoxEntity.this.isAggressive() && FoxEntity.this.getTarget() == null;
+	         return !EntityFox.this.isPlayerSleeping() && !EntityFox.this.isSitting() && !EntityFox.this.isAggressive() && EntityFox.this.getTarget() == null;
 	      }
 	   }*/
 
@@ -987,7 +987,7 @@ public class EntityFox extends EntityAnimalFuture {
 	      protected int timer;
 
 	      public EatSweetBerriesGoal(double speed, int range, int maxYDifference) {
-	         super(FoxEntity.this, speed, range, maxYDifference);
+	         super(EntityFox.this, speed, range, maxYDifference);
 	      }
 
 	      public double getDesiredSquaredDistanceToTarget() {
@@ -1010,43 +1010,43 @@ public class EntityFox extends EntityAnimalFuture {
 	            } else {
 	               ++this.timer;
 	            }
-	         } else if (!this.hasReached() && FoxEntity.this.rand.nextFloat() < 0.05F) {
-	            FoxEntity.this.playSound(DMod.MODID + ":entity.fox.sniff", 1.0F, 1.0F);
+	         } else if (!this.hasReached() && EntityFox.this.rand.nextFloat() < 0.05F) {
+	            EntityFox.this.playSound(DMod.MODID + ":entity.fox.sniff", 1.0F, 1.0F);
 	         }
 
 	         super.tick();
 	      }
 
 	      protected void eatSweetBerry() {
-	         if (FoxEntity.this.worldObj.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
-	            BlockState blockState = FoxEntity.this.worldObj.getBlockState(this.targetPos);
+	         if (EntityFox.this.worldObj.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
+	            BlockState blockState = EntityFox.this.worldObj.getBlockState(this.targetPos);
 	            if (blockState.isOf(Blocks.SWEET_BERRY_BUSH)) {
 	               int i = (Integer)blockState.get(SweetBerryBushBlock.AGE);
 	               blockState.with(SweetBerryBushBlock.AGE, 1);
-	               int j = 1 + FoxEntity.this.worldObj.rand.nextInt(2) + (i == 3 ? 1 : 0);
-	               ItemStack itemStack = FoxEntity.this.getEquippedStack(EquipmentSlot.MAINHAND);
+	               int j = 1 + EntityFox.this.worldObj.rand.nextInt(2) + (i == 3 ? 1 : 0);
+	               ItemStack itemStack = EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND);
 	               if (itemStack.isEmpty()) {
-	                  FoxEntity.this.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.SWEET_BERRIES));
+	                  EntityFox.this.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.SWEET_BERRIES));
 	                  --j;
 	               }
 
 	               if (j > 0) {
-	                  Block.dropStack(FoxEntity.this.worldObj, this.targetPos, new ItemStack(Items.SWEET_BERRIES, j));
+	                  Block.dropStack(EntityFox.this.worldObj, this.targetPos, new ItemStack(Items.SWEET_BERRIES, j));
 	               }
 
-	               FoxEntity.this.playSound("item.sweet_berries.pick_from_bush", 1.0F, 1.0F);
-	               FoxEntity.this.worldObj.setBlockState(this.targetPos, (BlockState)blockState.with(SweetBerryBushBlock.AGE, 1), 2);
+	               EntityFox.this.playSound("item.sweet_berries.pick_from_bush", 1.0F, 1.0F);
+	               EntityFox.this.worldObj.setBlockState(this.targetPos, (BlockState)blockState.with(SweetBerryBushBlock.AGE, 1), 2);
 	            }
 	         }
 	      }
 
 	      public boolean canStart() {
-	         return !FoxEntity.this.isPlayerSleeping() && super.canStart();
+	         return !EntityFox.this.isPlayerSleeping() && super.canStart();
 	      }
 
 	      public void start() {
 	         this.timer = 0;
-	         FoxEntity.this.setSitting(false);
+	         EntityFox.this.setSitting(false);
 	         super.start();
 	      }
 	   }
@@ -1217,7 +1217,7 @@ public class EntityFox extends EntityAnimalFuture {
 	               return EntityFox.this.worldObj.canBlockSeeTheSky(
 	            		   MathHelper.floor_double(posX),
 	            		   MathHelper.floor_double(posY),
-	            		   MathHelper.floor_double(posZ)) /*&& !((WorldServer)FoxEntity.this.worldObj).isNearOccupiedPointOfInterest(blockPos)*/
+	            		   MathHelper.floor_double(posZ)) /*&& !((WorldServer)EntityFox.this.worldObj).isNearOccupiedPointOfInterest(blockPos)*/
 	            		   && this.targetShadedPos();
 	            } else if (this.timer > 0) {
 	               --this.timer;
@@ -1227,7 +1227,7 @@ public class EntityFox extends EntityAnimalFuture {
 	               return EntityFox.this.worldObj.isDaytime() && EntityFox.this.worldObj.canBlockSeeTheSky(
 	            		   MathHelper.floor_double(posX),
 	            		   MathHelper.floor_double(posY),
-	            		   MathHelper.floor_double(posZ)) /*&& !((WorldServer)FoxEntity.this.worldObj).isNearOccupiedPointOfInterest(blockPos)*/
+	            		   MathHelper.floor_double(posZ)) /*&& !((WorldServer)EntityFox.this.worldObj).isNearOccupiedPointOfInterest(blockPos)*/
 	            		   && this.targetShadedPos();
 	            }
 	         } else {
@@ -1249,19 +1249,19 @@ public class EntityFox extends EntityAnimalFuture {
 	      private int lastAttackedTime;
 
 	      public DefendFriendGoal(Class targetEntityClass, boolean checkVisibility, boolean checkCanNavigate, @Nullable Predicate<EntityLiving> targetPredicate) {
-	         super(FoxEntity.this, targetEntityClass, 10, checkVisibility, checkCanNavigate, targetPredicate);
+	         super(EntityFox.this, targetEntityClass, 10, checkVisibility, checkCanNavigate, targetPredicate);
 	      }
 
 	      public boolean canStart() {
 	         if (this.reciprocalChance > 0 && this.mob.rand.nextInt(this.reciprocalChance) != 0) {
 	            return false;
 	         } else {
-	            Iterator var1 = FoxEntity.this.getTrustedUuids().iterator();
+	            Iterator var1 = EntityFox.this.getTrustedUuids().iterator();
 
 	            while(var1.hasNext()) {
 	               UUID uUID = (UUID)var1.next();
-	               if (uUID != null && FoxEntity.this.world instanceof ServerWorld) {
-	                  Entity entity = ((ServerWorld)FoxEntity.this.world).getEntity(uUID);
+	               if (uUID != null && EntityFox.this.world instanceof ServerWorld) {
+	                  Entity entity = ((ServerWorld)EntityFox.this.world).getEntity(uUID);
 	                  if (entity instanceof LivingEntity) {
 	                     LivingEntity livingEntity = (LivingEntity)entity;
 	                     this.friend = livingEntity;
@@ -1283,9 +1283,9 @@ public class EntityFox extends EntityAnimalFuture {
 	            this.lastAttackedTime = this.friend.getLastAttackedTime();
 	         }
 
-	         FoxEntity.this.playSound(entity.fox.aggro, 1.0F, 1.0F);
-	         FoxEntity.this.setAggressive(true);
-	         FoxEntity.this.stopSleeping();
+	         EntityFox.this.playSound(entity.fox.aggro, 1.0F, 1.0F);
+	         EntityFox.this.setAggressive(true);
+	         EntityFox.this.stopSleeping();
 	         super.start();
 	      }
 	   }*/
@@ -1305,19 +1305,19 @@ public class EntityFox extends EntityAnimalFuture {
 	      @Override
 	      protected void spawnBaby() {
 	         WorldServer serverWorld = (WorldServer)EntityFox.this.worldObj;
-	         EntityFox foxEntity = (EntityFox)this.theAnimal.createChild(this.targetMate);
-	         if (foxEntity != null) {
+	         EntityFox EntityFox = (EntityFox)this.theAnimal.createChild(this.targetMate);
+	         if (EntityFox != null) {
 	            EntityPlayer serverPlayerEntity = this.theAnimal.func_146083_cb();
 	            EntityPlayer serverPlayerEntity2 = this.targetMate.func_146083_cb();
 	            EntityPlayer serverPlayerEntity3 = serverPlayerEntity;
 	            if (serverPlayerEntity != null) {
-	               foxEntity.addTrustedUuid(serverPlayerEntity.getUniqueID());
+	               EntityFox.addTrustedUuid(serverPlayerEntity.getUniqueID());
 	            } else {
 	               serverPlayerEntity3 = serverPlayerEntity2;
 	            }
 
 	            if (serverPlayerEntity2 != null && serverPlayerEntity != serverPlayerEntity2) {
-	               foxEntity.addTrustedUuid(serverPlayerEntity2.getUniqueID());
+	               EntityFox.addTrustedUuid(serverPlayerEntity2.getUniqueID());
 	            }
 	            
 	            if (serverPlayerEntity3 != null)
@@ -1329,9 +1329,9 @@ public class EntityFox extends EntityAnimalFuture {
 	            this.targetMate.setGrowingAge(6000);
 	            this.theAnimal.resetInLove();
 	            this.targetMate.resetInLove();
-	            foxEntity.setGrowingAge(-24000);
-	            foxEntity.setLocationAndAngles(this.theAnimal.posX, this.theAnimal.posY, this.theAnimal.posZ, 0.0F, 0.0F);
-	            EntityFox.this.worldObj.spawnEntityInWorld(foxEntity);
+	            EntityFox.setGrowingAge(-24000);
+	            EntityFox.setLocationAndAngles(this.theAnimal.posX, this.theAnimal.posY, this.theAnimal.posZ, 0.0F, 0.0F);
+	            EntityFox.this.worldObj.spawnEntityInWorld(EntityFox);
 	            EntityFox.this.worldObj.setEntityState(this.theAnimal, (byte)18);
 	            if (EntityFox.this.worldObj.getGameRules().getGameRuleBooleanValue("doMobLoot"))
 	            {
@@ -1358,53 +1358,57 @@ public class EntityFox extends EntityAnimalFuture {
 	         return !EntityFox.this.isSitting() && !EntityFox.this.isPlayerSleeping() && !EntityFox.this.isInSneakingPose() && !EntityFox.this.isWalking() && super.shouldExecute();
 	      }
 	   }
-/*
-	   class MoveToHuntGoal extends EntityAIBase {
-	      public MoveToHuntGoal() {
-	         this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
+
+	   class AIMoveToHunt extends EntityAIBase {
+	      public AIMoveToHunt() {
+	         this.setMutexBits(AIMutex.MOVE | AIMutex.LOOK);
 	      }
 
-	      public boolean canStart() {
-	         if (FoxEntity.this.isPlayerSleeping()) {
+	      @Override
+	      public boolean shouldExecute() {
+	         if (EntityFox.this.isPlayerSleeping()) {
 	            return false;
 	         } else {
-	            LivingEntity livingEntity = FoxEntity.this.getTarget();
-	            return livingEntity != null && livingEntity.isAlive() && FoxEntity.CHICKEN_AND_RABBIT_FILTER.test(livingEntity) && FoxEntity.this.squaredDistanceTo(livingEntity) > 36.0D && !FoxEntity.this.isInSneakingPose() && !FoxEntity.this.isRollingHead() && !FoxEntity.this.jumping;
+	            EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
+	            return livingEntity != null && livingEntity.isEntityAlive() && EntityFox.CHICKEN_AND_RABBIT_FILTER.test(livingEntity) && EntityFox.this.getDistanceSqToEntity(livingEntity) > 36.0D && !EntityFox.this.isInSneakingPose() && !EntityFox.this.isRollingHead() && !EntityFox.this.isJumping;
 	         }
 	      }
 
-	      public void start() {
-	         FoxEntity.this.setSitting(false);
-	         FoxEntity.this.setWalking(false);
+	      @Override
+	      public void startExecuting() {
+	         EntityFox.this.setSitting(false);
+	         EntityFox.this.setWalking(false);
 	      }
 
-	      public void stop() {
-	         LivingEntity livingEntity = FoxEntity.this.getTarget();
-	         if (livingEntity != null && FoxEntity.canJumpChase(FoxEntity.this, livingEntity)) {
-	            FoxEntity.this.setRollingHead(true);
-	            FoxEntity.this.setCrouching(true);
-	            FoxEntity.this.getNavigation().stop();
-	            FoxEntity.this.getLookControl().lookAt(livingEntity, (float)FoxEntity.this.getBodyYawSpeed(), (float)FoxEntity.this.getLookPitchSpeed());
+	      @Override
+	      public void resetTask() {
+	         EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
+	         if (livingEntity != null && EntityFox.canJumpChase(EntityFox.this, livingEntity)) {
+	            EntityFox.this.setRollingHead(true);
+	            EntityFox.this.setCrouching(true);
+	            EntityFox.this.getNavigator().clearPathEntity();
+	            EntityFox.this.getLookHelper().setLookPositionWithEntity(livingEntity, (float)EntityFox.this.getBodyYawSpeed(), (float)EntityFox.this.getLookPitchSpeed());
 	         } else {
-	            FoxEntity.this.setRollingHead(false);
-	            FoxEntity.this.setCrouching(false);
+	            EntityFox.this.setRollingHead(false);
+	            EntityFox.this.setCrouching(false);
 	         }
 
 	      }
 
-	      public void tick() {
-	         LivingEntity livingEntity = FoxEntity.this.getTarget();
-	         FoxEntity.this.getLookControl().lookAt(livingEntity, (float)FoxEntity.this.getBodyYawSpeed(), (float)FoxEntity.this.getLookPitchSpeed());
-	         if (FoxEntity.this.squaredDistanceTo(livingEntity) <= 36.0D) {
-	            FoxEntity.this.setRollingHead(true);
-	            FoxEntity.this.setCrouching(true);
-	            FoxEntity.this.getNavigation().stop();
+	      @Override
+	      public void updateTask() {
+	         EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
+	         EntityFox.this.getLookHelper().setLookPositionWithEntity(livingEntity, (float)EntityFox.this.getBodyYawSpeed(), (float)EntityFox.this.getLookPitchSpeed());
+	         if (EntityFox.this.getDistanceSqToEntity(livingEntity) <= 36.0D) {
+	            EntityFox.this.setRollingHead(true);
+	            EntityFox.this.setCrouching(true);
+	            EntityFox.this.getNavigator().clearPathEntity();
 	         } else {
-	            FoxEntity.this.getNavigation().startMovingTo(livingEntity, 1.5D);
+	            EntityFox.this.getNavigator().tryMoveToEntityLiving(livingEntity, 1.5D);
 	         }
 
 	      }
-	   }*/
+	   }
 
 	   class FoxMoveHelper extends EntityMoveHelper {
 	      public FoxMoveHelper() {
@@ -1426,16 +1430,16 @@ public class EntityFox extends EntityAnimalFuture {
 	      }
 
 	      public boolean canStart() {
-	         if (!FoxEntity.this.getEquippedStack(EquipmentSlot.MAINHAND).isEmpty()) {
+	         if (!EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND).isEmpty()) {
 	            return false;
-	         } else if (FoxEntity.this.getTarget() == null && FoxEntity.this.getAttacker() == null) {
-	            if (!FoxEntity.this.wantsToPickupItem()) {
+	         } else if (EntityFox.this.getTarget() == null && EntityFox.this.getAttacker() == null) {
+	            if (!EntityFox.this.wantsToPickupItem()) {
 	               return false;
-	            } else if (FoxEntity.this.rand.nextInt(10) != 0) {
+	            } else if (EntityFox.this.rand.nextInt(10) != 0) {
 	               return false;
 	            } else {
-	               List list = FoxEntity.this.worldObj.getEntitiesByClass(EntityItem.class, FoxEntity.this.boundingBox.expand(8.0D, 8.0D, 8.0D), FoxEntity.PICKABLE_DROP_FILTER);
-	               return !list.isEmpty() && FoxEntity.this.getEquippedStack(EquipmentSlot.MAINHAND).isEmpty();
+	               List list = EntityFox.this.worldObj.getEntitiesByClass(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
+	               return !list.isEmpty() && EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND).isEmpty();
 	            }
 	         } else {
 	            return false;
@@ -1443,18 +1447,18 @@ public class EntityFox extends EntityAnimalFuture {
 	      }
 
 	      public void tick() {
-	         List list = FoxEntity.this.worldObj.getEntitiesByClass(EntityItem.class, FoxEntity.this.boundingBox.expand(8.0D, 8.0D, 8.0D), FoxEntity.PICKABLE_DROP_FILTER);
-	         ItemStack itemStack = FoxEntity.this.getEquippedStack(EquipmentSlot.MAINHAND);
+	         List list = EntityFox.this.worldObj.getEntitiesByClass(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
+	         ItemStack itemStack = EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND);
 	         if (itemStack.isEmpty() && !list.isEmpty()) {
-	            FoxEntity.this.getNavigation().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
+	            EntityFox.this.getNavigation().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
 	         }
 
 	      }
 
 	      public void start() {
-	         List list = FoxEntity.this.worldObj.getEntitiesByClass(EntityItem.class, FoxEntity.this.boundingBox.expand(8.0D, 8.0D, 8.0D), FoxEntity.PICKABLE_DROP_FILTER);
+	         List list = EntityFox.this.worldObj.getEntitiesByClass(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
 	         if (!list.isEmpty()) {
-	            FoxEntity.this.getNavigation().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
+	            EntityFox.this.getNavigation().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
 	         }
 
 	      }
