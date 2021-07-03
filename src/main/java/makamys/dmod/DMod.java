@@ -12,7 +12,6 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import ganymedes01.etfuturum.ModBlocks;
 import ganymedes01.etfuturum.ModItems;
-import makamys.dmod.api.FutureRegistry;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 
 @Mod(modid = DMod.MODID, version = DMod.VERSION)
@@ -40,12 +39,6 @@ public class DMod
         EntityList.IDtoClassMapping.put(eggID, EntityFox.class);
 		EntityList.entityEggs.put(eggID, new EntityEggInfo(eggID, 0xFF8000, 0));
 		
-		registerCompatItems();
-    }
-    
-    public void registerCompatItems() {
-    	if(Loader.isModLoaded("etfuturum")) {
-    		FutureRegistry.instance.registerFoxBreedingItem(is -> is.getItem() == ModItems.sweet_berries);
-    	}
+		ConfigDMod.reload();
     }
 }
