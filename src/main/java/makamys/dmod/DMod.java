@@ -9,10 +9,13 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import ganymedes01.etfuturum.ModBlocks;
 import ganymedes01.etfuturum.ModItems;
 import net.minecraft.entity.EntityList.EntityEggInfo;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.WorldEvent;
 
 @Mod(modid = DMod.MODID, version = DMod.VERSION)
 public class DMod
@@ -27,6 +30,7 @@ public class DMod
     public void init(FMLInitializationEvent event)
     {
     	instance = this;
+    	MinecraftForge.EVENT_BUS.register(instance);
         
         EntityRegistry.registerModEntity(EntityFox.class, "fox", 0, instance, 64, 1, true);
         RenderingRegistry.registerEntityRenderingHandler(EntityFox.class, new RenderFox(new ModelFox(), 0.4F));
@@ -38,7 +42,10 @@ public class DMod
         
         EntityList.IDtoClassMapping.put(eggID, EntityFox.class);
 		EntityList.entityEggs.put(eggID, new EntityEggInfo(eggID, 0xFF8000, 0));
-		
-		ConfigDMod.reload();
+    }
+    
+    @SubscribeEvent
+    public void onWorldLoad(WorldEvent.Load event) {
+    	ConfigDMod.reload();
     }
 }

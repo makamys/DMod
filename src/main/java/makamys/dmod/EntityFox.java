@@ -137,7 +137,7 @@ public class EntityFox extends EntityAnimalFuture {
 */
 	   protected void initTasks() {
 		    this.followChickenAndRabbitTask = new EntityAINearestAttackableTarget(this, EntityLiving.class, 10, false, false, (livingEntity) -> {
-		    	return livingEntity instanceof EntityChicken /*|| livingEntity instanceof EntityRabbit*/;
+		    	return livingEntity instanceof EntityChicken || ConfigDMod.rabbitEntities.contains(livingEntity.getClass());
 		    });
 	      /*this.followBabyTurtleGoal = new FollowTargetGoal(this, TurtleEntity.class, 10, false, false, TurtleEntity.BABY_TURTLE_ON_LAND_FILTER);
 	      this.followFishGoal = new FollowTargetGoal(this, FishEntity.class, 20, false, false, (livingEntity) -> {
@@ -740,7 +740,7 @@ public class EntityFox extends EntityAnimalFuture {
 	         }
 	      };
 	      CHICKEN_AND_RABBIT_FILTER = (entity) -> {
-	         return entity instanceof EntityChicken/* || entity instanceof RabbitEntity*/;
+	         return entity instanceof EntityChicken || ConfigDMod.rabbitEntities.contains(entity.getClass());
 	      };
 	      NOTICEABLE_PLAYER_FILTER = (entity) -> {
 	         return !entity.isSneaking() && EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(entity);
@@ -1182,7 +1182,7 @@ public class EntityFox extends EntityAnimalFuture {
 	      public boolean test(EntityLivingBase livingEntity) {
 	         if (livingEntity instanceof EntityFox) {
 	            return false;
-	         } else if (!(livingEntity instanceof EntityChicken) /*&& !(livingEntity instanceof RabbitEntity)*/ && !(livingEntity instanceof EntityMob)) {
+	         } else if (!(livingEntity instanceof EntityChicken) && !ConfigDMod.rabbitEntities.contains(livingEntity.getClass()) && !(livingEntity instanceof EntityMob)) {
 	            if (livingEntity instanceof EntityTameable) {
 	               return !((EntityTameable)livingEntity).isTamed();
 	            } else if (livingEntity instanceof EntityPlayer && (/*livingEntity.isSpectator() || */((EntityPlayer)livingEntity).capabilities.isCreativeMode)) {
