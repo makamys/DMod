@@ -18,6 +18,8 @@ public class ConfigDMod {
 	public static List<Item> foxBreedingItems;
 	public static List<Class<Entity>> rabbitEntities;
 	
+	public static boolean wolvesTargetFoxes;
+	
 	private static List<Item> resolveItemListOrDefault(Configuration config, String propName, String propCat, String[] propDefault, String propComment, Item... defaults){
 		String[] list = config.getStringList(propName, propCat, propDefault, propComment);
 		List<Item> items = new ArrayList<>();
@@ -55,15 +57,19 @@ public class ConfigDMod {
 		return items;
 	}
 	
-	public static void reload() {
+	public static void reload(boolean resolve) {
 		Configuration config = new Configuration(new File(Launch.minecraftHome, "config/dmod.cfg"));
         
         config.load();
 
-        foxBreedingItems =
-        		resolveItemListOrDefault(config, "foxBreedingItems", "Fox", new String[]{"etfuturum:sweet_berries"}, "", Items.wheat);
-        rabbitEntities =
-        		resolveEntityClassListOrDefault(config, "rabbitEntities", "Fox", new String[]{"etfuturum.rabbit"}, "");
+        if(resolve) {
+	        foxBreedingItems =
+	        		resolveItemListOrDefault(config, "foxBreedingItems", "Fox", new String[]{"etfuturum:sweet_berries"}, "Falls back to wheat if none of the items can be resolved", Items.wheat);
+	        rabbitEntities =
+	        		resolveEntityClassListOrDefault(config, "rabbitEntities", "Fox", new String[]{"etfuturum.rabbit"}, "");
+        }
+        
+        wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
     
         if (config.hasChanged()) 
         {

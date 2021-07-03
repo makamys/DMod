@@ -7,5 +7,6 @@
     "mixins": [
     	"MixinEntityLiving",
     	"MixinEntityWolf"
-    ]
+    ],
+    "plugin": "makamys.dmod.MixinConfigPlugin"
 }

@@ -46,6 +46,6 @@ public class DMod
     
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
-    	ConfigDMod.reload();
+    	ConfigDMod.reload(true);
     }
 }
