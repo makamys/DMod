@@ -164,8 +164,8 @@ public class EntityFox extends EntityAnimalFuture {
 	    this.tasks.addTask(7, new EntityFox.AIAttack(1.2000000476837158D, true));
 	    this.tasks.addTask(7, new EntityFox.AIDelayedCalmDown());
 	    this.tasks.addTask(8, new EntityFox.AIFollowParent(this, 1.25D));
+	    // TODO (hint: this.worldObj.villageCollectionObj.findNearestVillage)
 	      //this.tasks.addTask(9, new EntityFox.GoToVillageGoal(32, 200));
-	      // TODO
 	      //this.tasks.addTask(10, new EntityFox.EatSweetBerriesGoal(1.2000000476837158D, 12, 2));
 	      this.tasks.addTask(10, new EntityAILeapAtTarget(this, 0.4F));
 	      this.tasks.addTask(11, new EntityAIWander(this, 1.0D));
