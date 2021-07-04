@@ -163,7 +163,7 @@ public class EntityFox extends EntityAnimalFuture {
 	    this.tasks.addTask(6, new EntityFox.AIAvoidDaylight(1.25D));
 	    this.tasks.addTask(7, new EntityFox.AIAttack(1.2000000476837158D, true));
 	    this.tasks.addTask(7, new EntityFox.AIDelayedCalmDown());
-	    //XXXthis.tasks.addTask(8, new EntityFox.FollowParentGoal(this, 1.25D));
+	    this.tasks.addTask(8, new EntityFox.AIFollowParent(this, 1.25D));
 	      //this.tasks.addTask(9, new EntityFox.GoToVillageGoal(32, 200));
 	      // TODO
 	      //this.tasks.addTask(10, new EntityFox.EatSweetBerriesGoal(1.2000000476837158D, 12, 2));
@@ -760,28 +760,31 @@ public class EntityFox extends EntityAnimalFuture {
 	         return super.continueExecuting() && !EntityFox.this.isWalking() && !EntityFox.this.isRollingHead();
 	      }
 	   }
-/*
-	   class FollowParentGoal extends EntityAIFollowParent {
+
+	   class AIFollowParent extends EntityAIFollowParent {
 	      private final EntityFox fox;
 
-	      public FollowParentGoal(EntityFox fox, double speed) {
+	      public AIFollowParent(EntityFox fox, double speed) {
 	         super(fox, speed);
 	         this.fox = fox;
 	      }
 
-	      public boolean canStart() {
-	         return !this.fox.isAggressive() && super.canStart();
+	      @Override
+	      public boolean shouldExecute() {
+	         return !this.fox.isAggressive() && super.shouldExecute();
 	      }
 
-	      public boolean shouldContinue() {
-	         return !this.fox.isAggressive() && super.shouldContinue();
+	      @Override
+	      public boolean continueExecuting() {
+	         return !this.fox.isAggressive() && super.continueExecuting();
 	      }
 
-	      public void start() {
+	      @Override
+	      public void startExecuting() {
 	         this.fox.stopActions();
-	         super.start();
+	         super.startExecuting();
 	      }
-	   }*/
+	   }
 
 	   public class FoxLookHelper extends ModernEntityLookHelper {
 	      public FoxLookHelper() {
