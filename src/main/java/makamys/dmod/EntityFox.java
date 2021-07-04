@@ -26,6 +26,7 @@ import makamys.dmod.future.AnimalEntityEmulator;
 import makamys.dmod.future.AnimalEntityFutured;
 import makamys.dmod.future.DiveJumpingGoal;
 import makamys.dmod.future.EntityAIAttackOnCollideFuture;
+import makamys.dmod.future.EntityAIDiveJump;
 import makamys.dmod.future.EntityAIFleeSunModern;
 import makamys.dmod.future.EntityAIModernAvoidEntity;
 import makamys.dmod.future.EntityAnimalFuture;
@@ -70,6 +71,7 @@ import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
@@ -157,7 +159,7 @@ public class EntityFox extends EntityAnimalFuture {
 	         return !this.isAggressive();
 	      }));*/
 	    this.tasks.addTask(5, new EntityFox.AIMoveToHunt());
-	    //XXXthis.tasks.addTask(6, new EntityFox.JumpChasingGoal());
+	    this.tasks.addTask(6, new EntityFox.AIJumpChase());
 	    this.tasks.addTask(6, new EntityFox.AIAvoidDaylight(1.25D));
 	    this.tasks.addTask(7, new EntityFox.AIAttack(1.2000000476837158D, true));
 	    this.tasks.addTask(7, new EntityFox.AIDelayedCalmDown());
@@ -181,8 +183,9 @@ public class EntityFox extends EntityAnimalFuture {
 	   }
 	   
 	   public void onLivingUpdate() {
+		   
 	      if (!this.worldObj.isRemote && this.isEntityAlive()/* && this.canMoveVoluntarily()*/) {
-	         ++this.eatingTime;
+	    	  ++this.eatingTime;
 	         ItemStack itemStack = this.getHeldItem();
 	         if (this.canEat(itemStack)) {
 	            if (this.eatingTime > 600) {
@@ -602,17 +605,12 @@ public class EntityFox extends EntityAnimalFuture {
 
 	      super.setAttackTarget(target);
 	   }
-	   // TODO
-	    /*
-	     * inspo:
-	      Called when the mob is falling. Calculates and applies fall damage.
-	     
-	    protected void fall(float p_70069_1_) {}*/
-/*
-	   protected int computeFallDamage(float fallDistance, float damageMultiplier) {
-	      return MathHelper.ceil((fallDistance - 5.0F) * damageMultiplier);
+	   
+	   @Override
+	   public float computeFallDistance(float fallDistance) {
+		   return fallDistance - 2f;
 	   }
-*/
+	   
 	   private void stopSleeping() {
 	      this.setSleeping(false);
 	   }
@@ -802,20 +800,21 @@ public class EntityFox extends EntityAnimalFuture {
 	         return !EntityFox.this.isChasing() && !EntityFox.this.isInSneakingPose() && !EntityFox.this.isRollingHead() & !EntityFox.this.isWalking();
 	      }
 	   }
-/*
-	   public class JumpChasingGoal extends DiveJumpingGoal {
-	      public boolean canStart() {
+
+	   public class AIJumpChase extends EntityAIDiveJump {
+		   @Override
+	      public boolean shouldExecute() {
 	         if (!EntityFox.this.isFullyCrouched()) {
 	            return false;
 	         } else {
-	            LivingEntity livingEntity = EntityFox.this.getTarget();
-	            if (livingEntity != null && livingEntity.isAlive()) {
-	               if (livingEntity.getMovementDirection() != livingEntity.getHorizontalFacing()) {
+	            EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
+	            if (livingEntity != null && livingEntity.isEntityAlive()) {
+	               if (EntityFuture.getMovementDirection(livingEntity) != EntityFuture.getHorizontalFacing(livingEntity)) {
 	                  return false;
 	               } else {
 	                  boolean bl = EntityFox.canJumpChase(EntityFox.this, livingEntity);
 	                  if (!bl) {
-	                     EntityFox.this.getNavigation().findPathTo((Entity)livingEntity, 0);
+	                     EntityFox.this.getNavigator().tryMoveToEntityLiving((Entity)livingEntity, 0);
 	                     EntityFox.this.setCrouching(false);
 	                     EntityFox.this.setRollingHead(false);
 	                  }
@@ -828,32 +827,36 @@ public class EntityFox extends EntityAnimalFuture {
 	         }
 	      }
 
-	      public boolean shouldContinue() {
-	         LivingEntity livingEntity = EntityFox.this.getTarget();
-	         if (livingEntity != null && livingEntity.isAlive()) {
-	            double d = EntityFox.this.getVelocity().y;
-	            return (d * d >= 0.05000000074505806D || Math.abs(EntityFox.this.pitch) >= 15.0F || !EntityFox.this.onGround) && !EntityFox.this.isWalking();
+	      @Override
+	      public boolean continueExecuting() {
+	         EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
+	         if (livingEntity != null && livingEntity.isEntityAlive()) {
+	            double d = EntityFox.this.motionY;
+	            return (d * d >= 0.05000000074505806D || Math.abs(EntityFox.this.rotationPitch) >= 15.0F || !EntityFox.this.onGround) && !EntityFox.this.isWalking();
 	         } else {
 	            return false;
 	         }
 	      }
 
-	      public boolean canStop() {
+	      @Override
+	      public boolean isInterruptible() {
 	         return false;
 	      }
 
-	      public void start() {
+	      @Override
+	      public void startExecuting() {
 	         EntityFox.this.setJumping(true);
 	         EntityFox.this.setChasing(true);
 	         EntityFox.this.setRollingHead(false);
-	         LivingEntity livingEntity = EntityFox.this.getTarget();
-	         EntityFox.this.getLookControl().lookAt(livingEntity, 60.0F, 30.0F);
-	         Vec3d vec3d = (new Vec3d(livingEntity.getX() - EntityFox.this.posX, livingEntity.getY() - EntityFox.this.posY, livingEntity.getZ() - EntityFox.this.posZ)).normalize();
-	         EntityFox.this.setVelocity(EntityFox.this.getVelocity().add(vec3d.x * 0.8D, 0.9D, vec3d.z * 0.8D));
-	         EntityFox.this.getNavigation().stop();
+	         EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
+	         EntityFox.this.getLookHelper().setLookPositionWithEntity(livingEntity, 60.0F, 30.0F);
+	         Vec3 vec3d = Vec3.createVectorHelper(livingEntity.posX - EntityFox.this.posX, livingEntity.posY - EntityFox.this.posY, livingEntity.posZ - EntityFox.this.posZ).normalize();
+	         EntityFuture.setVelocity(EntityFox.this, EntityFuture.getVelocity(EntityFox.this).addVector(vec3d.xCoord * 0.8D, 0.9D, vec3d.zCoord * 0.8D));
+	         EntityFox.this.getNavigator().clearPathEntity();
 	      }
 
-	      public void stop() {
+	      @Override
+	      public void resetTask() {
 	         EntityFox.this.setCrouching(false);
 	         EntityFox.this.extraRollingHeight = 0.0F;
 	         EntityFox.this.lastExtraRollingHeight = 0.0F;
@@ -861,33 +864,37 @@ public class EntityFox extends EntityAnimalFuture {
 	         EntityFox.this.setChasing(false);
 	      }
 
-	      public void tick() {
-	         LivingEntity livingEntity = EntityFox.this.getTarget();
+	      @Override
+	      public void updateTask() {
+	         EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
 	         if (livingEntity != null) {
-	            EntityFox.this.getLookControl().lookAt(livingEntity, 60.0F, 30.0F);
+	            EntityFox.this.getLookHelper().setLookPositionWithEntity(livingEntity, 60.0F, 30.0F);
 	         }
 
 	         if (!EntityFox.this.isWalking()) {
-	            Vec3d vec3d = EntityFox.this.getVelocity();
-	            if (vec3d.y * vec3d.y < 0.029999999329447746D && EntityFox.this.pitch != 0.0F) {
-	               EntityFox.this.pitch = MathHelper.lerpAngle(EntityFox.this.pitch, 0.0F, 0.2F);
+	            Vec3 vec3d = EntityFuture.getVelocity(EntityFox.this);
+	            if (vec3d.yCoord * vec3d.yCoord < 0.029999999329447746D && EntityFox.this.rotationPitch != 0.0F) {
+	               EntityFox.this.rotationPitch = MathHelperFuture.lerpAngle(EntityFox.this.rotationPitch, 0.0F, 0.2F);
 	            } else {
-	               double d = Math.sqrt(Entity.squaredHorizontalLength(vec3d));
-	               double e = Math.signum(-vec3d.y) * Math.acos(d / vec3d.length()) * 57.2957763671875D;
-	               EntityFox.this.pitch = (float)e;
+	               double d = Math.sqrt(EntityFuture.squaredHorizontalLength(vec3d));
+	               double e = Math.signum(-vec3d.yCoord) * Math.acos(d / vec3d.lengthVector()) * 57.2957763671875D;
+	               EntityFox.this.rotationPitch = (float)e;
 	            }
 	         }
 
-	         if (livingEntity != null && EntityFox.this.distanceTo(livingEntity) <= 2.0F) {
-	            EntityFox.this.tryAttack(livingEntity);
-	         } else if (EntityFox.this.pitch > 0.0F && EntityFox.this.onGround && (float)EntityFox.this.getVelocity().y != 0.0F && EntityFox.this.worldObj.getBlockState(EntityFox.this.getBlockPos()).isOf(Blocks.SNOW)) {
-	            EntityFox.this.pitch = 60.0F;
-	            EntityFox.this.setTarget((LivingEntity)null);
+	         if (livingEntity != null && EntityFox.this.getDistanceToEntity(livingEntity) <= 2.0F) {
+	            EntityFox.this.attackEntityAsMob(livingEntity);
+	         } else if (EntityFox.this.rotationPitch > 0.0F && EntityFox.this.onGround && (float)EntityFox.this.motionY != 0.0F && EntityFox.this.worldObj.getBlock(
+	        		 MathHelper.floor_double(posX),
+          		   MathHelper.floor_double(posY),
+          		   MathHelper.floor_double(posZ)) == Blocks.snow_layer) {
+	            EntityFox.this.rotationPitch = 60.0F;
+	            EntityFox.this.setAttackTarget(null);
 	            EntityFox.this.setWalking(true);
 	         }
 
 	      }
-	   }*/
+	   }
 
 	   class AISwim extends EntityAISwimming {
 	      public AISwim() {
@@ -925,7 +932,7 @@ public class EntityFox extends EntityAnimalFuture {
 	      }
 
 	      private boolean canGoToVillage() {
-	         return !EntityFox.this.isPlayerSleeping() && !EntityFox.this.isSitting() && !EntityFox.this.isAggressive() && EntityFox.this.getTarget() == null;
+	         return !EntityFox.this.isPlayerSleeping() && !EntityFox.this.isSitting() && !EntityFox.this.isAggressive() && EntityFox.this.getAttackTarget() == null;
 	      }
 	   }*/
 
@@ -1432,7 +1439,7 @@ public class EntityFox extends EntityAnimalFuture {
 	      public boolean canStart() {
 	         if (!EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND).isEmpty()) {
 	            return false;
-	         } else if (EntityFox.this.getTarget() == null && EntityFox.this.getAttacker() == null) {
+	         } else if (EntityFox.this.getAttackTarget() == null && EntityFox.this.getAttacker() == null) {
 	            if (!EntityFox.this.wantsToPickupItem()) {
 	               return false;
 	            } else if (EntityFox.this.rand.nextInt(10) != 0) {
@@ -1450,7 +1457,7 @@ public class EntityFox extends EntityAnimalFuture {
 	         List list = EntityFox.this.worldObj.getEntitiesByClass(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
 	         ItemStack itemStack = EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND);
 	         if (itemStack.isEmpty() && !list.isEmpty()) {
-	            EntityFox.this.getNavigation().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
+	            EntityFox.this.getNavigator().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
 	         }
 
 	      }
@@ -1458,7 +1465,7 @@ public class EntityFox extends EntityAnimalFuture {
 	      public void start() {
 	         List list = EntityFox.this.worldObj.getEntitiesByClass(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
 	         if (!list.isEmpty()) {
-	            EntityFox.this.getNavigation().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
+	            EntityFox.this.getNavigator().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
 	         }
 
 	      }

@@ -112,4 +112,8 @@ public abstract class EntityAnimalFuture extends EntityAnimal implements EntityL
 
 	        return flag;
 	    }
+	   
+	   public float computeFallDistance(float fallDistance) {
+		   return fallDistance;
+	   }
 }

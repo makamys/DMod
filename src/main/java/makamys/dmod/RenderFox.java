@@ -3,6 +3,7 @@ package makamys.dmod;
 import org.lwjgl.opengl.GL11;
 
 import codechicken.lib.math.MathHelper;
+import makamys.dmod.future.MathHelperFuture;
 import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -44,6 +45,20 @@ public class RenderFox extends RenderLiving
     protected ResourceLocation getEntityTexture(Entity p_110775_1_)
     {
         return this.getEntityTexture((EntityFox)p_110775_1_);
+    }
+    
+    // what the heck are these MCP names
+    protected void rotateCorpse(EntityFox foxEntity, float animationProgress, float bodyYaw, float tickDelta) {
+    	super.rotateCorpse(foxEntity, animationProgress, bodyYaw, tickDelta);
+        if (foxEntity.isChasing() || foxEntity.isWalking()) {
+           float i = -MathHelperFuture.lerp(tickDelta, foxEntity.prevRotationPitch, foxEntity.rotationPitch);
+           GL11.glRotatef(i, 1f, 0f, 0f);
+        }
+    }
+    
+    @Override
+    protected void rotateCorpse(EntityLivingBase entity, float animationProgress, float bodyYaw, float tickDelta) {
+    	rotateCorpse((EntityFox)entity, animationProgress, bodyYaw, tickDelta);
     }
     
     protected void renderEquippedItems(EntityLivingBase p_77029_1_, float p_77029_2_)

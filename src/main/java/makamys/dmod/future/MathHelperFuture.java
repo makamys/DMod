@@ -10,4 +10,16 @@ public class MathHelperFuture {
 		return start + delta * (end - start);
 	}
 	
+	@Deprecated
+   public static float lerpAngle(float start, float end, float delta) {
+      float f;
+      for(f = end - start; f < -180.0F; f += 360.0F) {
+      }
+
+      while(f >= 180.0F) {
+         f -= 360.0F;
+      }
+
+      return start + delta * f;
+   }
 }

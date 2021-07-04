@@ -13,8 +13,10 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import ganymedes01.etfuturum.ModBlocks;
 import ganymedes01.etfuturum.ModItems;
+import makamys.dmod.future.EntityAnimalFuture;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 @Mod(modid = DMod.MODID, version = DMod.VERSION)
@@ -47,5 +49,12 @@ public class DMod
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
     	ConfigDMod.reload(true);
+    }
+    
+    @SubscribeEvent
+    public void onLivingFall(LivingFallEvent event) {
+    	if(event.entity instanceof EntityAnimalFuture) {
+    		event.distance = ((EntityAnimalFuture)event.entity).computeFallDistance(event.distance);
+    	}
     }
 }
