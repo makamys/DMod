@@ -166,6 +166,7 @@ public class EntityFox extends EntityAnimalFuture {
 	    this.tasks.addTask(5, new EntityFox.AIMoveToHunt());
 	    this.tasks.addTask(6, new EntityFox.AIJumpChase());
 	    this.tasks.addTask(6, new EntityFox.AIAvoidDaylight(1.25D));
+	    // set this to false to make foxes more aggressive
 	    this.tasks.addTask(7, new EntityFox.AIAttack(1.2000000476837158D, true));
 	    this.tasks.addTask(7, new EntityFox.AIDelayedCalmDown());
 	    this.tasks.addTask(8, new EntityFox.AIFollowParent(this, 1.25D));
@@ -177,9 +178,11 @@ public class EntityFox extends EntityAnimalFuture {
 	    this.tasks.addTask(11, new EntityFox.AIPickupItem());
 	    this.tasks.addTask(12, new EntityFox.AILookAtEntity(this, EntityPlayer.class, 24.0F));
 	    this.tasks.addTask(13, new EntityFox.AISitDownAndLookAround());
-	    //XXXthis.targetTasks.addTask(3, new EntityFox.DefendFriendGoal(EntityLiving.class, false, false, (livingEntity) -> {
-	    //XXXreturn JUST_ATTACKED_SOMETHING_FILTER.test(livingEntity) && !this.canTrust(livingEntity.getUniqueID());
-	       //XXX}));
+	    this.targetTasks.addTask(3, new EntityFox.AIDefendFriend(EntityLiving.class, false, false, (livingEntity) -> {
+	    return livingEntity instanceof EntityLivingBase && 
+	    		JUST_ATTACKED_SOMETHING_FILTER.test((EntityLivingBase)livingEntity) && 
+	    		!this.canTrust(livingEntity.getUniqueID());
+	       }));
 	   }
 
 	   @Override
@@ -747,8 +750,9 @@ public class EntityFox extends EntityAnimalFuture {
 	         if (!(entity instanceof EntityLiving)) {
 	            return false;
 	         } else {
-	            EntityLiving livingEntity = (EntityLiving)entity;
-	            return livingEntity.getLastAttacker() != null && livingEntity.getLastAttackerTime() < livingEntity.ticksExisted + 600;
+	        	 return true;
+	            //EntityLiving livingEntity = (EntityLiving)entity;
+	            //return livingEntity.getLastAttacker() != null && livingEntity.getLastAttackerTime() < livingEntity.ticksExisted + 600;
 	         }
 	      };
 	      CHICKEN_AND_RABBIT_FILTER = (entity) -> {
@@ -1278,31 +1282,34 @@ public class EntityFox extends EntityAnimalFuture {
 	      }
 	   }
 
-/*	   class DefendFriendGoal extends EntityAINearestAttackableTarget {
-	      @Nullable
-	      private LivingEntity offender;
-	      private LivingEntity friend;
+	   class AIDefendFriend extends EntityAINearestAttackableTarget {
+	      private EntityLivingBase offender;
+	      private EntityLivingBase friend;
 	      private int lastAttackedTime;
+	      TargetPredicate targetPredicate;
 
-	      public DefendFriendGoal(Class targetEntityClass, boolean checkVisibility, boolean checkCanNavigate, @Nullable Predicate<EntityLiving> targetPredicate) {
-	         super(EntityFox.this, targetEntityClass, 10, checkVisibility, checkCanNavigate, targetPredicate);
+	      public AIDefendFriend(Class targetEntityClass, boolean checkVisibility, boolean checkCanNavigate, Predicate<Entity> targetPredicate) {
+	         super(EntityFox.this, targetEntityClass, 10, checkVisibility, checkCanNavigate, e -> targetPredicate.test(e));
+	         this.targetPredicate = (new TargetPredicate()).setBaseMaxDistance(this.getTargetDistance()).setPredicate(targetPredicate);
 	      }
 
-	      public boolean canStart() {
-	         if (this.reciprocalChance > 0 && this.mob.rand.nextInt(this.reciprocalChance) != 0) {
+	      @Override
+	      public boolean shouldExecute() {
+	         if (this.targetChance > 0 && EntityFox.this.getRNG().nextInt(this.targetChance) != 0) {
 	            return false;
 	         } else {
 	            Iterator var1 = EntityFox.this.getTrustedUuids().iterator();
 
 	            while(var1.hasNext()) {
 	               UUID uUID = (UUID)var1.next();
-	               if (uUID != null && EntityFox.this.world instanceof ServerWorld) {
-	                  Entity entity = ((ServerWorld)EntityFox.this.world).getEntity(uUID);
-	                  if (entity instanceof LivingEntity) {
-	                     LivingEntity livingEntity = (LivingEntity)entity;
+	               if (uUID != null && EntityFox.this.worldObj instanceof WorldServer) {
+	            	   // Assuming owner is a player
+	                  Entity entity = ((WorldServer)EntityFox.this.worldObj).func_152378_a(uUID); // getPlayerByUuid
+	                  if (entity instanceof EntityLivingBase) {
+	                	  EntityLivingBase livingEntity = (EntityLivingBase)entity;
 	                     this.friend = livingEntity;
-	                     this.offender = livingEntity.getAttacker();
-	                     int i = livingEntity.getLastAttackedTime();
+	                     this.offender = livingEntity.getAITarget();
+	                     int i = livingEntity.func_142015_aE();
 	                     return i != this.lastAttackedTime && this.canTrack(this.offender, this.targetPredicate);
 	                  }
 	               }
@@ -1311,20 +1318,50 @@ public class EntityFox extends EntityAnimalFuture {
 	            return false;
 	         }
 	      }
+	      
+	      private boolean canTrack(EntityLivingBase target, TargetPredicate targetPredicate) {
+	    	  if (target == null) {
+	    	         return false;
+	    	      } else if (!targetPredicate.test(EntityFox.this, target)) {
+	    	         return false;
+	    	      } else if (!EntityFox.this.isWithinHomeDistance(
+	    	    		MathHelper.floor_double(target.posX),
+		            	MathHelper.floor_double(target.posY),
+		            	MathHelper.floor_double(target.posZ))) {
+	    	         return false;
+	    	      } else {
+	    	         if (this.nearbyOnly) {
+	    	            if (--this.targetSearchDelay <= 0) {
+	    	               this.targetSearchStatus = 0;
+	    	            }
 
-	      public void start() {
-	         this.setTargetEntity(this.offender);
+	    	            if (this.targetSearchStatus == 0) {
+	    	               this.targetSearchStatus = this.canEasilyReach(target) ? 1 : 2;
+	    	            }
+
+	    	            if (this.targetSearchStatus == 2) {
+	    	               return false;
+	    	            }
+	    	         }
+
+	    	         return true;
+	    	      }
+	      }
+
+	      @Override
+	      public void startExecuting() {
+	         // this.setTargetEntity(this.offender); // NOP
 	         this.targetEntity = this.offender;
 	         if (this.friend != null) {
-	            this.lastAttackedTime = this.friend.getLastAttackedTime();
+	            this.lastAttackedTime = this.friend.getLastAttackerTime();
 	         }
-
-	         EntityFox.this.playSound(entity.fox.aggro, 1.0F, 1.0F);
+	         
+	         EntityFox.this.playSound("entity.fox.aggro", 1.0F, 1.0F);
 	         EntityFox.this.setAggressive(true);
 	         EntityFox.this.stopSleeping();
-	         super.start();
+	         super.startExecuting();
 	      }
-	   }*/
+	   }
 
 	   class AIMate extends EntityAIMate {
 	      public AIMate(double chance) {
@@ -1391,7 +1428,8 @@ public class EntityFox extends EntityAnimalFuture {
 
 	      @Override
 	      public boolean shouldExecute() {
-	         return !EntityFox.this.isSitting() && !EntityFox.this.isPlayerSleeping() && !EntityFox.this.isInSneakingPose() && !EntityFox.this.isWalking() && super.shouldExecute();
+	         boolean result = !EntityFox.this.isSitting() && !EntityFox.this.isPlayerSleeping() && !EntityFox.this.isInSneakingPose() && !EntityFox.this.isWalking() && super.shouldExecute();
+	         return result;
 	      }
 	   }
 
