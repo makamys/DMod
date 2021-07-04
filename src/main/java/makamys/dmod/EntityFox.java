@@ -45,6 +45,7 @@ import makamys.dmod.future.PassiveEntityEmulator;
 import makamys.dmod.future.TargetPredicate;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
+import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -100,7 +101,7 @@ public class EntityFox extends EntityAnimalFuture {
 		private static final TrackedData<Byte> FOX_FLAGS;
 		private static final TrackedData<Optional<UUID>> OWNER;
 		private static final TrackedData<Optional<UUID>> OTHER_TRUSTED;*/
-	   private static final Predicate<EntityItem> PICKABLE_DROP_FILTER;
+	   private static final IEntitySelector PICKABLE_DROP_FILTER;
 	   private static final Predicate<EntityLivingBase> JUST_ATTACKED_SOMETHING_FILTER;
 	   private static final Predicate<EntityLivingBase> CHICKEN_AND_RABBIT_FILTER;
 	   private static final Predicate<EntityLivingBase> NOTICEABLE_PLAYER_FILTER;
@@ -173,7 +174,7 @@ public class EntityFox extends EntityAnimalFuture {
 	      this.tasks.addTask(10, new EntityFox.AIEatSweetBerries(1.2000000476837158D, 12, 2));
 	      this.tasks.addTask(10, new EntityAILeapAtTarget(this, 0.4F));
 	      this.tasks.addTask(11, new EntityAIWander(this, 1.0D));
-	    //XXXthis.tasks.addTask(11, new EntityFox.PickupItemGoal());
+	    this.tasks.addTask(11, new EntityFox.AIPickupItem());
 	    this.tasks.addTask(12, new EntityFox.AILookAtEntity(this, EntityPlayer.class, 24.0F));
 	    this.tasks.addTask(13, new EntityFox.AISitDownAndLookAround());
 	    //XXXthis.targetTasks.addTask(3, new EntityFox.DefendFriendGoal(EntityLiving.class, false, false, (livingEntity) -> {
@@ -739,8 +740,8 @@ public class EntityFox extends EntityAnimalFuture {
 	      FOX_FLAGS = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.BYTE);
 	      OWNER = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
 	      OTHER_TRUSTED = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);*/
-	      PICKABLE_DROP_FILTER = (EntityItem) -> {
-	         return !EntityItemFuture.cannotPickUp(EntityItem) && EntityItem.isEntityAlive();
+	      PICKABLE_DROP_FILTER = (entityItem) -> {
+	         return !EntityItemFuture.cannotPickUp((EntityItem)entityItem) && entityItem.isEntityAlive();
 	      };
 	      JUST_ATTACKED_SOMETHING_FILTER = (entity) -> {
 	         if (!(entity instanceof EntityLiving)) {
@@ -1458,46 +1459,49 @@ public class EntityFox extends EntityAnimalFuture {
 
 	      }
 	   }
-/*
-	   class PickupItemGoal extends EntityAIBase {
-	      public PickupItemGoal() {
-	         this.setControls(EnumSet.of(Goal.Control.MOVE));
+
+	   class AIPickupItem extends EntityAIBase {
+	      public AIPickupItem() {
+	         this.setMutexBits(AIMutex.MOVE);
 	      }
 
-	      public boolean canStart() {
-	         if (!EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND).isEmpty()) {
+	      @Override
+	      public boolean shouldExecute() {
+	         if (EntityFox.this.getHeldItem() != null) {
 	            return false;
-	         } else if (EntityFox.this.getAttackTarget() == null && EntityFox.this.getAttacker() == null) {
+	         } else if (EntityFox.this.getAttackTarget() == null && EntityFox.this.getAITarget() == null) {
 	            if (!EntityFox.this.wantsToPickupItem()) {
 	               return false;
 	            } else if (EntityFox.this.rand.nextInt(10) != 0) {
 	               return false;
 	            } else {
-	               List list = EntityFox.this.worldObj.getEntitiesByClass(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
-	               return !list.isEmpty() && EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND).isEmpty();
+	               List list = EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
+	               return !list.isEmpty() && EntityFox.this.getHeldItem() == null;
 	            }
 	         } else {
 	            return false;
 	         }
 	      }
 
-	      public void tick() {
-	         List list = EntityFox.this.worldObj.getEntitiesByClass(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
-	         ItemStack itemStack = EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND);
-	         if (itemStack.isEmpty() && !list.isEmpty()) {
-	            EntityFox.this.getNavigator().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
+	      @Override
+	      public void updateTask() {
+	         List list = EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
+	         ItemStack itemStack = EntityFox.this.getHeldItem();
+	         if (itemStack == null && !list.isEmpty()) {
+	            EntityFox.this.getNavigator().tryMoveToEntityLiving((Entity)list.get(0), 1.2000000476837158D);
 	         }
 
 	      }
 
-	      public void start() {
-	         List list = EntityFox.this.worldObj.getEntitiesByClass(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
+	      @Override
+	      public void startExecuting() {
+	         List list = EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
 	         if (!list.isEmpty()) {
-	            EntityFox.this.getNavigator().startMovingTo((Entity)list.get(0), 1.2000000476837158D);
+	            EntityFox.this.getNavigator().tryMoveToEntityLiving((Entity)list.get(0), 1.2000000476837158D);
 	         }
 
 	      }
-	   }
+	   }/*
 	   
 	class AvoidPlayerGoal extends EntityAIAvoidEntity {
 		/**
