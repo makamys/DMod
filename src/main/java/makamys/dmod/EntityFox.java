@@ -16,9 +16,11 @@ import com.google.common.collect.Lists;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ganymedes01.etfuturum.blocks.BlockBerryBush;
 
 import java.util.UUID;
 
+import makamys.dmod.Compat.BerryBushState;
 import makamys.dmod.constants.AIMutex;
 import makamys.dmod.constants.NBTType;
 import makamys.dmod.etfuturum.BlockPos;
@@ -29,6 +31,7 @@ import makamys.dmod.future.EntityAIAttackOnCollideFuture;
 import makamys.dmod.future.EntityAIDiveJump;
 import makamys.dmod.future.EntityAIFleeSunModern;
 import makamys.dmod.future.EntityAIModernAvoidEntity;
+import makamys.dmod.future.EntityAIMoveToTargetPos;
 import makamys.dmod.future.EntityAnimalFuture;
 import makamys.dmod.future.EntityFuture;
 import makamys.dmod.future.EntityItemFuture;
@@ -40,6 +43,7 @@ import makamys.dmod.future.MathHelperFuture;
 import makamys.dmod.future.ModernEntityLookHelper;
 import makamys.dmod.future.PassiveEntityEmulator;
 import makamys.dmod.future.TargetPredicate;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockColored;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -166,7 +170,7 @@ public class EntityFox extends EntityAnimalFuture {
 	    this.tasks.addTask(8, new EntityFox.AIFollowParent(this, 1.25D));
 	    // TODO (hint: this.worldObj.villageCollectionObj.findNearestVillage)
 	      //this.tasks.addTask(9, new EntityFox.GoToVillageGoal(32, 200));
-	      //this.tasks.addTask(10, new EntityFox.EatSweetBerriesGoal(1.2000000476837158D, 12, 2));
+	      this.tasks.addTask(10, new EntityFox.AIEatSweetBerries(1.2000000476837158D, 12, 2));
 	      this.tasks.addTask(10, new EntityAILeapAtTarget(this, 0.4F));
 	      this.tasks.addTask(11, new EntityAIWander(this, 1.0D));
 	    //XXXthis.tasks.addTask(11, new EntityFox.PickupItemGoal());
@@ -713,6 +717,15 @@ public class EntityFox extends EntityAnimalFuture {
 			return result;
 		}
 	   
+	   @Override
+	   public boolean attackEntityFrom(DamageSource source, float damage) {
+		   if(Compat.isBerryBushDamageSource(source)) {
+			   return false;
+		   } else {
+			   return super.attackEntityFrom(source, damage);
+		   }
+	   }
+	   
 	   // TODO
 /*
 	   @SideOnly(Side.CLIENT)
@@ -992,28 +1005,32 @@ public class EntityFox extends EntityAnimalFuture {
 	         this.type = type;
 	      }
 	   }
-/*
-	   public class EatSweetBerriesGoal extends MoveToTargetPosGoal {
+
+	   public class AIEatSweetBerries extends EntityAIMoveToTargetPos {
 	      protected int timer;
 
-	      public EatSweetBerriesGoal(double speed, int range, int maxYDifference) {
+	      public AIEatSweetBerries(double speed, int range, int maxYDifference) {
 	         super(EntityFox.this, speed, range, maxYDifference);
 	      }
 
+	      @Override
 	      public double getDesiredSquaredDistanceToTarget() {
 	         return 2.0D;
 	      }
 
+	      @Override
 	      public boolean shouldResetPath() {
 	         return this.tryingTime % 100 == 0;
 	      }
 
-	      protected boolean isTargetPos(WorldView world, BlockPos pos) {
-	         BlockState blockState = world.getBlockState(pos);
-	         return blockState.isOf(Blocks.SWEET_BERRY_BUSH) && (Integer)blockState.get(SweetBerryBushBlock.AGE) >= 2;
+	      @Override
+	      protected boolean isTargetPos(World world, int bx, int by, int bz) {
+	    	  BerryBushState bbs = Compat.getBerryBushState(world, bx, by, bz);
+	    	  return bbs != null ? bbs.getAge() >= 2 : false;
 	      }
 
-	      public void tick() {
+	      @Override
+	      public void updateTask() {
 	         if (this.hasReached()) {
 	            if (this.timer >= 40) {
 	               this.eatSweetBerry();
@@ -1024,43 +1041,51 @@ public class EntityFox extends EntityAnimalFuture {
 	            EntityFox.this.playSound(DMod.MODID + ":entity.fox.sniff", 1.0F, 1.0F);
 	         }
 
-	         super.tick();
+	         super.updateTask();
 	      }
 
 	      protected void eatSweetBerry() {
-	         if (EntityFox.this.worldObj.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING)) {
-	            BlockState blockState = EntityFox.this.worldObj.getBlockState(this.targetPos);
-	            if (blockState.isOf(Blocks.SWEET_BERRY_BUSH)) {
-	               int i = (Integer)blockState.get(SweetBerryBushBlock.AGE);
-	               blockState.with(SweetBerryBushBlock.AGE, 1);
+	         if (EntityFox.this.worldObj.getGameRules().getGameRuleBooleanValue("mobGriefing")) {
+	        	 int x = this.targetPos.getX();
+	        	 int y = this.targetPos.getY();
+	        	 int z = this.targetPos.getZ();
+	        	 Block block = EntityFox.this.worldObj.getBlock(x, y, z);
+	        	 int meta = EntityFox.this.worldObj.getBlockMetadata(x, y, z);
+	        	 BerryBushState bbs = Compat.getBerryBushState(EntityFox.this.worldObj, x, y, z);
+	        			 
+	            if (bbs != null) {
+	               int i = bbs.getAge();
+	               //blockState.with(SweetBerryBushBlock.AGE, 1); // NOP?
 	               int j = 1 + EntityFox.this.worldObj.rand.nextInt(2) + (i == 3 ? 1 : 0);
-	               ItemStack itemStack = EntityFox.this.getEquippedStack(EquipmentSlot.MAINHAND);
-	               if (itemStack.isEmpty()) {
-	                  EntityFox.this.equipStack(EquipmentSlot.MAINHAND, new ItemStack(Items.SWEET_BERRIES));
+	               ItemStack itemStack = EntityFox.this.getHeldItem();
+	               if (itemStack == null) {
+	                  EntityFox.this.setCurrentItemOrArmor(0, new ItemStack(bbs.handler.getSweetBerryItem()));
 	                  --j;
 	               }
 
 	               if (j > 0) {
-	                  Block.dropStack(EntityFox.this.worldObj, this.targetPos, new ItemStack(Items.SWEET_BERRIES, j));
+	            	   block.dropBlockAsItem(EntityFox.this.worldObj, x, y, z, new ItemStack(bbs.handler.getSweetBerryItem(), j));
 	               }
 
 	               EntityFox.this.playSound("item.sweet_berries.pick_from_bush", 1.0F, 1.0F);
-	               EntityFox.this.worldObj.setBlockState(this.targetPos, (BlockState)blockState.with(SweetBerryBushBlock.AGE, 1), 2);
+	               EntityFox.this.worldObj.setBlockMetadataWithNotify(x, y, z, bbs.getMetaForNewAge(1), 2);
 	            }
 	         }
 	      }
 
-	      public boolean canStart() {
-	         return !EntityFox.this.isPlayerSleeping() && super.canStart();
+	      @Override
+	      public boolean shouldExecute() {
+	         return !EntityFox.this.isPlayerSleeping() && super.shouldExecute();
 	      }
 
-	      public void start() {
+	      @Override
+	      public void startExecuting() {
 	         this.timer = 0;
 	         EntityFox.this.setSitting(false);
-	         super.start();
+	         super.startExecuting();
 	      }
 	   }
-*/
+
 	   class AISitDownAndLookAround extends EntityFox.AICalmDown {
 	      private double lookX;
 	      private double lookZ;
