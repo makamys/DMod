@@ -49,7 +49,6 @@ import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAIMate;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAIPanic;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
@@ -941,7 +940,7 @@ public class EntityFox extends EntityAnimalFuture {
 		}
 	}*/
 
-	class AIEscapeWhenNotAggressive extends EntityAIPanic {
+	class AIEscapeWhenNotAggressive extends EntityAIPanicWithTimeout {
 		public AIEscapeWhenNotAggressive(double speed) {
 			super(EntityFox.this, speed);
 		}
