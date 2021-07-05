@@ -91,6 +91,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.BiomeDictionary;
 
 public class EntityFox extends EntityAnimalFuture {
 		private static final int OWNER = 18;
@@ -319,8 +320,7 @@ public class EntityFox extends EntityAnimalFuture {
 
 	   public IEntityLivingData onSpawnWithEgg(IEntityLivingData entityData){
 		   entityData = super.onSpawnWithEgg(entityData);
-	      Optional<BiomeGenBase> optional = Optional.of(worldObj.getBiomeGenForCoords((int)this.posX, (int)this.posZ));
-	      EntityFox.Type type = EntityFox.Type.fromBiome(optional);
+	      EntityFox.Type type = EntityFox.Type.fromBiome(worldObj.getBiomeGenForCoords((int)this.posX, (int)this.posZ));
 	      boolean bl = false;
 	      if (entityData instanceof EntityFox.FoxData) {
 	         type = ((EntityFox.FoxData)entityData).type;
@@ -1595,8 +1595,8 @@ public class EntityFox extends EntityAnimalFuture {
 	}*/
 
 	   public static enum Type {
-	      RED(0, "red", new BiomeGenBase[]{BiomeGenBase.taiga, BiomeGenBase.taigaHills, DUtil.getMutation(BiomeGenBase.taiga), BiomeGenBase.megaTaiga, BiomeGenBase.megaTaigaHills}), // GIANT_SPRUCE_TAIGA?
-	      SNOW(1, "snow", new BiomeGenBase[]{BiomeGenBase.coldTaiga, BiomeGenBase.coldTaigaHills, DUtil.getMutation(BiomeGenBase.coldTaiga)});
+	      RED(0, "red"),
+	      SNOW(1, "snow");
 
 	      private static final EntityFox.Type[] TYPES = (EntityFox.Type[])Arrays.stream(values()).sorted(Comparator.comparingInt(EntityFox.Type::getId)).toArray((i) -> {
 	         return new EntityFox.Type[i];
@@ -1606,12 +1606,10 @@ public class EntityFox extends EntityAnimalFuture {
 	      }));
 	      private final int id;
 	      private final String key;
-	      private final List biomes;
 
-	      private Type(int id, String key, BiomeGenBase... registryKeys) {
+	      private Type(int id, String key) {
 	         this.id = id;
 	         this.key = key;
-	         this.biomes = Arrays.asList(registryKeys);
 	      }
 
 	      public String getKey() {
@@ -1634,8 +1632,8 @@ public class EntityFox extends EntityAnimalFuture {
 	         return TYPES[id];
 	      }
 
-	      public static EntityFox.Type fromBiome(Optional optional) {
-	         return optional.isPresent() && SNOW.biomes.contains(optional.get()) ? SNOW : RED;
+	      public static EntityFox.Type fromBiome(BiomeGenBase bgb) {
+	         return bgb != null && BiomeDictionary.isBiomeOfType(bgb, BiomeDictionary.Type.SNOWY) ? SNOW : RED;
 	      }
 	   }
 }
