@@ -113,6 +113,8 @@ public class EntityFox extends EntityAnimalFuture {
 	   private float extraRollingHeight;
 	   private float lastExtraRollingHeight;
 	   private int eatingTime;
+	   
+	   public static boolean trustEveryone = Boolean.parseBoolean(System.getProperty("dmod.foxTrustEveryone", "false"));
 
 	   public EntityFox(World world) {
 	      super(world);
@@ -190,9 +192,22 @@ public class EntityFox extends EntityAnimalFuture {
 	      return DMod.MODID + ":entity.fox.eat";
 	   }
 	   
+	   private void trustAllPlayers() {
+		   for(Object obj : ((WorldServer)worldObj).playerEntities) {
+			   UUID uuid = ((Entity)obj).getUniqueID();
+			   if(!canTrust(uuid)) {
+				   addTrustedUuid(uuid);
+			   }
+		   }
+	   }
+	   
 	   public void onLivingUpdate() {
 		   
 	      if (!this.worldObj.isRemote && this.isEntityAlive()/* && this.canMoveVoluntarily()*/) {
+	    	 if(trustEveryone && this.ticksExisted % 20 == 0) {
+	    		 trustAllPlayers();
+	    	 }
+	    	  
 	    	  ++this.eatingTime;
 	         ItemStack itemStack = this.getHeldItem();
 	         if (this.canEat(itemStack)) {
