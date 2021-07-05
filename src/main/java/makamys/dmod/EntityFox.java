@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -16,18 +15,12 @@ import com.google.common.collect.Lists;
 import cpw.mods.fml.relauncher.ReflectionHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import ganymedes01.etfuturum.blocks.BlockBerryBush;
-
 import java.util.UUID;
 
 import makamys.dmod.Compat.BerryBushState;
 import makamys.dmod.constants.AIMutex;
 import makamys.dmod.constants.NBTType;
 import makamys.dmod.etfuturum.BlockPos;
-import makamys.dmod.future.AnimalEntityEmulator;
-import makamys.dmod.future.AnimalEntityFutured;
-import makamys.dmod.future.DiveJumpingGoal;
-import makamys.dmod.future.EntityAIAttackOnCollideFuture;
 import makamys.dmod.future.EntityAIDiveJump;
 import makamys.dmod.future.EntityAIFleeSunModern;
 import makamys.dmod.future.EntityAIModernAvoidEntity;
@@ -35,7 +28,6 @@ import makamys.dmod.future.EntityAIMoveToTargetPos;
 import makamys.dmod.future.EntityAnimalFuture;
 import makamys.dmod.future.EntityFuture;
 import makamys.dmod.future.EntityItemFuture;
-import makamys.dmod.future.EntityLivingFutured;
 import makamys.dmod.future.EntityPredicates;
 import makamys.dmod.future.EntityViewEmulator;
 import makamys.dmod.future.ItemStackFuture;
@@ -44,7 +36,6 @@ import makamys.dmod.future.ModernEntityLookHelper;
 import makamys.dmod.future.PassiveEntityEmulator;
 import makamys.dmod.future.TargetPredicate;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockColored;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -53,31 +44,24 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackOnCollide;
-import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIFleeSun;
 import net.minecraft.entity.ai.EntityAIFollowParent;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAIMate;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIPanic;
-import net.minecraft.entity.ai.EntityAIRestrictSun;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.ai.EntityLookHelper;
 import net.minecraft.entity.ai.EntityMoveHelper;
-import net.minecraft.entity.ai.RandomPositionGenerator;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -99,10 +83,6 @@ public class EntityFox extends EntityAnimalFuture {
 		private static final int OTHER_TRUSTED = 19;
 		private static final int TYPE = 20;
 		private static final int FOX_FLAGS = 21;
-		/*private static final TrackedData<Integer> TYPE;
-		private static final TrackedData<Byte> FOX_FLAGS;
-		private static final TrackedData<Optional<UUID>> OWNER;
-		private static final TrackedData<Optional<UUID>> OTHER_TRUSTED;*/
 	   private static final IEntitySelector PICKABLE_DROP_FILTER;
 	   private static final Predicate<EntityLivingBase> JUST_ATTACKED_SOMETHING_FILTER;
 	   private static final Predicate<EntityLivingBase> CHICKEN_AND_RABBIT_FILTER;
@@ -137,15 +117,6 @@ public class EntityFox extends EntityAnimalFuture {
 		this.dataWatcher.addObject(FOX_FLAGS, Byte.valueOf((byte) 0));
 	}
 
-/*
-	   protected void initDataTracker() {
-	      super.initDataTracker();
-	      this.dataTracker.startTracking(OWNER, Optional.empty());
-	      this.dataTracker.startTracking(OTHER_TRUSTED, Optional.empty());
-	      this.dataTracker.startTracking(TYPE, 0);
-	      this.dataTracker.startTracking(FOX_FLAGS, (byte)0);
-	   }
-*/
 	   protected void initTasks() {
 		    this.followChickenAndRabbitTask = new EntityAINearestAttackableTarget(this, EntityLiving.class, 10, false, false, (livingEntity) -> {
 		    	return livingEntity instanceof EntityChicken || ConfigDMod.rabbitEntities.contains(livingEntity.getClass());
@@ -204,7 +175,6 @@ public class EntityFox extends EntityAnimalFuture {
 	   }
 	   
 	   public void onLivingUpdate() {
-		   
 	      if (!this.worldObj.isRemote && this.isEntityAlive()/* && this.canMoveVoluntarily()*/) {
 	    	 if(trustEveryone && this.ticksExisted % 20 == 0) {
 	    		 trustAllPlayers();
@@ -243,7 +213,7 @@ public class EntityFox extends EntityAnimalFuture {
 
 	      super.onLivingUpdate();
 	      if (this.isAggressive() && this.rand.nextFloat() < 0.05F) {
-	         this.playSound(DMod.MODID + ":entity.fox.aggro", 1.0F, 1.0F); //TODO
+	         this.playSound(DMod.MODID + ":entity.fox.aggro", 1.0F, 1.0F);
 	      }
 
 	   }
@@ -490,7 +460,7 @@ public class EntityFox extends EntityAnimalFuture {
 	         EntityItem EntityItem = new EntityItem(this.worldObj, this.posX + rv.xCoord, this.posY + 1.0D, this.posZ + rv.zCoord, stack);
 	         EntityItem.delayBeforeCanPickup = 40;
 	         EntityItem.func_145799_b(getUniqueID().toString()); // is this OK?
-	         this.playSound(DMod.MODID + ":entity.fox.spit", 1.0F, 1.0F); // TODO
+	         this.playSound(DMod.MODID + ":entity.fox.spit", 1.0F, 1.0F);
 	         this.worldObj.spawnEntityInWorld(EntityItem);
 	      }
 	   }
@@ -564,6 +534,8 @@ public class EntityFox extends EntityAnimalFuture {
 	   public boolean isBreedingItem(ItemStack stack) {
 	      return stack != null && ConfigDMod.foxBreedingItems.contains(stack.getItem());
 	   }
+	   
+	   // Not a thing in 1.7.10 as eggs only spawn adult entities
 /*
 	   protected void onPlayerSpawnedChild(PlayerEntity player, MobEntity child) {
 	      ((EntityFox)child).addTrustedUuid(player.getUuid());
@@ -695,7 +667,6 @@ public class EntityFox extends EntityAnimalFuture {
 	      double d = chasedEntity.posZ - fox.posZ;
 	      double e = chasedEntity.posX - fox.posX;
 	      double f = d / e;
-	      //int i = true;
 
 	      for(int j = 0; j < 6; ++j) {
 	         double g = f == 0.0D ? 0.0D : d * (double)((float)j / 6.0F);
@@ -741,10 +712,6 @@ public class EntityFox extends EntityAnimalFuture {
 */
 
 	   static {
-	      /*TYPE = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.INTEGER);
-	      FOX_FLAGS = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.BYTE);
-	      OWNER = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);
-	      OTHER_TRUSTED = DataTracker.registerData(EntityFox.class, TrackedDataHandlerRegistry.OPTIONAL_UUID);*/
 	      PICKABLE_DROP_FILTER = (entityItem) -> {
 	         return !EntityItemFuture.cannotPickUp((EntityItem)entityItem) && entityItem.isEntityAlive();
 	      };
@@ -1057,7 +1024,6 @@ public class EntityFox extends EntityAnimalFuture {
 	        	 int y = this.targetPos.getY();
 	        	 int z = this.targetPos.getZ();
 	        	 Block block = EntityFox.this.worldObj.getBlock(x, y, z);
-	        	 int meta = EntityFox.this.worldObj.getBlockMetadata(x, y, z);
 	        	 BerryBushState bbs = Compat.getBerryBushState(EntityFox.this.worldObj, x, y, z);
 	        			 
 	            if (bbs != null) {
@@ -1210,7 +1176,6 @@ public class EntityFox extends EntityAnimalFuture {
 	      }
 
 	      protected boolean canNotCalmDown() {
-	    	  //return !F.worldObj.selectEntitiesWithinAABB(EntityLivingBase.class, this.boundingBox.expand(20.0D, 8.0D, 20.0D), attackEntitySelector);
 	         return !EntityViewEmulator.getTargets(EntityFox.this.worldObj, EntityLivingBase.class, this.WORRIABLE_ENTITY_PREDICATE, EntityFox.this, EntityFox.this.boundingBox.expand(12.0D, 6.0D, 12.0D)).isEmpty();
 	      }
 
@@ -1238,11 +1203,6 @@ public class EntityFox extends EntityAnimalFuture {
 	            return true;
 	         }
 	      }
-/*
-	      // $FF: synthetic method
-	      public boolean test(Object entity) {
-	         return this.test((LivingEntity)entity);
-	      }*/
 	   }
 
 	   class AIAvoidDaylight extends EntityAIFleeSunModern {
@@ -1300,7 +1260,7 @@ public class EntityFox extends EntityAnimalFuture {
 	         if (this.targetChance > 0 && EntityFox.this.getRNG().nextInt(this.targetChance) != 0) {
 	            return false;
 	         } else {
-	            Iterator var1 = EntityFox.this.getTrustedUuids().iterator();
+	            Iterator<UUID> var1 = EntityFox.this.getTrustedUuids().iterator();
 
 	            while(var1.hasNext()) {
 	               UUID uUID = (UUID)var1.next();
@@ -1358,7 +1318,7 @@ public class EntityFox extends EntityAnimalFuture {
 	            this.lastAttackedTime = this.friend.getLastAttackerTime();
 	         }
 	         
-	         EntityFox.this.playSound("entity.fox.aggro", 1.0F, 1.0F);
+	         EntityFox.this.playSound(DMod.MODID + ":entity.fox.aggro", 1.0F, 1.0F);
 	         EntityFox.this.setAggressive(true);
 	         EntityFox.this.stopSleeping();
 	         super.startExecuting();
@@ -1379,7 +1339,6 @@ public class EntityFox extends EntityAnimalFuture {
 
 	      @Override
 	      protected void spawnBaby() {
-	         WorldServer serverWorld = (WorldServer)EntityFox.this.worldObj;
 	         EntityFox EntityFox = (EntityFox)this.theAnimal.createChild(this.targetMate);
 	         if (EntityFox != null) {
 	            EntityPlayer serverPlayerEntity = this.theAnimal.func_146083_cb();
@@ -1541,45 +1500,7 @@ public class EntityFox extends EntityAnimalFuture {
 	         }
 
 	      }
-	   }/*
-	   
-	class AvoidPlayerGoal extends EntityAIAvoidEntity {
-		/**
-		 * Returns whether the EntityAIBase should begin execution.
-		 *//*
-		@Override
-		public boolean shouldExecute() {
-			if (this.targetEntityClass == EntityPlayer.class) {
-				if (this.theEntity instanceof EntityTameable && ((EntityTameable) this.theEntity).isTamed()) {
-					return false;
-				}
-
-				this.closestLivingEntity = this.theEntity.worldObj.getClosestPlayerToEntity(this.theEntity,
-						(double) this.distanceFromEntity);
-
-				if (this.closestLivingEntity == null) {
-					return false;
-				} else {
-					return NOTICEABLE_PLAYER_FILTER.test(closestLivingEntity)
-							&& !this.canTrust(closestLivingEntity.getUuid()) && !this.isAggressive();
-				}
-			}
-
-			Vec3 vec3 = RandomPositionGenerator.findRandomTargetBlockAwayFrom(this.theEntity, 16, 7,
-					Vec3.createVectorHelper(this.closestLivingEntity.posX, this.closestLivingEntity.posY,
-							this.closestLivingEntity.posZ));
-
-			if (vec3 == null) {
-				return false;
-			} else if (this.closestLivingEntity.getDistanceSq(vec3.xCoord, vec3.yCoord,
-					vec3.zCoord) < this.closestLivingEntity.getDistanceSqToEntity(this.theEntity)) {
-				return false;
-			} else {
-				this.entityPathEntity = this.entityPathNavigate.getPathToXYZ(vec3.xCoord, vec3.yCoord, vec3.zCoord);
-				return this.entityPathEntity == null ? false : this.entityPathEntity.isDestinationSame(vec3);
-			}
-		}
-	}*/
+	   }
 
 	   public static enum Type {
 	      RED(0, "red"),
