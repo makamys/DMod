@@ -183,7 +183,7 @@ public class EntityFox extends EntityAnimalFuture {
 	 	  ++this.eatingTime;
 			ItemStack itemStack = this.getHeldItem();
 			if (this.canEat(itemStack)) {
-				int eatDelay = (int)((this.getHealth() < this.getMaxHealth() ? this.getHealth() / this.getMaxHealth() / 2f : 1f) * 560f);
+				int eatDelay = (int)((this.getHealth() < this.getMaxHealth() ? this.getHealth() / this.getMaxHealth() / 4f : 1f) * 560f);
 				if (this.eatingTime > eatDelay + 40) {
 					ItemStack itemStack2 = ItemStackFuture.finishUsing(itemStack, this.worldObj, this);
 					if (!ItemStackFuture.isEmpty(itemStack2)) {
