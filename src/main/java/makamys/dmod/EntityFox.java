@@ -575,7 +575,7 @@ public class EntityFox extends EntityAnimalFuture {
 	   }
 
 	   public boolean isBreedingItem(ItemStack stack) {
-	      return ConfigDMod.foxBreedingItems.contains(stack.getItem());
+	      return stack != null && ConfigDMod.foxBreedingItems.contains(stack.getItem());
 	   }
 /*
 	   protected void onPlayerSpawnedChild(PlayerEntity player, MobEntity child) {
