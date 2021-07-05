@@ -116,4 +116,8 @@ public abstract class EntityAnimalFuture extends EntityAnimal implements EntityL
 	   public float computeFallDistance(float fallDistance) {
 		   return fallDistance;
 	   }
+	   
+	   public ItemStack eatFood(World world, ItemStack stack) {
+		   return EntityLivingFuture.eatFoodBody(this, world, stack);
+	   }
 }

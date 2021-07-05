@@ -11,6 +11,14 @@ import net.minecraft.world.World;
 
 public class EntityLivingFuture {
 	public static ItemStack eatFood(EntityLivingBase dis, World world, ItemStack stack) {
+		if(dis instanceof EntityAnimalFuture) {
+			return ((EntityAnimalFuture)dis).eatFood(world, stack);
+		} else {
+			return eatFoodBody(dis, world, stack);
+		}
+	}
+	
+	public static ItemStack eatFoodBody(EntityLivingBase dis, World world, ItemStack stack) {
 		if (stack.getItem() instanceof ItemFood) {
 			world.playSound(dis.posX, dis.posY, dis.posZ, ((EntityLivingFutured)dis).getEatSound(stack), 1.0F, 1.0F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.4F, false);
 			EntityLivingFuture.applyFoodEffects(dis, stack, world, dis);
@@ -18,7 +26,6 @@ public class EntityLivingFuture {
 				ItemStackFuture.decrement(stack, 1);
 			}
 		}
-
 		return stack;
 	}
 	

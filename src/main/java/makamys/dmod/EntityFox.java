@@ -183,7 +183,8 @@ public class EntityFox extends EntityAnimalFuture {
 	 	  ++this.eatingTime;
 			ItemStack itemStack = this.getHeldItem();
 			if (this.canEat(itemStack)) {
-				if (this.eatingTime > 600) {
+				int eatDelay = (int)((this.getHealth() < this.getMaxHealth() ? this.getHealth() / this.getMaxHealth() / 2f : 1f) * 560f);
+				if (this.eatingTime > eatDelay + 40) {
 					ItemStack itemStack2 = ItemStackFuture.finishUsing(itemStack, this.worldObj, this);
 					if (!ItemStackFuture.isEmpty(itemStack2)) {
 						this.setCurrentItemOrArmor(0, itemStack2);
@@ -192,7 +193,7 @@ public class EntityFox extends EntityAnimalFuture {
 					}
 
 					this.eatingTime = 0;
-				} else if (this.eatingTime > 560 && this.rand.nextFloat() < 0.1F) {
+				} else if (this.eatingTime > eatDelay && this.rand.nextFloat() < 0.1F) {
 					this.playSound(this.getEatSound(itemStack), 1.0F, 1.0F);
 					this.worldObj.setEntityState(this, (byte)45);
 				}
@@ -310,6 +311,21 @@ public class EntityFox extends EntityAnimalFuture {
 			this.targetTasks.addTask(6, this.followChickenAndRabbitTask);
 			//this.targetTasks.addTask(6, this.followBabyTurtleGoal);
 		}
+	}
+	
+	public void healByFood(ItemStack stack) {
+		Item item = stack.getItem();
+		if(item instanceof ItemFood){
+			ItemFood food = (ItemFood)item;
+			int healAmount = food.func_150905_g(null);
+			this.heal(healAmount);
+		}
+	}
+	
+	@Override
+	public ItemStack eatFood(World world, ItemStack stack) {
+		healByFood(stack);
+		return super.eatFood(world, stack);
 	}
 
 	public void eat(EntityPlayer player, ItemStack stack) {
@@ -1465,16 +1481,17 @@ public class EntityFox extends EntityAnimalFuture {
 
 		@Override
 		public boolean shouldExecute() {
-			if (EntityFox.this.getHeldItem() != null) {
+			boolean hungry = EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f; 
+			if (EntityFox.this.getHeldItem() != null && !hungry) {
 				return false;
-			} else if (EntityFox.this.getAttackTarget() == null && EntityFox.this.getAITarget() == null) {
+			} else if ((EntityFox.this.getAttackTarget() == null && EntityFox.this.getAITarget() == null) || hungry) {
 				if (!EntityFox.this.wantsToPickupItem()) {
 					return false;
-				} else if (EntityFox.this.rand.nextInt(10) != 0) {
+				} else if (EntityFox.this.rand.nextInt(10) != 0 && !hungry) {
 					return false;
 				} else {
 					List list = EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
-					return !list.isEmpty() && EntityFox.this.getHeldItem() == null;
+					return !list.isEmpty();
 				}
 			} else {
 				return false;
