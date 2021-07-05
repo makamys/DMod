@@ -88,6 +88,7 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -256,27 +257,13 @@ public class EntityFox extends EntityAnimalFuture {
 	      return stack != null && stack.getItem() instanceof ItemFood && this.getAttackTarget() == null && this.onGround && !this.isPlayerSleeping();
 	   }
 
-	   // TODO it would be nice to have this configurable
 	   protected void initEquipment() {
 	      if (this.rand.nextFloat() < 0.2F) {
-	         float f = this.rand.nextFloat();
-	         ItemStack itemStack6;
-	         if (f < 0.05F) {
-	            itemStack6 = new ItemStack(Items.emerald);
-	         } else if (f < 0.2F) {
-	            itemStack6 = new ItemStack(Items.egg);
-	         // TODO
-	         //} else if (f < 0.4F) {
-	         //   itemStack6 = this.rand.nextBoolean() ? new ItemStack(Items.RABBIT_FOOT) : new ItemStack(Items.RABBIT_HIDE);
-	         } else if (f < 0.6F) {
-	            itemStack6 = new ItemStack(Items.wheat);
-	         } else if (f < 0.8F) {
-	            itemStack6 = new ItemStack(Items.leather);
-	         } else {
-	            itemStack6 = new ItemStack(Items.feather);
-	         }
-
-	         this.setCurrentItemOrArmor(0, itemStack6);
+	    	  List<WeightedRandomItem<Item>> items = ConfigDMod.foxMouthItems;
+	    	  if(!items.isEmpty()) {
+		    	  WeightedRandomItem<Item> choice = (WeightedRandomItem<Item>)WeightedRandom.getRandomItem(getRNG(), items);
+		         this.setCurrentItemOrArmor(0, new ItemStack(choice.data));
+	    	  }
 	      }
 
 	   }

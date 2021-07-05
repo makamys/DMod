@@ -16,6 +16,7 @@ import net.minecraftforge.common.config.Configuration;
 public class ConfigDMod {
 	
 	public static List<Item> foxBreedingItems;
+	public static List<WeightedRandomItem<Item>> foxMouthItems;
 	public static List<Class<Entity>> rabbitEntities;
 	
 	public static boolean wolvesTargetFoxes;
@@ -67,6 +68,8 @@ public class ConfigDMod {
 	        		resolveItemListOrDefault(config, "foxBreedingItems", "Fox", new String[]{"etfuturum:sweet_berries"}, "Falls back to wheat if none of the items can be resolved", Items.wheat);
 	        rabbitEntities =
 	        		resolveEntityClassListOrDefault(config, "rabbitEntities", "Fox", new String[]{"etfuturum.rabbit"}, "");
+	        foxMouthItems = Arrays.stream(config.getStringList("foxMouthItems", "Fox", new String[] {"emerald=5", "egg=15", "etfuturum:rabbit_foot=10", "etfuturum:rabbit_hide=10", "wheat=20", "leather=20", "feather=20"}, "item=weight pairs deciding the relative likelyhood of foxes spawning with certain items. Entries containing items that can't be resolved will be ignored."))
+	        		.map(str -> parseWeightedItemEntry(str)).filter(p -> p != null).collect(Collectors.toList());
         }
         
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
@@ -75,6 +78,27 @@ public class ConfigDMod {
         {
             config.save();
         }
+	}
+	
+	private static WeightedRandomItem<Item> parseWeightedItemEntry(String str) {
+    	String[] halves = str.split("=");
+    	if(halves.length == 2) {
+    		Object itemObj = Item.itemRegistry.getObject(halves[0]);
+			if(itemObj != null) {
+				Item item = (Item)itemObj;
+				try {
+					int weight = Integer.parseInt(halves[1]);
+					return new WeightedRandomItem<>(weight, item);
+				} catch(NumberFormatException e) {
+					System.out.println("Invalid weight (must be an integer): " + halves[1]);
+				}
+			} else {
+				System.out.println("No item called " + halves[0]);
+			}
+    	} else {
+    		System.out.println("Incorrect pair: " + str);
+    	}
+		return null;
 	}
 	
 }
