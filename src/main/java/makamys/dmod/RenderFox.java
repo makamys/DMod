@@ -101,16 +101,7 @@ public class RenderFox extends RenderLiving
                 GL11.glTranslatef(0.3f, 1f, 1.5f);
             }
             else {
-            	if (itemstack.getItem() == Items.bow)
-	            {
-	                f1 = 0.625F;
-	                GL11.glTranslatef(0.0F, 0.125F, 0.3125F);
-	                GL11.glRotatef(-20.0F, 0.0F, 1.0F, 0.0F);
-	                GL11.glScalef(f1, -f1, f1);
-	                GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
-	                GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
-	            }
-	            else if (itemstack.getItem().isFull3D())
+            	if (itemstack.getItem().isFull3D())
 	            {
 	                f1 = 0.625F * 0.7f;
 	
