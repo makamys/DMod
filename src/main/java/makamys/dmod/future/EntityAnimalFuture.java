@@ -1,14 +1,17 @@
 package makamys.dmod.future;
 
+import makamys.dmod.EggHelper;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 public abstract class EntityAnimalFuture extends EntityAnimal implements EntityLivingFutured {
@@ -120,4 +123,10 @@ public abstract class EntityAnimalFuture extends EntityAnimal implements EntityL
 	   public ItemStack eatFood(World world, ItemStack stack) {
 		   return EntityLivingFuture.eatFoodBody(this, world, stack);
 	   }
+	   
+		@Override
+		public ItemStack getPickedResult(MovingObjectPosition target) {
+			int eggID = EggHelper.getIDForClass(getClass());
+			return eggID != -1 ? new ItemStack(Items.spawn_egg, 1, eggID) : super.getPickedResult(target);
+		}
 }

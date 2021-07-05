@@ -53,14 +53,7 @@ public class DMod
         List<BiomeGenBase> foxBiomes = DUtil.getBiomesMatchingTag(BiomeDictionary.Type.CONIFEROUS);
     	DMod.LOGGER.debug("Fox spawn biomes: " + String.join(", ", foxBiomes.stream().map(b -> b.biomeName + " (" + b.getClass().getName() + ")").collect(Collectors.toList())));
         EntityRegistry.addSpawn(EntityFox.class, 8, 2, 4, EnumCreatureType.creature, foxBiomes.toArray(new BiomeGenBase[] {}));
-        
-        int eggID = 0;
-        while(EntityList.getStringFromID(eggID) != null) {
-        	eggID++;
-        }
-        
-        EntityList.IDtoClassMapping.put(eggID, EntityFox.class);
-		EntityList.entityEggs.put(eggID, new EntityEggInfo(eggID, 0xFF8000, 0));
+        EggHelper.addEgg(EntityFox.class, 14005919, 13396256);
     }
     
     @SubscribeEvent
