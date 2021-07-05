@@ -13,6 +13,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.util.ResourceLocation;
 
 public class RenderFox extends RenderLiving
@@ -119,7 +120,7 @@ public class RenderFox extends RenderLiving
 	                    GL11.glTranslatef(0.0F, -0.125F, 0.0F);
 	                }
 	                
-	                GL11.glTranslatef(0.02f, 0.0f, 0f);
+	                GL11.glTranslatef(0.02f + (itemstack.getItem() instanceof ItemSword ? 0f : 0.32f), 0.0f, 0f);
 	                GL11.glScalef(f1, -f1, f1);
 	            }
 	            else
