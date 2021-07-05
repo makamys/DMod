@@ -31,11 +31,11 @@ public class ConfigDMod {
 			}
 		}
 		if(items.isEmpty() && list.length > 0) {
-			System.out.println("Couldn't resolve any of the items in " + propCat + "." + propName + ", falling back to defaults");
+			DMod.LOGGER.debug("Couldn't resolve any of the items in " + propCat + "." + propName + ", falling back to defaults");
 			items = Arrays.asList(defaults);
 		}
 		
-		System.out.println("Resolved " + propCat + "." + propName + " to " + items.stream().map(i -> i.getUnlocalizedName()).collect(Collectors.toList()));
+		DMod.LOGGER.debug("Resolved " + propCat + "." + propName + " to " + items.stream().map(i -> i.getUnlocalizedName()).collect(Collectors.toList()));
 		return items;
 	}
 	
@@ -50,11 +50,11 @@ public class ConfigDMod {
 			}
 		}
 		if(items.isEmpty() && list.length > 0) {
-			System.out.println("Couldn't resolve any of the entity names in " + propCat + "." + propName + ", falling back to defaults");
+			DMod.LOGGER.debug("Couldn't resolve any of the entity names in " + propCat + "." + propName + ", falling back to defaults");
 			items = Arrays.asList(defaults);
 		}
 		
-		System.out.println("Resolved " + propCat + "." + propName + " to " + items.stream().map(e -> EntityList.classToStringMapping.get(e)).collect(Collectors.toList()));
+		DMod.LOGGER.debug("Resolved " + propCat + "." + propName + " to " + items.stream().map(e -> EntityList.classToStringMapping.get(e)).collect(Collectors.toList()));
 		return items;
 	}
 	
@@ -90,13 +90,13 @@ public class ConfigDMod {
 					int weight = Integer.parseInt(halves[1]);
 					return new WeightedRandomItem<>(weight, item);
 				} catch(NumberFormatException e) {
-					System.out.println("Invalid weight (must be an integer): " + halves[1]);
+					DMod.LOGGER.warn("Invalid weight (must be an integer): " + halves[1]);
 				}
 			} else {
-				System.out.println("No item called " + halves[0]);
+				DMod.LOGGER.warn("No item called " + halves[0]);
 			}
     	} else {
-    		System.out.println("Incorrect pair: " + str);
+    		DMod.LOGGER.warn("Incorrect pair: " + str);
     	}
 		return null;
 	}
