@@ -783,7 +783,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	
 	public int getLootingLevel() {
 		int lootingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.looting.effectId, this.getHeldItem());
-		return lootingLevel;
+		return Math.max(1, lootingLevel);
 	}
 	
 	// TODO
