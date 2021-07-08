@@ -749,7 +749,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 				if(isFleeingNearDeath && getRNG().nextBoolean()) {
 					return false;
 				} else if(getHeldItem() != null && getHeldItem().getItem() instanceof ItemSword && getRNG().nextInt(3) == 0) {
-					this.playSound("random.anvil_land", 0.5F, 1.5f);
+					this.playSound("random.anvil_land", 0.5F, 1.3f);
 					damage /= 2f;
 				} else if(this.getHealth() - damage <= EntityFox.this.getMaxHealth() / 4f && this.getHealth() > EntityFox.this.getMaxHealth() / 4f) {
 					this.playSound(DMod.MODID + ":entity.fox.screech", 2F, getSoundPitch() * 1.4f);
