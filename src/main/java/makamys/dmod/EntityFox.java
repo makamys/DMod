@@ -491,9 +491,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 			boolean holdingWeapon = current instanceof ItemSword;
 			boolean fullyHealed = this.getHealth() == this.getMaxHealth();
 			if(item instanceof ItemFood) {
-				return !(current instanceof ItemFood) && (!holdingWeapon || !fullyHealed);
+				return !(current instanceof ItemFood) && (!holdingWeapon || (!fullyHealed && this.getAITarget() == null && this.getAttackTarget() == null));
 			} else if(item instanceof ItemSword) {
-				return !(current instanceof ItemFood) || fullyHealed;
+				return !(current instanceof ItemFood) || !((!fullyHealed && this.getAITarget() == null && this.getAttackTarget() == null));
 			} else {
 				return false;
 			}
