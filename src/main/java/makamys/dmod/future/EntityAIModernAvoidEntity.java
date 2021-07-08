@@ -54,7 +54,7 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 		      }, distance, slowSpeed, fastSpeed, EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR::test);
 	   }
 
-	   public EntityAIModernAvoidEntity(EntityCreature mob, Class<?> fleeFromType, Predicate<EntityLivingBase> extraInclusionSelector, float distance, double slowSpeed, double fastSpeed, Predicate<EntityLivingBase> inclusionSelector) {
+	   public EntityAIModernAvoidEntity(EntityCreature mob, Class<?> fleeFromType, Predicate<EntityLivingBase> extraInclusionSelector, float distance, double slowSpeed, double fastSpeed, Predicate<EntityLivingBase> inclusionSelector, boolean includeHidden) {
 	      this.mob = mob;
 	      this.classToFleeFrom = fleeFromType;
 	      this.extraInclusionSelector = extraInclusionSelector;
@@ -65,12 +65,23 @@ public class EntityAIModernAvoidEntity extends EntityAIBase {
 	      this.fleeingEntityNavigation = mob.getNavigator();
 	      this.setMutexBits(AIMutex.MOVE);
 	      this.withinRangePredicate = (new TargetPredicate()).setBaseMaxDistance((double)distance).setPredicate(inclusionSelector.and(extraInclusionSelector));
+	      if(includeHidden) {
+	    	  withinRangePredicate.includeHidden();
+	      }
 	   }
-
-	   public EntityAIModernAvoidEntity(EntityCreature fleeingEntity, Class<?> classToFleeFrom, float fleeDistance, double fleeSlowSpeed, double fleeFastSpeed, Predicate<EntityLivingBase> inclusionSelector) {
+	   
+	   public EntityAIModernAvoidEntity(EntityCreature mob, Class<?> fleeFromType, Predicate<EntityLivingBase> extraInclusionSelector, float distance, double slowSpeed, double fastSpeed, Predicate<EntityLivingBase> inclusionSelector) {
+	      this(mob, fleeFromType, extraInclusionSelector, distance, slowSpeed, fastSpeed, inclusionSelector, false);
+	   }
+	   
+	   public EntityAIModernAvoidEntity(EntityCreature fleeingEntity, Class<?> classToFleeFrom, float fleeDistance, double fleeSlowSpeed, double fleeFastSpeed, Predicate<EntityLivingBase> inclusionSelector, boolean includeHidden) {
 	      this(fleeingEntity, classToFleeFrom, (livingEntity) -> {
 	         return true;
-	      }, fleeDistance, fleeSlowSpeed, fleeFastSpeed, inclusionSelector);
+	      }, fleeDistance, fleeSlowSpeed, fleeFastSpeed, inclusionSelector, includeHidden);
+	   }
+	   
+	   public EntityAIModernAvoidEntity(EntityCreature fleeingEntity, Class<?> classToFleeFrom, float fleeDistance, double fleeSlowSpeed, double fleeFastSpeed, Predicate<EntityLivingBase> inclusionSelector) {
+		   this(fleeingEntity, classToFleeFrom, fleeDistance, fleeSlowSpeed, fleeFastSpeed, inclusionSelector, false);
 	   }
 
 	   @Override

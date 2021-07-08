@@ -151,7 +151,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		}));
 		this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityCreeper.class, 4F, 1.0D, 1.6D, (livingEntity) -> {
 			return ((EntityCreeper)livingEntity).getCreeperState() == 1;
-		}));
+		}, true));
 		/*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, PolarBearEntity.class, 8.0F, 1.6D, 1.4D, (livingEntity) -> {
 			return !this.isAggressive();
 		}));*/
