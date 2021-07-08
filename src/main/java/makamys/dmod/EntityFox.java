@@ -107,6 +107,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	private boolean isFleeingNearDeath;
 	private EntityLivingBase friend;
 	private boolean searchingForWeapon;
+	int exp = 0;
 	
 	public static boolean trustEveryone = Boolean.parseBoolean(System.getProperty("dmod.foxTrustEveryone", "false"));
 
@@ -402,6 +403,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		tag.setString("Type", this.getFoxType().getKey());
 		tag.setBoolean("Sitting", this.isSitting());
 		tag.setBoolean("Crouching", this.isInSneakingPose());
+		if(this.exp != 0) {
+			tag.setInteger("Experience", this.exp);
+		}
 	}
 	
 	/**
@@ -421,6 +425,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 			this.setCrouching(tag.getBoolean("Crouching"));
 			if (this.worldObj instanceof WorldServer) {
 				this.addTypeSpecificTasks();
+			}
+			if(tag.hasKey("Experience")) {
+				this.exp = tag.getInteger("Experience");
 			}
 	}
 
@@ -736,6 +743,11 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	@Override
 	public boolean attackEntityAsMob(Entity p_70652_1_) {
 		boolean result = super.attackEntityAsMob(p_70652_1_);
+		if(!p_70652_1_.isEntityAlive() && p_70652_1_ instanceof EntityMob) {
+			EntityMob victim = (EntityMob)p_70652_1_;
+			int exp = ReflectionHelper.getPrivateValue(EntityLiving.class, victim, "experienceValue");
+			this.exp += exp;
+		}
 		if(result) {
 			EntityFox.this.playSound(DMod.MODID + ":entity.fox.bite", 1.0F, 1.0F);
 		}
