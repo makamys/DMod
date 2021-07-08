@@ -82,7 +82,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 
-public class EntityFox extends EntityAnimalFuture {
+public class EntityFox extends EntityAnimalFuture implements ITameable {
 	private static final int OWNER = 18;
 	private static final int OTHER_TRUSTED = 19;
 	private static final int TYPE = 20;
@@ -162,6 +162,7 @@ public class EntityFox extends EntityAnimalFuture {
 		this.tasks.addTask(7, new EntityFox.AIAttack(1.2000000476837158D, true));
 		this.tasks.addTask(7, new EntityFox.AIDelayedCalmDown());
 		this.tasks.addTask(8, new EntityFox.AIFollowParent(this, 1.25D));
+		this.tasks.addTask(8, new EntityAIFollowOwnerEx(this, 1.3D, 24.0F, 8.0F));
 	 	// TODO (hint: this.worldObj.villageCollectionObj.findNearestVillage)
 		//this.tasks.addTask(9, new EntityFox.GoToVillageGoal(32, 200));
 		this.tasks.addTask(10, new EntityFox.AIEatSweetBerries(1.2000000476837158D, 12, 2));
@@ -756,6 +757,26 @@ public class EntityFox extends EntityAnimalFuture {
 			}
 			return super.attackEntityFrom(source, damage);
 		}
+	}
+	
+	@Override
+	public EntityLivingBase getPetOwner() {
+		UUID uUID = EntityFox.this.getTrustedUuids().get(0);
+
+		if (uUID != null && EntityFox.this.worldObj instanceof WorldServer) {
+			// Assuming owner is a player
+			Entity entity = ((WorldServer)EntityFox.this.worldObj).func_152378_a(uUID); // getPlayerByUuid
+			if (entity instanceof EntityLivingBase) {
+				EntityLivingBase livingEntity = (EntityLivingBase)entity;
+				return livingEntity;
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean isPetSitting() {
+		return false;
 	}
 	
 	// TODO
