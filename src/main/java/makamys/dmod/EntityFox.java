@@ -56,6 +56,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityMoveHelper;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityTameable;
@@ -146,6 +147,9 @@ public class EntityFox extends EntityAnimalFuture {
 		this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityWolf.class, 8.0F, 1.6D, 1.4D, (livingEntity) -> {
 			return !((EntityWolf)livingEntity).isTamed() && !this.isAggressive();
 		}));
+		this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityCreeper.class, 4F, 1.0D, 1.6D, (livingEntity) -> {
+			return ((EntityCreeper)livingEntity).getCreeperState() == 1;
+		}));
 		/*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, PolarBearEntity.class, 8.0F, 1.6D, 1.4D, (livingEntity) -> {
 			return !this.isAggressive();
 		}));*/
@@ -197,7 +201,6 @@ public class EntityFox extends EntityAnimalFuture {
 			ItemStack itemStack = this.getHeldItem();
 			if (this.canEat(itemStack)) {
 				int eatDelay = (int)(MathHelper.clamp_float(this.getHealth() < this.getMaxHealth() ? (this.getHealth() - 2f) / this.getMaxHealth() / 4f : 1f, 0f, 1f) * 560f);
-				System.out.println("eat delay: " + eatDelay);
 				if (this.eatingTime > eatDelay + 40) {
 					ItemStack itemStack2 = ItemStackFuture.finishUsing(itemStack, this.worldObj, this);
 					if (!ItemStackFuture.isEmpty(itemStack2)) {
@@ -480,7 +483,22 @@ public class EntityFox extends EntityAnimalFuture {
 	public boolean canPickupItem(ItemStack stack) {
 		Item item = stack.getItem();
 		ItemStack itemStack = this.getEquipmentInSlot(0);
-		return itemStack == null || (this.eatingTime > 0 && item instanceof ItemFood && !(itemStack.getItem() instanceof ItemFood)) || ((this.getAITarget() != null || this.getAttackTarget() != null) && item instanceof ItemSword);
+		if(itemStack == null) {
+			return true;
+		} else if(this.eatingTime > 0){
+			Item current = itemStack.getItem();
+			boolean holdingWeapon = current instanceof ItemSword;
+			boolean fullyHealed = this.getHealth() == this.getMaxHealth();
+			if(item instanceof ItemFood) {
+				return !(current instanceof ItemFood) && (!holdingWeapon || !fullyHealed);
+			} else if(item instanceof ItemSword) {
+				return !(current instanceof ItemFood) || fullyHealed;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
 	}
 
 	private void spit(ItemStack stack) {
@@ -728,8 +746,15 @@ public class EntityFox extends EntityAnimalFuture {
 		if(Compat.isBerryBushDamageSource(source)) {
 			return false;
 		} else {
-			if(source.getEntity() instanceof EntityMob && isFleeingNearDeath && getRNG().nextBoolean()) {
-				return false;
+			if(source.getEntity() instanceof EntityMob) {
+				if(isFleeingNearDeath && getRNG().nextBoolean()) {
+					return false;
+				} else if(getHeldItem() != null && getHeldItem().getItem() instanceof ItemSword && getRNG().nextInt(3) == 0) {
+					this.playSound("random.anvil_land", 0.5F, 1.5f);
+					damage /= 2f;
+				} else if(this.getHealth() - damage <= EntityFox.this.getMaxHealth() / 4f && this.getHealth() > EntityFox.this.getMaxHealth() / 4f) {
+					this.playSound(DMod.MODID + ":entity.fox.screech", 2F, getSoundPitch() * 1.4f);
+				}
 			}
 			return super.attackEntityFrom(source, damage);
 		}
@@ -1320,6 +1345,11 @@ public class EntityFox extends EntityAnimalFuture {
 		public AIDefendFriend(Class targetEntityClass, boolean checkVisibility, boolean checkCanNavigate, Predicate<Entity> targetPredicate) {
 			super(EntityFox.this, targetEntityClass, 10, checkVisibility, checkCanNavigate, e -> targetPredicate.test(e));
 			this.targetPredicate = (new TargetPredicate()).setBaseMaxDistance(this.getTargetDistance()).setPredicate(targetPredicate);
+			if(!checkVisibility) {
+				// rationale for this: tall grass blocks the view of foxes. since they are so short, this greatly limits their helpfulness in
+				// areas with tall grass
+				this.targetPredicate.includeHidden();
+			}
 		}
 
 		@Override
