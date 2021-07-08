@@ -20,6 +20,7 @@ public class ConfigDMod {
 	public static List<Class<Entity>> rabbitEntities;
 	
 	public static boolean wolvesTargetFoxes;
+	public static boolean lootingFoxFix;
 	
 	private static List<Item> resolveItemListOrDefault(Configuration config, String propName, String propCat, String[] propDefault, String propComment, Item... defaults){
 		String[] list = config.getStringList(propName, propCat, propDefault, propComment);
@@ -73,6 +74,7 @@ public class ConfigDMod {
         }
         
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
+        lootingFoxFix = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "Make looting enchants of fox weapons have an effect");
     
         if (config.hasChanged()) 
         {

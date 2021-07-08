@@ -27,6 +27,10 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
                 "makamys.dmod.mixin.MixinEntityWolf"
                 ).contains(mixinClassName)){
             return ConfigDMod.wolvesTargetFoxes;	
+        } else if(Arrays.asList(
+                "makamys.dmod.mixin.MixinEntityLivingBase"
+                ).contains(mixinClassName)){
+            return ConfigDMod.lootingFoxFix;
         } else {
             return true;
         }
