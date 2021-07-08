@@ -29,9 +29,7 @@ public abstract class MixinEntityLivingBase {
 	public int lootingModifier(int value) {
 		Entity entity = lastDamageSource.getEntity();
 		if(entity instanceof EntityFox) {
-			EntityFox fox = (EntityFox)entity;
-			int lootingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.looting.effectId, fox.getHeldItem());
-			value = lootingLevel;
+			value = ((EntityFox)entity).getLootingLevel();
 		}
 		return value;
 	}

@@ -38,6 +38,8 @@ import makamys.dmod.future.PassiveEntityEmulator;
 import makamys.dmod.future.TargetPredicate;
 import net.minecraft.block.Block;
 import net.minecraft.command.IEntitySelector;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLiving;
@@ -777,6 +779,11 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	@Override
 	public boolean isPetSitting() {
 		return false;
+	}
+	
+	public int getLootingLevel() {
+		int lootingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.looting.effectId, this.getHeldItem());
+		return lootingLevel;
 	}
 	
 	// TODO

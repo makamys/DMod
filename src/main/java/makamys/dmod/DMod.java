@@ -4,6 +4,11 @@ import net.minecraft.client.model.ModelWolf;
 import net.minecraft.client.renderer.entity.RenderWolf;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import java.util.List;
@@ -25,8 +30,10 @@ import ganymedes01.etfuturum.ModBlocks;
 import ganymedes01.etfuturum.ModItems;
 import makamys.dmod.future.EntityAnimalFuture;
 import net.minecraft.entity.EntityList.EntityEggInfo;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
@@ -65,6 +72,24 @@ public class DMod
     public void onLivingFall(LivingFallEvent event) {
     	if(event.entity instanceof EntityAnimalFuture) {
     		event.distance = ((EntityAnimalFuture)event.entity).computeFallDistance(event.distance);
+    	}
+    }
+    
+    @SubscribeEvent
+    public void onLivingDrops(LivingDropsEvent event) {
+    	if(event.source.getEntity() instanceof EntityFox) {
+    		EntityFox fox = (EntityFox)event.source.getEntity();
+    		int looting = fox.getLootingLevel();
+    		EntityLivingBase victim = event.entityLiving;
+    		if(victim instanceof EntityChicken) {
+    			int extraChicken = victim.getRNG().nextInt(1 + looting);
+    			for(EntityItem entityItem : event.drops) {
+    				Item item = entityItem.getEntityItem().getItem();
+    				if(item == Items.cooked_chicken || item == Items.chicken) {
+    					entityItem.getEntityItem().stackSize += extraChicken;
+    				}
+    			}
+    		}
     	}
     }
 }
