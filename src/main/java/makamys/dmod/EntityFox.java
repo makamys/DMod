@@ -65,11 +65,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.WeightedRandom;
@@ -84,6 +87,9 @@ public class EntityFox extends EntityAnimalFuture {
 	private static final int TYPE = 20;
 	private static final int FOX_FLAGS = 21;
 	private static final IEntitySelector PICKABLE_DROP_FILTER;
+	private static final IEntitySelector FOOD_DROP_FILTER;
+	private static final IEntitySelector TOOL_DROP_FILTER;
+	private static final IEntitySelector SWORD_DROP_FILTER;
 	private static final Predicate<EntityLivingBase> JUST_ATTACKED_SOMETHING_FILTER;
 	private static final Predicate<EntityLivingBase> CHICKEN_AND_RABBIT_FILTER;
 	private static final Predicate<EntityLivingBase> NOTICEABLE_PLAYER_FILTER;
@@ -95,6 +101,9 @@ public class EntityFox extends EntityAnimalFuture {
 	private float extraRollingHeight;
 	private float lastExtraRollingHeight;
 	private int eatingTime;
+	private boolean isFleeingNearDeath;
+	private EntityLivingBase friend;
+	private boolean searchingForWeapon;
 	
 	public static boolean trustEveryone = Boolean.parseBoolean(System.getProperty("dmod.foxTrustEveryone", "false"));
 
@@ -127,7 +136,9 @@ public class EntityFox extends EntityAnimalFuture {
 		});*/
 		this.tasks.addTask(0, new EntityFox.AISwim());
 		this.tasks.addTask(1, new EntityFox.AIStopWandering());
+		this.tasks.addTask(1, new EntityFox.AIPickupItemWhenWounded());
 		this.tasks.addTask(2, new EntityFox.AIEscapeWhenNotAggressive(2.2D));
+		this.tasks.addTask(2, new EntityFox.AIEscapeWhenAggressiveAndWounded(2.2D));
 		this.tasks.addTask(3, new EntityFox.AIMate(1.0D));
 		this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityPlayer.class, 16.0F, 1.6D, 1.4D, (livingEntity) -> {
 			return NOTICEABLE_PLAYER_FILTER.test(livingEntity) && !this.canTrust(livingEntity.getUniqueID()) && !this.isAggressive();
@@ -139,9 +150,11 @@ public class EntityFox extends EntityAnimalFuture {
 			return !this.isAggressive();
 		}));*/
 		this.tasks.addTask(5, new EntityFox.AIMoveToHunt());
+		this.tasks.addTask(5, new EntityFox.AIPickupWeapon());
 		this.tasks.addTask(6, new EntityFox.AIJumpChase());
 		this.tasks.addTask(6, new EntityFox.AIAvoidDaylight(1.25D));
 		// set this to false to make foxes more aggressive
+		// TODO make them more aggressive when they or their owner is low on health
 		this.tasks.addTask(7, new EntityFox.AIAttack(1.2000000476837158D, true));
 		this.tasks.addTask(7, new EntityFox.AIDelayedCalmDown());
 		this.tasks.addTask(8, new EntityFox.AIFollowParent(this, 1.25D));
@@ -183,7 +196,8 @@ public class EntityFox extends EntityAnimalFuture {
 	 	  ++this.eatingTime;
 			ItemStack itemStack = this.getHeldItem();
 			if (this.canEat(itemStack)) {
-				int eatDelay = (int)((this.getHealth() < this.getMaxHealth() ? this.getHealth() / this.getMaxHealth() / 4f : 1f) * 560f);
+				int eatDelay = (int)(MathHelper.clamp_float(this.getHealth() < this.getMaxHealth() ? (this.getHealth() - 2f) / this.getMaxHealth() / 4f : 1f, 0f, 1f) * 560f);
+				System.out.println("eat delay: " + eatDelay);
 				if (this.eatingTime > eatDelay + 40) {
 					ItemStack itemStack2 = ItemStackFuture.finishUsing(itemStack, this.worldObj, this);
 					if (!ItemStackFuture.isEmpty(itemStack2)) {
@@ -225,7 +239,7 @@ public class EntityFox extends EntityAnimalFuture {
 	}
 
 	private boolean canEat(ItemStack stack) {
-		return stack != null && stack.getItem() instanceof ItemFood && this.getAttackTarget() == null && this.onGround && !this.isPlayerSleeping();
+		return stack != null && stack.getItem() instanceof ItemFood && (this.getAttackTarget() == null || EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f) && this.onGround && !this.isPlayerSleeping();
 	}
 
 	protected void initEquipment() {
@@ -466,7 +480,7 @@ public class EntityFox extends EntityAnimalFuture {
 	public boolean canPickupItem(ItemStack stack) {
 		Item item = stack.getItem();
 		ItemStack itemStack = this.getEquipmentInSlot(0);
-		return itemStack == null || this.eatingTime > 0 && item instanceof ItemFood && !(itemStack.getItem() instanceof ItemFood);
+		return itemStack == null || (this.eatingTime > 0 && item instanceof ItemFood && !(itemStack.getItem() instanceof ItemFood)) || ((this.getAITarget() != null || this.getAttackTarget() != null) && item instanceof ItemSword);
 	}
 
 	private void spit(ItemStack stack) {
@@ -714,6 +728,9 @@ public class EntityFox extends EntityAnimalFuture {
 		if(Compat.isBerryBushDamageSource(source)) {
 			return false;
 		} else {
+			if(source.getEntity() instanceof EntityMob && isFleeingNearDeath && getRNG().nextBoolean()) {
+				return false;
+			}
 			return super.attackEntityFrom(source, damage);
 		}
 	}
@@ -729,6 +746,15 @@ public class EntityFox extends EntityAnimalFuture {
 	static {
 		PICKABLE_DROP_FILTER = (entityItem) -> {
 			return !EntityItemFuture.cannotPickUp((EntityItem)entityItem) && entityItem.isEntityAlive();
+		};
+		FOOD_DROP_FILTER = (entityItem) -> {
+			return ((EntityItem)entityItem).getEntityItem().getItem() instanceof ItemFood && entityItem.isEntityAlive();
+		};
+		TOOL_DROP_FILTER = (entityItem) -> {
+			return ((EntityItem)entityItem).getEntityItem().getItem() instanceof ItemTool && entityItem.isEntityAlive();
+		};
+		SWORD_DROP_FILTER = (entityItem) -> {
+			return ((EntityItem)entityItem).getEntityItem().getItem() instanceof ItemSword && entityItem.isEntityAlive();
 		};
 		JUST_ATTACKED_SOMETHING_FILTER = (entity) -> {
 			if (!(entity instanceof EntityLiving)) {
@@ -951,6 +977,29 @@ public class EntityFox extends EntityAnimalFuture {
 			return !EntityFox.this.isAggressive() && super.shouldExecute();
 		}
 	}
+	
+	class AIEscapeWhenAggressiveAndWounded extends EntityAIPanicWithTimeout {
+		public AIEscapeWhenAggressiveAndWounded(double speed) {
+			super(EntityFox.this, speed);
+		}
+		
+		@Override
+		public void startExecuting() {
+			EntityFox.this.isFleeingNearDeath = true;
+			super.startExecuting();
+		}
+		
+		@Override
+		public boolean shouldExecute() {
+			return EntityFox.this.isAggressive() && (EntityFox.this.getHealth() <= EntityFox.this.getMaxHealth() / 4f) && super.shouldExecute();
+		}
+		
+		@Override
+		public void resetTask() {
+			EntityFox.this.isFleeingNearDeath = false;
+			super.resetTask();
+		}
+	}
 
 	class AIStopWandering extends EntityAIBase {
 		int timer;
@@ -1087,12 +1136,16 @@ public class EntityFox extends EntityAnimalFuture {
 
 		@Override
 		public boolean shouldExecute() {
-			return EntityFox.this.getEntityToAttack() == null && EntityFox.this.rand.nextFloat() < 0.02F && !EntityFox.this.isPlayerSleeping() && EntityFox.this.getAttackTarget() == null && EntityFox.this.getNavigator().noPath() && !this.canNotCalmDown() && !EntityFox.this.isChasing() && !EntityFox.this.isInSneakingPose();
+			return isIdle() && EntityFox.this.rand.nextFloat() < 0.02F;
+		}
+		
+		private boolean isIdle() {
+			return EntityFox.this.getEntityToAttack() == null && !EntityFox.this.isPlayerSleeping() && EntityFox.this.getAttackTarget() == null && EntityFox.this.getNavigator().noPath() && !this.canNotCalmDown() && !EntityFox.this.isChasing() && !EntityFox.this.isInSneakingPose() && (EntityFox.this.getHealth() > EntityFox.this.getMaxHealth() / 4f);
 		}
 
 		@Override
 		public boolean continueExecuting() {
-			return this.counter > 0;
+			return this.counter > 0 && isIdle();
 		}
 
 		@Override
@@ -1261,7 +1314,6 @@ public class EntityFox extends EntityAnimalFuture {
 
 	class AIDefendFriend extends EntityAINearestAttackableTargetEx {
 		private EntityLivingBase offender;
-		private EntityLivingBase friend;
 		private int lastAttackedTime;
 		TargetPredicate targetPredicate;
 
@@ -1284,7 +1336,7 @@ public class EntityFox extends EntityAnimalFuture {
 						Entity entity = ((WorldServer)EntityFox.this.worldObj).func_152378_a(uUID); // getPlayerByUuid
 						if (entity instanceof EntityLivingBase) {
 					 	  EntityLivingBase livingEntity = (EntityLivingBase)entity;
-							this.friend = livingEntity;
+							EntityFox.this.friend = livingEntity;
 							this.offender = livingEntity.getAITarget();
 							int i = livingEntity.func_142015_aE();
 							return i != this.lastAttackedTime && this.canTrack(this.offender, this.targetPredicate);
@@ -1329,14 +1381,20 @@ public class EntityFox extends EntityAnimalFuture {
 		public void startExecuting() {
 			// this.setTargetEntity(this.offender); // NOP
 			this.targetEntity = this.offender;
-			if (this.friend != null) {
-				this.lastAttackedTime = this.friend.getLastAttackerTime();
+			if (EntityFox.this.friend != null) {
+				this.lastAttackedTime = EntityFox.this.friend.getLastAttackerTime();
 			}
 			
 			EntityFox.this.playSound(DMod.MODID + ":entity.fox.aggro", 1.0F, 1.0F);
 			EntityFox.this.setAggressive(true);
 			EntityFox.this.stopSleeping();
 			super.startExecuting();
+		}
+		
+		@Override
+		public void resetTask() {
+			EntityFox.this.friend = null;
+			super.resetTask();
 		}
 	}
 
@@ -1392,14 +1450,28 @@ public class EntityFox extends EntityAnimalFuture {
 	}
 
 	class AIAttack extends EntityAIAttackOnCollide {
+		double baseSpeed;
 		public AIAttack(double speed, boolean pauseWhenIdle) {
 			super(EntityFox.this, speed, pauseWhenIdle);
+			this.baseSpeed = speed;
 		}
 		
 		@Override
 		public void startExecuting() {
 			EntityFox.this.setRollingHead(false);
 			super.startExecuting();
+		}
+		
+		@Override
+		public void updateTask() {
+			float deadness = MathHelper.clamp_float(1f - (EntityFox.this.getHealth() / (EntityFox.this.getMaxHealth() / 2f)), 0f, 1f);
+			boolean strong = EntityFox.this.getRNG().nextInt(12 - (int)(10 * deadness)) == 0;
+			if((EntityFox.this.friend != null && EntityFox.this.friend.getHealth() < EntityFox.this.friend.getMaxHealth() / 4f) ){
+				strong = true;
+				EntityFox.this.getNavigator().setSpeed(baseSpeed * 1.5f);
+			}
+			ReflectionHelper.setPrivateValue(EntityAIAttackOnCollide.class, this, !strong, "longMemory");
+			super.updateTask();
 		}
 
 		@Override
@@ -1426,12 +1498,14 @@ public class EntityFox extends EntityAnimalFuture {
 
 		@Override
 		public void startExecuting() {
+			System.out.println("start!");
 			EntityFox.this.setSitting(false);
 			EntityFox.this.setWalking(false);
 		}
 
 		@Override
 		public void resetTask() {
+			System.out.println("end");
 			EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
 			if (livingEntity != null && EntityFox.canJumpChase(EntityFox.this, livingEntity)) {
 				EntityFox.this.setRollingHead(true);
@@ -1447,6 +1521,7 @@ public class EntityFox extends EntityAnimalFuture {
 
 		@Override
 		public void updateTask() {
+			System.out.println("updoot");
 			EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
 			EntityFox.this.getLookHelper().setLookPositionWithEntity(livingEntity, (float)EntityFox.this.getBodyYawSpeed(), (float)EntityFox.this.getLookPitchSpeed());
 			if (EntityFox.this.getDistanceSqToEntity(livingEntity) <= 36.0D) {
@@ -1473,6 +1548,107 @@ public class EntityFox extends EntityAnimalFuture {
 
 		}
 	}
+	
+	class AIPickupWeapon extends AIPickupItem {
+		public AIPickupWeapon() {
+			super();
+		}
+		
+		private boolean isMajorFoe(EntityLivingBase e) {
+			return e != null;
+		}
+
+		@Override
+		public boolean shouldExecute() { 
+			if (EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f && EntityFox.this.getHeldItem() != null && EntityFox.this.getHeldItem().getItem() instanceof ItemFood) {
+				return false;
+			} else if (isMajorFoe(EntityFox.this.getAttackTarget()) || isMajorFoe(EntityFox.this.getAITarget())) {
+				if (!EntityFox.this.wantsToPickupItem()) {
+					return false;
+				} else if(EntityFox.this.getHeldItem() == null || !(EntityFox.this.getHeldItem().getItem() instanceof ItemSword || EntityFox.this.getHeldItem().getItem() instanceof ItemTool)) {
+					return !getNearbyItemStacks().isEmpty();
+				} else {
+					return false;
+				}
+			} else {
+				return false;
+			}
+		}
+		
+		@Override
+		public void startExecuting() {
+			EntityFox.this.searchingForWeapon = true;
+			super.startExecuting();
+		}
+		
+		@Override
+		public void resetTask() {
+			EntityFox.this.searchingForWeapon = false;
+			super.resetTask();
+		}
+		
+		@Override
+		public void updateTask() {
+			moveToNearbyItemStack(false);
+		}
+
+		@Override
+		protected double getFetchSpeed() {
+			return 1.6D;
+		}
+		
+		@Override
+		protected List getNearbyItemStacks() {
+			List swords = getNearbyItemStacksFiltered(EntityFox.SWORD_DROP_FILTER);
+			if(!swords.isEmpty()) {
+				return swords;
+			} else {
+				return getNearbyItemStacksFiltered(EntityFox.TOOL_DROP_FILTER);
+			}
+		}
+	}
+	
+	class AIPickupItemWhenWounded extends AIPickupItem {
+		public AIPickupItemWhenWounded() {
+			super();
+		}
+
+		@Override
+		public boolean shouldExecute() {
+			boolean hungry = EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f
+					&& (EntityFox.this.getHeldItem() == null || !(EntityFox.this.getHeldItem().getItem() instanceof ItemFood));
+			if(!hungry) {
+				return false;
+			} else {
+				if (!EntityFox.this.wantsToPickupItem()) {
+					return false;
+				} else {
+					return !getNearbyItemStacks().isEmpty();
+				}
+			}
+		}
+		
+		@Override
+		public void updateTask() {
+			moveToNearbyItemStack(false);
+		}
+
+		@Override
+		protected double getFetchSpeed() {
+			return MathHelperFuture.lerp(1f - (EntityFox.this.getHealth() / (EntityFox.this.getMaxHealth() / 2f)), 1.2000000476837158D, 2.2D);
+		}
+		
+		@Override
+		protected List getNearbyItemStacks() {
+			return EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.FOOD_DROP_FILTER);
+		}
+		
+		@Override
+		protected boolean prefersItem(ItemStack is) {
+			ItemStack current = EntityFox.this.getHeldItem();
+			return current == null;
+		}
+	}
 
 	class AIPickupItem extends EntityAIBase {
 		public AIPickupItem() {
@@ -1480,18 +1656,16 @@ public class EntityFox extends EntityAnimalFuture {
 		}
 
 		@Override
-		public boolean shouldExecute() {
-			boolean hungry = EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f; 
-			if (EntityFox.this.getHeldItem() != null && !hungry) {
+		public boolean shouldExecute() { 
+			if (EntityFox.this.getHeldItem() != null) {
 				return false;
-			} else if ((EntityFox.this.getAttackTarget() == null && EntityFox.this.getAITarget() == null) || hungry) {
+			} else if ((EntityFox.this.getAttackTarget() == null && EntityFox.this.getAITarget() == null)) {
 				if (!EntityFox.this.wantsToPickupItem()) {
 					return false;
-				} else if (EntityFox.this.rand.nextInt(10) != 0 && !hungry) {
+				} else if (EntityFox.this.rand.nextInt(10) != 0) {
 					return false;
 				} else {
-					List list = EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
-					return !list.isEmpty();
+					return !getNearbyItemStacks().isEmpty();
 				}
 			} else {
 				return false;
@@ -1500,21 +1674,38 @@ public class EntityFox extends EntityAnimalFuture {
 
 		@Override
 		public void updateTask() {
-			List list = EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
-			ItemStack itemStack = EntityFox.this.getHeldItem();
-			if (itemStack == null && !list.isEmpty()) {
-				EntityFox.this.getNavigator().tryMoveToEntityLiving((Entity)list.get(0), 1.2000000476837158D);
-			}
-
+			moveToNearbyItemStack(true);
 		}
 
 		@Override
 		public void startExecuting() {
-			List list = EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), EntityFox.PICKABLE_DROP_FILTER);
-			if (!list.isEmpty()) {
-				EntityFox.this.getNavigator().tryMoveToEntityLiving((Entity)list.get(0), 1.2000000476837158D);
+			moveToNearbyItemStack(false);
+		}
+		
+		protected double getFetchSpeed() {
+			return 1.2000000476837158D;
+		}
+		
+		protected List getNearbyItemStacksFiltered(IEntitySelector selector) {
+			return EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), selector);
+		}
+		
+		protected List getNearbyItemStacks() {
+			return getNearbyItemStacksFiltered(EntityFox.PICKABLE_DROP_FILTER);
+		}
+		
+		protected void moveToNearbyItemStack(boolean onlyIfNotHoldingItem) {
+			List list = getNearbyItemStacks();
+			ItemStack itemStack = EntityFox.this.getHeldItem();
+			EntityItem ei = (EntityItem)list.get(0);
+			if ((!onlyIfNotHoldingItem || prefersItem(ei.getEntityItem())) && !list.isEmpty()) {
+				EntityFox.this.getNavigator().tryMoveToEntityLiving(ei, getFetchSpeed());
 			}
-
+		}
+		
+		protected boolean prefersItem(ItemStack is) {
+			ItemStack current = EntityFox.this.getHeldItem();
+			return current == null;
 		}
 	}
 
