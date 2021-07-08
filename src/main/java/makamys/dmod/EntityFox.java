@@ -185,9 +185,7 @@ public class EntityFox extends EntityAnimalFuture {
 	private void trustAllPlayers() {
 		for(Object obj : ((WorldServer)worldObj).playerEntities) {
 			UUID uuid = ((Entity)obj).getUniqueID();
-			if(!canTrust(uuid)) {
-				addTrustedUuid(uuid);
-			}
+			this.dataWatcher.updateObject(OWNER, uuid.toString());
 		}
 	}
 	
