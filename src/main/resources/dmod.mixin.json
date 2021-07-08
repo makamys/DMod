@@ -6,7 +6,8 @@
     "compatibilityLevel": "JAVA_8",
     "mixins": [
     	"MixinEntityLiving",
-    	"MixinEntityWolf"
+    	"MixinEntityWolf",
+    	"MixinEntityLivingBase"
     ],
     "plugin": "makamys.dmod.MixinConfigPlugin"
 }
