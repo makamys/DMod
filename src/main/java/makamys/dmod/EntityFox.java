@@ -25,6 +25,7 @@ import makamys.dmod.future.EntityAIDiveJump;
 import makamys.dmod.future.EntityAIFleeSunModern;
 import makamys.dmod.future.EntityAIModernAvoidEntity;
 import makamys.dmod.future.EntityAIMoveToTargetPos;
+import makamys.dmod.future.EntityAINearestAttackableTargetEx;
 import makamys.dmod.future.EntityAnimalFuture;
 import makamys.dmod.future.EntityFuture;
 import makamys.dmod.future.EntityItemFuture;
@@ -117,7 +118,7 @@ public class EntityFox extends EntityAnimalFuture {
 	}
 
 	protected void initTasks() {
-		 this.followChickenAndRabbitTask = new EntityAINearestAttackableTarget(this, EntityLiving.class, 10, false, false, (livingEntity) -> {
+		 this.followChickenAndRabbitTask = new EntityAINearestAttackableTargetEx(this, EntityLiving.class, 10, true, false, (livingEntity) -> {
 		 	return livingEntity instanceof EntityChicken || ConfigDMod.rabbitEntities.contains(livingEntity.getClass());
 		 });
 		/*this.followBabyTurtleGoal = new FollowTargetGoal(this, TurtleEntity.class, 10, false, false, TurtleEntity.BABY_TURTLE_ON_LAND_FILTER);
@@ -1258,7 +1259,7 @@ public class EntityFox extends EntityAnimalFuture {
 		}
 	}
 
-	class AIDefendFriend extends EntityAINearestAttackableTarget {
+	class AIDefendFriend extends EntityAINearestAttackableTargetEx {
 		private EntityLivingBase offender;
 		private EntityLivingBase friend;
 		private int lastAttackedTime;
