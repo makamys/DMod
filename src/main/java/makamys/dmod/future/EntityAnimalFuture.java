@@ -76,45 +76,54 @@ public abstract class EntityAnimalFuture extends EntityAnimal implements EntityL
 	   }
 	   
 	   @Override
-	   public boolean attackEntityAsMob(Entity p_70652_1_)
+	   public boolean attackEntityAsMob(Entity target)
 	    {
 	        float f = (float)this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
 	        int i = 0;
 
-	        if (p_70652_1_ instanceof EntityLivingBase)
+	        if (target instanceof EntityLivingBase)
 	        {
-	            f += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLivingBase)p_70652_1_);
-	            i += EnchantmentHelper.getKnockbackModifier(this, (EntityLivingBase)p_70652_1_);
+	            f += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLivingBase)target);
+	            i += EnchantmentHelper.getKnockbackModifier(this, (EntityLivingBase)target);
 	        }
 
-	        boolean flag = p_70652_1_.attackEntityFrom(DamageSource.causeMobDamage(this), f);
+	        int j = EnchantmentHelper.getFireAspectModifier(this);
+
+            if (j > 0)
+            {
+                target.setFire(j * 4);
+            }
+	        
+	        boolean flag = target.attackEntityFrom(DamageSource.causeMobDamage(this), f);
 
 	        if (flag)
 	        {
 	            if (i > 0)
 	            {
-	                p_70652_1_.addVelocity((double)(-MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F));
+	                target.addVelocity((double)(-MathHelper.sin(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F), 0.1D, (double)(MathHelper.cos(this.rotationYaw * (float)Math.PI / 180.0F) * (float)i * 0.5F));
 	                this.motionX *= 0.6D;
 	                this.motionZ *= 0.6D;
 	            }
 
-	            int j = EnchantmentHelper.getFireAspectModifier(this);
-
-	            if (j > 0)
-	            {
-	                p_70652_1_.setFire(j * 4);
-	            }
-
-	            if (p_70652_1_ instanceof EntityLivingBase)
-	            {
-	                EnchantmentHelper.func_151384_a((EntityLivingBase)p_70652_1_, this);
-	            }
-
-	            EnchantmentHelper.func_151385_b(this, p_70652_1_);
+	            this.dealDamage(this, target);
+	            this.onAttacking(target);
 	        }
 
 	        return flag;
 	    }
+	   
+	   public void dealDamage(EntityLivingBase attacker, Entity target) {
+           if (target instanceof EntityLivingBase)
+           {
+               EnchantmentHelper.func_151384_a((EntityLivingBase)target, attacker);
+           }
+
+           EnchantmentHelper.func_151385_b(attacker, target);
+	   }
+	   
+	   public void onAttacking(Entity target) {
+		   this.setLastAttacker(target instanceof EntityLivingBase ? (EntityLivingBase)target : null);
+	   }
 	   
 	   public float computeFallDistance(float fallDistance) {
 		   return fallDistance;
