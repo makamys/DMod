@@ -131,7 +131,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		this.dataWatcher.addObject(OTHER_TRUSTED, String.valueOf(""));
 		this.dataWatcher.addObject(TYPE, Byte.valueOf((byte) 0));
 		this.dataWatcher.addObject(FOX_FLAGS, Byte.valueOf((byte) 0));
-		this.dataWatcher.addObject(EXPERIENCE, Integer.valueOf(0));
+		this.dataWatcher.addObject(EXPERIENCE, Float.valueOf(0));
 	}
 
 	protected void initTasks() {
@@ -389,16 +389,16 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		this.dataWatcher.updateObject(TYPE, Byte.valueOf((byte)type.getId()));
 	}
 	
-	private void setExperience(int exp) {
-		this.dataWatcher.updateObject(EXPERIENCE, Integer.valueOf(exp));
+	private void setExperience(float exp) {
+		this.dataWatcher.updateObject(EXPERIENCE, exp);
 	}
 	
-	private void addExperience(int exp) {
+	private void addExperience(float exp) {
 		setExperience(getExperience() + exp);
 	}
 	
-	public int getExperience() {
-		return this.dataWatcher.getWatchableObjectInt(EXPERIENCE);
+	public float getExperience() {
+		return this.dataWatcher.getWatchableObjectFloat(EXPERIENCE);
 	}
 
 	private List<UUID> getTrustedUuids() {
@@ -438,7 +438,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		tag.setBoolean("Sitting", this.isSitting());
 		tag.setBoolean("Crouching", this.isInSneakingPose());
 		if(this.getExperience() != 0) {
-			tag.setInteger("Experience", this.getExperience());
+			tag.setFloat("Experience", this.getExperience());
 		}
 		if(this.followOwner) {
 			tag.setBoolean("FollowOwner", this.followOwner);
@@ -464,7 +464,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 				this.addTypeSpecificTasks();
 			}
 			if(tag.hasKey("Experience")) {
-				this.setExperience(tag.getInteger("Experience"));
+				this.setExperience(tag.getFloat("Experience"));
 			}
 			if(tag.hasKey("FollowOwner")) {
 				this.followOwner = tag.getBoolean("FollowOwner");
