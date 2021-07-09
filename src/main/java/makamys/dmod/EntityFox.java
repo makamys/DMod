@@ -826,8 +826,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		if(!p_70652_1_.isEntityAlive() && p_70652_1_ instanceof EntityMob) {
 			EntityMob victim = (EntityMob)p_70652_1_;
 			int exp = ReflectionHelper.getPrivateValue(EntityLiving.class, victim, "experienceValue");
-			this.addExperience(exp);
-			DMod.LOGGER.debug("Earned " + exp + " exp (now at " + this.getExperience() + ")");
+			float expModifier = this.worldObj.isDaytime() ? 0.5f : 1f;
+			this.addExperience(exp * expModifier);
+			DMod.LOGGER.debug("Earned " + exp * expModifier + " exp (now at " + this.getExperience() + ")");
 		}
 		if(result) {
 			EntityFox.this.playSound(DMod.MODID + ":entity.fox.bite", 1.0F, 1.0F);
