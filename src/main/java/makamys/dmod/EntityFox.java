@@ -108,6 +108,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	private EntityLivingBase friend;
 	private boolean searchingForWeapon;
 	int exp = 0;
+	private boolean followOwner;
 	
 	public static boolean trustEveryone = Boolean.parseBoolean(System.getProperty("dmod.foxTrustEveryone", "false"));
 
@@ -223,6 +224,10 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 				this.setCrouching(false);
 				this.setRollingHead(false);
 			}
+		}
+		
+		if(this.getPetOwner() != null && this.getDistanceSqToEntity(this.getPetOwner()) > 64f * 64f) {
+			followOwner = false;
 		}
 
 		if (this.isPlayerSleeping() || this.isImmobile()) {
@@ -406,6 +411,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		if(this.exp != 0) {
 			tag.setInteger("Experience", this.exp);
 		}
+		if(this.followOwner) {
+			tag.setBoolean("FollowOwner", this.followOwner);
+		}
 	}
 	
 	/**
@@ -428,6 +436,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 			}
 			if(tag.hasKey("Experience")) {
 				this.exp = tag.getInteger("Experience");
+			}
+			if(tag.hasKey("FollowOwner")) {
+				this.followOwner = tag.getBoolean("FollowOwner");
 			}
 	}
 
@@ -528,6 +539,12 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	protected void loot(EntityItem item) {
 		ItemStack itemStack = item.getEntityItem();
 		if (this.canPickupItem(itemStack)) {
+			EntityPlayer dropper = DMod.instance.itemDropperMap.getIfPresent(item);
+			
+			if(isBreedingItem(itemStack) && dropper != null && dropper.getUniqueID().equals(getTrustedUuids().get(0))) {
+				followOwner = true;
+			}
+			
 			int i = itemStack.stackSize;
 			if (i > 1) {
 				this.dropItem(itemStack.splitStack(i - 1));
@@ -790,7 +807,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	
 	@Override
 	public boolean isPetSitting() {
-		return false;
+		return !followOwner;
 	}
 	
 	public int getLootingLevel() {

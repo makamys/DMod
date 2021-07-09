@@ -2,10 +2,12 @@ package makamys.dmod;
 
 import net.minecraft.client.model.ModelWolf;
 import net.minecraft.client.renderer.entity.RenderWolf;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,6 +18,9 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Loader;
@@ -33,6 +38,7 @@ import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -47,6 +53,8 @@ public class DMod
 	public static DMod instance;
     
     public static final Logger LOGGER = LogManager.getLogger("dmod");
+    
+    public Cache<EntityItem, EntityPlayer> itemDropperMap = CacheBuilder.newBuilder().maximumSize(1000).build(); 
 
     @EventHandler
     public void init(FMLInitializationEvent event)
@@ -91,5 +99,10 @@ public class DMod
     			}
     		}
     	}
+    }
+    
+    @SubscribeEvent
+    public void onItemTossEvent(ItemTossEvent event) {
+    	itemDropperMap.put(event.entityItem, event.player);
     }
 }
