@@ -42,6 +42,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
@@ -83,6 +84,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
+import static makamys.dmod.EntityFox.Ability.*;
 
 public class EntityFox extends EntityAnimalFuture implements ITameable {
 	private static final int OWNER = 18;
@@ -154,7 +156,12 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		}));
 		this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, EntityCreeper.class, 4F, 1.0D, 1.6D, (livingEntity) -> {
 			return ((EntityCreeper)livingEntity).getCreeperState() == 1;
-		}, true));
+		}, true) {
+			@Override
+			public boolean shouldExecute() {
+				return EntityFox.this.hasAbility(Ability.AVOID_PRIMED_CREEPERS) && super.shouldExecute();
+			}
+		});
 		/*this.tasks.addTask(4, new EntityAIModernAvoidEntity(this, PolarBearEntity.class, 8.0F, 1.6D, 1.4D, (livingEntity) -> {
 			return !this.isAggressive();
 		}));*/
@@ -167,7 +174,12 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		this.tasks.addTask(7, new EntityFox.AIAttack(1.2000000476837158D, true));
 		this.tasks.addTask(7, new EntityFox.AIDelayedCalmDown());
 		this.tasks.addTask(8, new EntityFox.AIFollowParent(this, 1.25D));
-		this.tasks.addTask(8, new EntityAIFollowOwnerEx(this, 1.3D, 24.0F, 8.0F));
+		this.tasks.addTask(8, new EntityAIFollowOwnerEx(this, 1.3D, 24.0F, 8.0F) {
+			@Override
+			public boolean shouldExecute() {
+				return EntityFox.this.hasAbility(FOLLOW_OWNER) && super.shouldExecute();
+			}
+		});
 	 	// TODO (hint: this.worldObj.villageCollectionObj.findNearestVillage)
 		//this.tasks.addTask(9, new EntityFox.GoToVillageGoal(32, 200));
 		this.tasks.addTask(10, new EntityFox.AIEatSweetBerries(1.2000000476837158D, 12, 2));
@@ -204,7 +216,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	 	  ++this.eatingTime;
 			ItemStack itemStack = this.getHeldItem();
 			if (this.canEat(itemStack)) {
-				int eatDelay = (int)(MathHelper.clamp_float(this.getHealth() < this.getMaxHealth() ? (this.getHealth() - 2f) / this.getMaxHealth() / 4f : 1f, 0f, 1f) * 560f);
+				int eatDelay = this.hasAbility(FASTER_EATING)
+						? (int)(MathHelper.clamp_float(this.getHealth() < this.getMaxHealth() ? (this.getHealth() - 2f) / this.getMaxHealth() / 4f : 1f, 0f, 1f) * 560f)
+						: 560;
 				if (this.eatingTime > eatDelay + 40) {
 					ItemStack itemStack2 = ItemStackFuture.finishUsing(itemStack, this.worldObj, this);
 					if (!ItemStackFuture.isEmpty(itemStack2)) {
@@ -250,7 +264,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	}
 
 	private boolean canEat(ItemStack stack) {
-		return stack != null && stack.getItem() instanceof ItemFood && (this.getAttackTarget() == null || EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f) && this.onGround && !this.isPlayerSleeping();
+		return stack != null && stack.getItem() instanceof ItemFood && (this.getAttackTarget() == null || EntityFox.this.hasAbility(Ability.WOUNDED_AI) && EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f) && this.onGround && !this.isPlayerSleeping();
 	}
 
 	protected void initEquipment() {
@@ -349,7 +363,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	
 	@Override
 	public ItemStack eatFood(World world, ItemStack stack) {
-		healByFood(stack);
+		if(this.hasAbility(EAT_TO_HEAL)) {
+			healByFood(stack);
+		}
 		return super.eatFood(world, stack);
 	}
 
@@ -513,6 +529,10 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		}
 	 */
 	public boolean canPickupItem(ItemStack stack) {
+		if(!this.hasAbility(BETTER_PICKUP)) {
+			return canPickupItemOld(stack);
+		}
+		
 		Item item = stack.getItem();
 		ItemStack itemStack = this.getEquipmentInSlot(0);
 		if(itemStack == null) {
@@ -531,6 +551,16 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		} else {
 			return false;
 		}
+	}
+	
+	private boolean canPickupItemOld(ItemStack stack) {
+		Item item = stack.getItem();
+		ItemStack itemStack = this.getEquipmentInSlot(0);
+		return itemStack == null || this.eatingTime > 0 && item instanceof ItemFood && !(itemStack.getItem() instanceof ItemFood);
+	}
+
+	private boolean canEatOld(ItemStack stack) {
+		return stack != null && stack.getItem() instanceof ItemFood && this.getAttackTarget() == null && this.onGround && !this.isPlayerSleeping();
 	}
 
 	private void spit(ItemStack stack) {
@@ -791,12 +821,12 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 			return false;
 		} else {
 			if(source.getEntity() instanceof EntityMob) {
-				if(isFleeingNearDeath && getRNG().nextBoolean()) {
+				if(this.hasAbility(FLEE_DODGE) && isFleeingNearDeath && getRNG().nextBoolean()) {
 					return false;
-				} else if(getHeldItem() != null && getHeldItem().getItem() instanceof ItemSword && getRNG().nextInt(3) == 0) {
+				} else if(this.hasAbility(SWORD_BLOCK) && getHeldItem() != null && getHeldItem().getItem() instanceof ItemSword && getRNG().nextInt(3) == 0) {
 					this.playSound("random.anvil_land", 0.5F, 1.3f);
 					damage /= 2f;
-				} else if(this.getHealth() - damage <= EntityFox.this.getMaxHealth() / 4f && this.getHealth() > EntityFox.this.getMaxHealth() / 4f) {
+				} else if(this.hasAbility(WOUNDED_SCREECH) && this.getHealth() - damage <= EntityFox.this.getMaxHealth() / 4f && this.getHealth() > EntityFox.this.getMaxHealth() / 4f) {
 					this.playSound(DMod.MODID + ":entity.fox.screech", 2F, getSoundPitch() * 1.4f);
 				}
 			}
@@ -826,7 +856,11 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	
 	public int getLootingLevel() {
 		int lootingLevel = EnchantmentHelper.getEnchantmentLevel(Enchantment.looting.effectId, this.getHeldItem());
-		return Math.max(1, lootingLevel);
+		return Math.max(this.hasAbility(INTRINSIC_LOOTING) ? 1 : 0, lootingLevel);
+	}
+	
+	public boolean hasAbility(Ability ability) {
+		return this.getExperience() >= ability.minExp;
 	}
 	
 	// TODO
@@ -1085,6 +1119,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		
 		@Override
 		public boolean shouldExecute() {
+			if(!EntityFox.this.hasAbility(WOUNDED_AI)) {
+				return false;
+			}
 			return EntityFox.this.isAggressive() && (EntityFox.this.getHealth() <= EntityFox.this.getMaxHealth() / 4f) && super.shouldExecute();
 		}
 		
@@ -1563,11 +1600,14 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		
 		@Override
 		public void updateTask() {
-			float deadness = MathHelper.clamp_float(1f - (EntityFox.this.getHealth() / (EntityFox.this.getMaxHealth() / 2f)), 0f, 1f);
-			boolean strong = EntityFox.this.getRNG().nextInt(12 - (int)(10 * deadness)) == 0;
-			if((EntityFox.this.friend != null && EntityFox.this.friend.getHealth() < EntityFox.this.friend.getMaxHealth() / 4f) ){
-				strong = true;
-				EntityFox.this.getNavigator().setSpeed(baseSpeed * 1.5f);
+			boolean strong = false;
+			if(EntityFox.this.hasAbility(ESCALATE_AGRESSION)) {
+				float deadness = MathHelper.clamp_float(1f - (EntityFox.this.getHealth() / (EntityFox.this.getMaxHealth() / 2f)), 0f, 1f);
+				strong = EntityFox.this.getRNG().nextInt(12 - (int)(10 * deadness)) == 0;
+				if((EntityFox.this.friend != null && EntityFox.this.friend.getHealth() < EntityFox.this.friend.getMaxHealth() / 4f) ){
+					strong = true;
+					EntityFox.this.getNavigator().setSpeed(baseSpeed * 1.5f);
+				}
 			}
 			ReflectionHelper.setPrivateValue(EntityAIAttackOnCollide.class, this, !strong, "longMemory");
 			super.updateTask();
@@ -1658,7 +1698,10 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		}
 
 		@Override
-		public boolean shouldExecute() { 
+		public boolean shouldExecute() {
+			if(!EntityFox.this.hasAbility(SEARCH_WEAPON_WHEN_AGGRESSIVE)) {
+				return false;
+			}
 			if (EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f && EntityFox.this.getHeldItem() != null && EntityFox.this.getHeldItem().getItem() instanceof ItemFood) {
 				return false;
 			} else if (isMajorFoe(EntityFox.this.getAttackTarget()) || isMajorFoe(EntityFox.this.getAITarget())) {
@@ -1714,6 +1757,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 
 		@Override
 		public boolean shouldExecute() {
+			if(!EntityFox.this.hasAbility(WOUNDED_AI)) {
+				return false;
+			}
 			boolean hungry = EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f
 					&& (EntityFox.this.getHeldItem() == null || !(EntityFox.this.getHeldItem().getItem() instanceof ItemFood));
 			if(!hungry) {
@@ -1848,6 +1894,34 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 
 		public static EntityFox.Type fromBiome(BiomeGenBase bgb) {
 			return bgb != null && BiomeDictionary.isBiomeOfType(bgb, BiomeDictionary.Type.SNOWY) ? SNOW : RED;
+		}
+	}
+	
+	public static enum Ability {
+		WOUNDED_SCREECH(5),
+		
+		EAT_TO_HEAL(15),
+		
+		FASTER_EATING(25),
+		WOUNDED_AI(25),
+		AVOID_PRIMED_CREEPERS(25),
+		
+		IMPROVED_HELD_ITEM_RENDERING(50),
+		BETTER_PICKUP(50),
+		FLEE_DODGE(50),
+		SEARCH_WEAPON_WHEN_AGGRESSIVE(50),
+		ESCALATE_AGRESSION(50),
+		FOLLOW_OWNER(50),
+		LOOTING_CHICKEN(50),
+		INTRINSIC_LOOTING(50),
+		
+		SWORD_BLOCK(75),
+		;
+		
+		private int minExp;
+		
+		private Ability(int minExp) {
+			this.minExp = minExp;
 		}
 	}
 }

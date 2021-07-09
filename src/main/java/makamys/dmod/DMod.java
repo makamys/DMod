@@ -89,7 +89,7 @@ public class DMod
     		EntityFox fox = (EntityFox)event.source.getEntity();
     		int looting = fox.getLootingLevel();
     		EntityLivingBase victim = event.entityLiving;
-    		if(victim instanceof EntityChicken) {
+    		if(fox.hasAbility(EntityFox.Ability.LOOTING_CHICKEN) && victim instanceof EntityChicken) {
     			int extraChicken = victim.getRNG().nextInt(1 + looting);
     			for(EntityItem entityItem : event.drops) {
     				Item item = entityItem.getEntityItem().getItem();

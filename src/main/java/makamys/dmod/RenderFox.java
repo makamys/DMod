@@ -101,7 +101,8 @@ public class RenderFox extends RenderLiving
                 GL11.glTranslatef(0.3f, 1f, 1.5f);
             }
             else {
-            	if (itemstack.getItem().isFull3D())
+            	if (p_77029_1_.hasAbility(EntityFox.Ability.IMPROVED_HELD_ITEM_RENDERING)
+            			&& itemstack.getItem().isFull3D())
 	            {
 	                f1 = 0.625F * 0.7f;
 	
