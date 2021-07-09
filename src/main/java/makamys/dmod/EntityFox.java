@@ -821,9 +821,10 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 			return false;
 		} else {
 			if(source.getEntity() instanceof EntityMob) {
+				int swordBlockAbility = this.getTieredAbilityLevel(SWORD_BLOCK, SWORD_BLOCK_II);
 				if(this.hasAbility(FLEE_DODGE) && isFleeingNearDeath && getRNG().nextBoolean()) {
 					return false;
-				} else if(this.hasAbility(SWORD_BLOCK) && getHeldItem() != null && getHeldItem().getItem() instanceof ItemSword && getRNG().nextInt(3) == 0) {
+				} else if(swordBlockAbility > 0 && getHeldItem() != null && getHeldItem().getItem() instanceof ItemSword && getRNG().nextInt(4 - swordBlockAbility) == 0) {
 					this.playSound("random.anvil_land", 0.5F, 1.3f);
 					damage /= 2f;
 				} else if(this.hasAbility(WOUNDED_SCREECH) && this.getHealth() - damage <= EntityFox.this.getMaxHealth() / 4f && this.getHealth() > EntityFox.this.getMaxHealth() / 4f) {
@@ -861,6 +862,15 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	
 	public boolean hasAbility(Ability ability) {
 		return this.getExperience() >= ability.minExp;
+	}
+	
+	public int getTieredAbilityLevel(Ability...abilities) {
+		for(int i = 0; i < abilities.length; i++)
+			if(this.getExperience() >= abilities[i].minExp) {
+				return i + 1;
+		}
+		return 0;
+		
 	}
 	
 	// TODO
@@ -1601,9 +1611,11 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		@Override
 		public void updateTask() {
 			boolean strong = false;
-			if(EntityFox.this.hasAbility(ESCALATE_AGRESSION)) {
+			int agressionAbility = getTieredAbilityLevel(ESCALATE_AGRESSION, ESCALATE_AGRESSION_II);
+			if(agressionAbility > 0) {
 				float deadness = MathHelper.clamp_float(1f - (EntityFox.this.getHealth() / (EntityFox.this.getMaxHealth() / 2f)), 0f, 1f);
-				strong = EntityFox.this.getRNG().nextInt(12 - (int)(10 * deadness)) == 0;
+				int baseAgressionChance = 12 - (agressionAbility - 1) * 4;
+				strong = EntityFox.this.getRNG().nextInt(baseAgressionChance - (int)((baseAgressionChance - 2) * deadness)) == 0;
 				if((EntityFox.this.friend != null && EntityFox.this.friend.getHealth() < EntityFox.this.friend.getMaxHealth() / 4f) ){
 					strong = true;
 					EntityFox.this.getNavigator().setSpeed(baseSpeed * 1.5f);
@@ -1900,14 +1912,13 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	public static enum Ability {
 		WOUNDED_SCREECH(5),
 		
-		EAT_TO_HEAL(15),
-		
+		EAT_TO_HEAL(25),
 		FASTER_EATING(25),
 		WOUNDED_AI(25),
 		AVOID_PRIMED_CREEPERS(25),
+		BETTER_PICKUP(25),
 		
 		IMPROVED_HELD_ITEM_RENDERING(50),
-		BETTER_PICKUP(50),
 		FLEE_DODGE(50),
 		SEARCH_WEAPON_WHEN_AGGRESSIVE(50),
 		ESCALATE_AGRESSION(50),
@@ -1916,6 +1927,11 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		INTRINSIC_LOOTING(50),
 		
 		SWORD_BLOCK(75),
+		
+		ESCALATE_AGRESSION_II(100),
+		
+		SWORD_BLOCK_II(150),
+		SWORD_SWING(150), // TODO
 		;
 		
 		private int minExp;
