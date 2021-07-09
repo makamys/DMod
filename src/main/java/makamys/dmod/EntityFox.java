@@ -827,6 +827,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 			EntityMob victim = (EntityMob)p_70652_1_;
 			int exp = ReflectionHelper.getPrivateValue(EntityLiving.class, victim, "experienceValue");
 			float expModifier = this.worldObj.isDaytime() ? 0.5f : 1f;
+			expModifier *= 1f + this.getRNG().nextFloat() * 0.2f;
 			this.addExperience(exp * expModifier);
 			DMod.LOGGER.debug("Earned " + exp * expModifier + " exp (now at " + this.getExperience() + ")");
 		}
