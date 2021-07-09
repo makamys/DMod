@@ -111,6 +111,8 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	private EntityLivingBase friend;
 	private boolean searchingForWeapon;
 	private boolean followOwner;
+	public int finishedSwings;
+	private float lastActualSwingProgress;
 	
 	public static boolean trustEveryone = Boolean.parseBoolean(System.getProperty("dmod.foxTrustEveryone", "false"));
 
@@ -208,6 +210,16 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	}
 	
 	public void onLivingUpdate() {
+		if(this.worldObj.isRemote) {
+			this.updateArmSwingProgress();
+			System.out.println(this.getSwingProgress(0) + " -> " + this.getSwingProgress(1));
+			float actualSwingProgress = this.getSwingProgress(1);
+			if(actualSwingProgress < lastActualSwingProgress) {
+				finishedSwings++;
+			}
+			lastActualSwingProgress = actualSwingProgress;
+		}
+		
 		if (!this.worldObj.isRemote && this.isEntityAlive()/* && this.canMoveVoluntarily()*/) {
 	 	 if(trustEveryone && this.ticksExisted % 20 == 0) {
 	 		 trustAllPlayers();
@@ -256,6 +268,14 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 			this.playSound(DMod.MODID + ":entity.fox.aggro", 1.0F, 1.0F);
 		}
 
+	}
+	
+	@Override
+	public void setCurrentItemOrArmor(int p_70062_1_, ItemStack p_70062_2_) {
+		if(p_70062_1_ == 0) {
+			 finishedSwings = 0;
+		}
+		super.setCurrentItemOrArmor(p_70062_1_, p_70062_2_);
 	}
 	
 	// XXX not called
@@ -1936,7 +1956,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		ESCALATE_AGRESSION_II(100),
 		
 		SWORD_BLOCK_II(150),
-		SWORD_SWING(150), // TODO
+		SWORD_SWING_ANIMATION(150),
 		;
 		
 		private int minExp;

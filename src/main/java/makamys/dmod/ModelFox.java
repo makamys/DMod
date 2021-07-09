@@ -21,6 +21,8 @@ public class ModelFox extends ModelBase
     public ModelRenderer leftFrontLeg;
     public ModelRenderer tail;
     private float legPitchModifier;
+    
+    private float partialTicks;
 
     public ModelFox(){
     	this.textureWidth = 48;
@@ -126,6 +128,8 @@ public class ModelFox extends ModelBase
            this.rightFrontLeg.rotateAngleX = -0.2617994F;
            this.leftFrontLeg.rotateAngleX = -0.2617994F;
         }
+        
+        this.partialTicks = h;
     }
 
     /**
@@ -182,7 +186,17 @@ public class ModelFox extends ModelBase
     	
         if (!foxEntity.isPlayerSleeping() && !foxEntity.isWalking() && !foxEntity.isInSneakingPose()) {
             this.head.rotateAngleX = j * 0.017453292F;
-            this.head.rotateAngleY = i * 0.017453292F;
+            float swing = 0f;
+            if(foxEntity.hasAbility(EntityFox.Ability.SWORD_SWING_ANIMATION)) {
+	            swing = foxEntity.getSwingProgress(partialTicks);
+	            if(swing != 0f) {
+		            if(foxEntity.finishedSwings % 2 == 0) {
+		            	swing = 1f - swing;
+		            }
+		        	swing = (swing / 2f - 1/4f);
+	            }
+            }
+            this.head.rotateAngleY = i * 0.017453292F + swing * ((float)Math.PI);
          }
 
          if (foxEntity.isPlayerSleeping()) {

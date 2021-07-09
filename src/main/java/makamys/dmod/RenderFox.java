@@ -114,6 +114,14 @@ public class RenderFox extends RenderLiving
 	                
 	                GL11.glTranslatef(0.02f + (itemstack.getItem() instanceof ItemSword ? 0f : 0.32f), 0.0f, 0f);
 	                GL11.glScalef(f1, -f1, f1);
+	                float swing = 0f;
+	                if(p_77029_1_.hasAbility(EntityFox.Ability.SWORD_SWING_ANIMATION)) {
+		                swing = p_77029_1_.getSwingProgress(p_77029_2_);
+		                if(p_77029_1_.finishedSwings % 2 == 1) {
+		                	swing = 1f - swing;
+		                }
+	                }
+	                GL11.glRotatef(-swing*180f, 0.0F, 1.0F, 0.0F);
 	            }
 	            else
 	            {
