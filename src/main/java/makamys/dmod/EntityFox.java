@@ -1720,7 +1720,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 				if (!EntityFox.this.wantsToPickupItem()) {
 					return false;
 				} else if(EntityFox.this.getHeldItem() == null || !(EntityFox.this.getHeldItem().getItem() instanceof ItemSword || EntityFox.this.getHeldItem().getItem() instanceof ItemTool)) {
-					return !getNearbyItemStacks().isEmpty();
+					return canPickUpNearbyItemStack();
 				} else {
 					return false;
 				}
@@ -1780,7 +1780,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 				if (!EntityFox.this.wantsToPickupItem()) {
 					return false;
 				} else {
-					return !getNearbyItemStacks().isEmpty();
+					return canPickUpNearbyItemStack();
 				}
 			}
 		}
@@ -1822,7 +1822,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 				} else if (EntityFox.this.rand.nextInt(10) != 0) {
 					return false;
 				} else {
-					return !getNearbyItemStacks().isEmpty();
+					return canPickUpNearbyItemStack();
 				}
 			} else {
 				return false;
@@ -1843,16 +1843,16 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 			return 1.2000000476837158D;
 		}
 		
-		protected List getNearbyItemStacksFiltered(IEntitySelector selector) {
+		protected List<EntityItem> getNearbyItemStacksFiltered(IEntitySelector selector) {
 			return EntityFox.this.worldObj.selectEntitiesWithinAABB(EntityItem.class, EntityFox.this.boundingBox.expand(8.0D, 8.0D, 8.0D), selector);
 		}
 		
-		protected List getNearbyItemStacks() {
+		protected List<EntityItem> getNearbyItemStacks() {
 			return getNearbyItemStacksFiltered(EntityFox.PICKABLE_DROP_FILTER);
 		}
 		
 		protected void moveToNearbyItemStack(boolean onlyIfNotHoldingItem) {
-			List list = getNearbyItemStacks();
+			List<EntityItem> list = getNearbyItemStacks();
 			ItemStack itemStack = EntityFox.this.getHeldItem();
 			EntityItem ei = (EntityItem)list.get(0);
 			if ((!onlyIfNotHoldingItem || prefersItem(ei.getEntityItem())) && !list.isEmpty()) {
@@ -1863,6 +1863,11 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		protected boolean prefersItem(ItemStack is) {
 			ItemStack current = EntityFox.this.getHeldItem();
 			return current == null;
+		}
+		
+		protected boolean canPickUpNearbyItemStack() {
+			List<EntityItem> nearbyItemStacks = getNearbyItemStacks();
+			return !nearbyItemStacks.isEmpty() && EntityFox.this.canPickupItem(nearbyItemStacks.get(0).getEntityItem());
 		}
 	}
 
