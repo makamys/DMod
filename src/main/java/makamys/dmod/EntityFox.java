@@ -478,7 +478,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	
 			this.setSleeping(tag.getBoolean("Sleeping"));
 			this.setType(EntityFox.Type.byName(tag.getString("Type")));
-			this.setSitting(tag.getBoolean("Sitting"));
+			this.setSitting(false);//tag.getBoolean("Sitting")); // disabled to avoid bugs
 			this.setCrouching(tag.getBoolean("Crouching"));
 			if (this.worldObj instanceof WorldServer) {
 				this.addTypeSpecificTasks();
