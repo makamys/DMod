@@ -1594,6 +1594,8 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 					EntityFox.addTrustedUuid(serverPlayerEntity2.getUniqueID());
 				}
 				
+				EntityFox.setExperience(Math.max(0, (((EntityFox)this.theAnimal).getExperience() + ((EntityFox)this.targetMate).getExperience()) / 2f - this.theAnimal.getRNG().nextFloat() * 10f));
+				
 				if (serverPlayerEntity3 != null)
 				{
 					serverPlayerEntity3.triggerAchievement(StatList.field_151186_x);
