@@ -89,6 +89,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	private static final int OTHER_TRUSTED = 19;
 	private static final int TYPE = 20;
 	private static final int FOX_FLAGS = 21;
+	private static final int EXPERIENCE = 22;
 	private static final IEntitySelector PICKABLE_DROP_FILTER;
 	private static final IEntitySelector FOOD_DROP_FILTER;
 	private static final IEntitySelector TOOL_DROP_FILTER;
@@ -107,7 +108,6 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	private boolean isFleeingNearDeath;
 	private EntityLivingBase friend;
 	private boolean searchingForWeapon;
-	int exp = 0;
 	private boolean followOwner;
 	
 	public static boolean trustEveryone = Boolean.parseBoolean(System.getProperty("dmod.foxTrustEveryone", "false"));
@@ -129,6 +129,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		this.dataWatcher.addObject(OTHER_TRUSTED, String.valueOf(""));
 		this.dataWatcher.addObject(TYPE, Byte.valueOf((byte) 0));
 		this.dataWatcher.addObject(FOX_FLAGS, Byte.valueOf((byte) 0));
+		this.dataWatcher.addObject(EXPERIENCE, Integer.valueOf(0));
 	}
 
 	protected void initTasks() {
@@ -371,6 +372,18 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	private void setType(EntityFox.Type type) {
 		this.dataWatcher.updateObject(TYPE, Byte.valueOf((byte)type.getId()));
 	}
+	
+	private void setExperience(int exp) {
+		this.dataWatcher.updateObject(EXPERIENCE, Integer.valueOf(exp));
+	}
+	
+	private void addExperience(int exp) {
+		setExperience(getExperience() + exp);
+	}
+	
+	public int getExperience() {
+		return this.dataWatcher.getWatchableObjectInt(EXPERIENCE);
+	}
 
 	private List<UUID> getTrustedUuids() {
 		List<UUID> list = Lists.newArrayList();
@@ -408,8 +421,8 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		tag.setString("Type", this.getFoxType().getKey());
 		tag.setBoolean("Sitting", this.isSitting());
 		tag.setBoolean("Crouching", this.isInSneakingPose());
-		if(this.exp != 0) {
-			tag.setInteger("Experience", this.exp);
+		if(this.getExperience() != 0) {
+			tag.setInteger("Experience", this.getExperience());
 		}
 		if(this.followOwner) {
 			tag.setBoolean("FollowOwner", this.followOwner);
@@ -435,7 +448,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 				this.addTypeSpecificTasks();
 			}
 			if(tag.hasKey("Experience")) {
-				this.exp = tag.getInteger("Experience");
+				this.setExperience(tag.getInteger("Experience"));
 			}
 			if(tag.hasKey("FollowOwner")) {
 				this.followOwner = tag.getBoolean("FollowOwner");
@@ -763,7 +776,8 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		if(!p_70652_1_.isEntityAlive() && p_70652_1_ instanceof EntityMob) {
 			EntityMob victim = (EntityMob)p_70652_1_;
 			int exp = ReflectionHelper.getPrivateValue(EntityLiving.class, victim, "experienceValue");
-			this.exp += exp;
+			this.addExperience(exp);
+			DMod.LOGGER.debug("Earned " + exp + " exp (now at " + this.getExperience() + ")");
 		}
 		if(result) {
 			EntityFox.this.playSound(DMod.MODID + ":entity.fox.bite", 1.0F, 1.0F);
