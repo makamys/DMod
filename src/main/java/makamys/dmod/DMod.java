@@ -29,6 +29,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import ganymedes01.etfuturum.ModBlocks;
@@ -61,6 +62,11 @@ public class DMod
     
     public Cache<EntityItem, EntityPlayer> itemDropperMap = CacheBuilder.newBuilder().maximumSize(1000).build(); 
 
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+    	DModItems.init();
+    }
+    
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
