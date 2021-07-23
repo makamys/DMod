@@ -609,7 +609,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	protected void loot(EntityItem item) {
 		ItemStack itemStack = item.getEntityItem();
 		if (this.canPickupItem(itemStack)) {
-			EntityPlayer dropper = DMod.instance.itemDropperMap.getIfPresent(item);
+			EntityPlayer dropper = DMod.proxy.itemDropperMap.getIfPresent(item);
 			
 			if(isBreedingItem(itemStack) && dropper != null && dropper.getUniqueID().equals(getTrustedUuids().get(0))) {
 				followOwner = true;
