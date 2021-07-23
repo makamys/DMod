@@ -220,7 +220,6 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	public void onLivingUpdate() {
 		if(this.worldObj.isRemote) {
 			this.updateArmSwingProgress();
-			System.out.println(this.getSwingProgress(0) + " -> " + this.getSwingProgress(1));
 			float actualSwingProgress = this.getSwingProgress(1);
 			if(actualSwingProgress < lastActualSwingProgress) {
 				finishedSwings++;
@@ -1681,14 +1680,12 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 
 		@Override
 		public void startExecuting() {
-			System.out.println("start!");
 			EntityFox.this.setSitting(false);
 			EntityFox.this.setWalking(false);
 		}
 
 		@Override
 		public void resetTask() {
-			System.out.println("end");
 			EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
 			if (livingEntity != null && EntityFox.canJumpChase(EntityFox.this, livingEntity)) {
 				EntityFox.this.setRollingHead(true);
@@ -1704,7 +1701,6 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 
 		@Override
 		public void updateTask() {
-			System.out.println("updoot");
 			EntityLivingBase livingEntity = EntityFox.this.getAttackTarget();
 			EntityFox.this.getLookHelper().setLookPositionWithEntity(livingEntity, (float)EntityFox.this.getBodyYawSpeed(), (float)EntityFox.this.getLookPitchSpeed());
 			if (EntityFox.this.getDistanceSqToEntity(livingEntity) <= 36.0D) {
