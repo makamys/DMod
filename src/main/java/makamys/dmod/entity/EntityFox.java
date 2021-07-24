@@ -832,7 +832,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		boolean result = super.attackEntityAsMob(p_70652_1_);
 		if(!p_70652_1_.isEntityAlive() && p_70652_1_ instanceof EntityMob) {
 			EntityMob victim = (EntityMob)p_70652_1_;
-			int exp = ReflectionHelper.getPrivateValue(EntityLiving.class, victim, "experienceValue");
+			int exp = ReflectionHelper.getPrivateValue(EntityLiving.class, victim, "experienceValue", "field_70728_aV");
 			float expModifier = this.worldObj.isDaytime() ? 0.5f : 1f;
 			expModifier *= 1f + this.getRNG().nextFloat() * 0.2f;
 			this.addExperience(exp * expModifier);
@@ -1652,7 +1652,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 					EntityFox.this.getNavigator().setSpeed(baseSpeed * 1.5f);
 				}
 			}
-			ReflectionHelper.setPrivateValue(EntityAIAttackOnCollide.class, this, !strong, "longMemory");
+			ReflectionHelper.setPrivateValue(EntityAIAttackOnCollide.class, this, !strong, "longMemory", "field_75437_f");
 			super.updateTask();
 		}
 
