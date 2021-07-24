@@ -5,15 +5,16 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang3.time.DateUtils;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import makamys.dmod.DMod;
 import makamys.dmod.DModItems;
 import makamys.dmod.future.item.IItemFuture;
+import makamys.dmod.future.inventory.SlotFuture;
+import makamys.dmod.future.item.ItemFuture;
+import makamys.dmod.future.item.ItemStackFuture;
+import makamys.dmod.future.nbt.NBTTagListFuture;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
@@ -22,14 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
-
-import makamys.dmod.future.inventory.SlotFuture;
-import makamys.dmod.future.item.ItemFuture;
-import makamys.dmod.future.item.ItemStackFuture;
-import makamys.dmod.util.DUtil;
-import makamys.dmod.future.nbt.NBTTagListFuture;
 
 public class ItemBundle extends Item implements IConfigurable, IItemFuture {
 	
