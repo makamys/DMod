@@ -8,7 +8,6 @@ import makamys.dmod.client.render.ModelFox;
 import makamys.dmod.client.render.RenderFox;
 import makamys.dmod.client.tooltip.DTooltipHandler;
 import makamys.dmod.entity.EntityFox;
-import makamys.dmod.inventory.DSlotClickHandler;
 import makamys.dmod.item.ItemBundle;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
@@ -20,7 +19,6 @@ public class DProxyClient extends DProxyCommon {
 		RenderingRegistry.registerEntityRenderingHandler(EntityFox.class, new RenderFox(new ModelFox(), 0.4F));
 		// TODO don't crash if chicken is not present
 		if(Loader.isModLoaded("CodeChickenCore")) {
-			GuiContainerManager.addSlotClickHandler(new DSlotClickHandler());
 			GuiContainerManager.addTooltipHandler(new DTooltipHandler());
 		}
 	}

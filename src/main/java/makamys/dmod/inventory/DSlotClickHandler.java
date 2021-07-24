@@ -5,19 +5,16 @@ import makamys.dmod.future.item.IItemFuture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class DSlotClickHandler implements IContainerSlotClickHandler {
+public class DSlotClickHandler {
 
-	@Override
-	public void beforeSlotClick(GuiContainer gui, int slotIndex, int button, Slot slot, int modifier) {}
-
-	// See https://wiki.vg/Protocol#Click_Window for explanation of arguments
-	@Override
-	public boolean handleSlotClick(GuiContainer gui, int slotIndex, int button, Slot slot, int modifier,
-			boolean eventconsumed) {
+	// See https://wiki.vg/Protocol#Click_Window
+	public static boolean onSlotClick(Container container, int slotNumber, int button, int modifier, EntityPlayer slotClickPlayer) {
+		boolean eventconsumed = false;
 		if(modifier == 0 || modifier == 5) {
 			if(modifier == 5) {
 				switch(button) {
@@ -35,7 +32,8 @@ public class DSlotClickHandler implements IContainerSlotClickHandler {
 				}
 			}
 			if(button >= 0 && button <= 2) {
-				EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+				Slot slot = container.getSlot(slotNumber);
+				EntityPlayer player = slotClickPlayer;
 				ItemStack cursor = player.inventory.getItemStack();
 				
 				ItemStack stack = slot.getStack();
@@ -44,13 +42,12 @@ public class DSlotClickHandler implements IContainerSlotClickHandler {
 				} else if(stack != null && stack.getItem() instanceof IItemFuture) {
 					eventconsumed |= ((IItemFuture)stack.getItem()).onClicked(stack, stack, slot, button, player);
 				}
+				if(eventconsumed) {
+					slot.onSlotChanged();
+				}
 			}
 		}
-		
 		return eventconsumed;
 	}
-
-	@Override
-	public void afterSlotClick(GuiContainer gui, int slotIndex, int button, Slot slot, int modifier) {}
 
 }
