@@ -16,6 +16,7 @@ import makamys.dmod.future.nbt.NBTTagListFuture;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -114,9 +115,15 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 	}
 	
 	@Override
-	public ItemStack onItemRightClick(ItemStack p_77659_1_, World p_77659_2_, EntityPlayer p_77659_3_) {
-		// TODO Auto-generated method stub
-		return super.onItemRightClick(p_77659_1_, p_77659_2_, p_77659_3_);
+	public ItemStack onItemRightClick(ItemStack p_77659_1_, World p_77659_2_, EntityPlayer user) {
+		ItemStack itemStack = user.getHeldItem();
+		if (dropAllBundledItems(itemStack, user)) {
+			// TODO stats
+			//user.incrementStat(Stats.USED.getOrCreateStat(this));
+			return itemStack;
+		} else {
+			return null;
+		}
 	}
 	
 	@Override
@@ -256,27 +263,27 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 			}
 		}
 	}
-/*
-	private static boolean dropAllBundledItems(ItemStack stack, PlayerEntity player) {
-		NBTTagCompound NBTTagCompound = stack.getOrCreateNbt();
-		if (!NBTTagCompound.contains("Items")) {
+
+	private static boolean dropAllBundledItems(ItemStack stack, EntityPlayer player) {
+		NBTTagCompound NBTTagCompound = ItemStackFuture.getOrCreateNbt(stack);
+		if (!NBTTagCompound.hasKey("Items")) {
 			return false;
 		} else {
-			if (player instanceof ServerPlayerEntity) {
-				NBTTagList NBTTagList = NBTTagCompound.getList("Items", 10);
+			if (player instanceof EntityPlayerMP) {
+				NBTTagList tagList = NBTTagCompound.getTagList("Items", 10);
 
-				for (int i = 0; i < NBTTagList.size(); ++i) {
-					NBTTagCompound NBTTagCompound2 = NBTTagList.getCompound(i);
-					ItemStack itemStack = ItemStack.fromNbt(NBTTagCompound2);
-					player.dropItem(itemStack, true);
+				for (int i = 0; i < tagList.tagCount(); ++i) {
+					NBTTagCompound NBTTagCompound2 = tagList.getCompoundTagAt(i);
+					ItemStack itemStack = ItemStack.loadItemStackFromNBT(NBTTagCompound2);
+					player.dropPlayerItemWithRandomChoice(itemStack, true);
 				}
 			}
 
-			stack.removeSubNbt("Items");
+			stack.stackTagCompound.removeTag("Items");
 			return true;
 		}
 	}
-*/
+
 	private static Stream<ItemStack> getBundledStacks(ItemStack stack) {
 		NBTTagCompound NBTTagCompound = stack.stackTagCompound;
 		if (NBTTagCompound == null) {
