@@ -5,8 +5,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;

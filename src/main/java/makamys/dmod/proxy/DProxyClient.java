@@ -8,7 +8,7 @@ import makamys.dmod.client.render.ModelFox;
 import makamys.dmod.client.render.RenderFox;
 import makamys.dmod.client.tooltip.DTooltipHandler;
 import makamys.dmod.entity.EntityFox;
-import makamys.dmod.item.ItemBundle;
+import makamys.dmod.future.item.IItemFuture;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 public class DProxyClient extends DProxyCommon {
@@ -25,8 +25,8 @@ public class DProxyClient extends DProxyCommon {
 	
 	@SubscribeEvent
     public void onItemTooltip(ItemTooltipEvent event) {
-    	if(event.itemStack.getItem() instanceof ItemBundle) {
-    		// TODO fallback if CodeChickenCore is not present
+    	if(event.itemStack.getItem() instanceof IItemFuture) {
+    		((IItemFuture)event.itemStack.getItem()).appendTooltip(event.itemStack, event.entity.worldObj, event.toolTip);
     	}
     }
 	

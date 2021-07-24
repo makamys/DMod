@@ -13,4 +13,8 @@ public class ItemFuture {
 		return dis instanceof ItemFood ? EntityLivingFuture.eatFood(user, world, stack) : stack;
 	}
 	
+	public static boolean canBeNested(Item dis) {
+		return true; // TODO don't allow shulker box, configurable blacklist?
+	}
+	
 }

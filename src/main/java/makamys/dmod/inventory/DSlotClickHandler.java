@@ -38,9 +38,9 @@ public class DSlotClickHandler {
 				
 				ItemStack stack = slot.getStack();
 				if(cursor != null && cursor.getItem() instanceof IItemFuture) {
-					eventconsumed |= ((IItemFuture)cursor.getItem()).onStackClicked(stack, slot, button, player);
+					eventconsumed |= ((IItemFuture)cursor.getItem()).onStackClicked(cursor, slot, button, player);
 				} else if(stack != null && stack.getItem() instanceof IItemFuture) {
-					eventconsumed |= ((IItemFuture)stack.getItem()).onClicked(stack, stack, slot, button, player);
+					eventconsumed |= ((IItemFuture)stack.getItem()).onClicked(stack, cursor, slot, button, player);
 				}
 				if(eventconsumed) {
 					slot.onSlotChanged();
