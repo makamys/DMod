@@ -23,7 +23,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+import net.minecraft.client.resources.I18n;
 
 public class ItemBundle extends Item implements IConfigurable, IItemFuture {
 	
@@ -40,7 +42,7 @@ public class ItemBundle extends Item implements IConfigurable, IItemFuture {
 	
    @SideOnly(Side.CLIENT)
    public void registerIcons(IIconRegister iconRegister) {
-	   super.itemIcon = iconRegister.registerIcon("dmod:bundle");
+	   super.itemIcon = iconRegister.registerIcon(DMod.MODID + ":bundle");
    }
 
 	@Override
@@ -279,10 +281,11 @@ public class ItemBundle extends Item implements IConfigurable, IItemFuture {
 		return Optional.of(new BundleTooltipData(defaultedList, getBundleOccupancy(stack)));
 	}
 */
+	@SideOnly(Side.CLIENT)
+	@Override
 	public void appendTooltip(ItemStack stack, World world, List<String> tooltip) {
 		tooltip.add(
-				//EnumChatFormatting.GRAY + I18n.format("item.minecraft.bundle.fullness", getBundleOccupancy(stack), 64));
-				getBundleOccupancy(stack) + " / 64");
+				EnumChatFormatting.GRAY + I18n.format("item." + DMod.MODID + ".bundle.fullness", getBundleOccupancy(stack), 64));
 	}
 /*
 	public void onItemEntityDestroyed(ItemEntity entity) {
