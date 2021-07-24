@@ -8,7 +8,7 @@ import makamys.dmod.client.render.ModelFox;
 import makamys.dmod.client.render.RenderFox;
 import makamys.dmod.client.tooltip.DTooltipHandler;
 import makamys.dmod.entity.EntityFox;
-import makamys.dmod.future.item.IItemFuture;
+import makamys.dmod.future.item.ItemFuture;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 public class DProxyClient extends DProxyCommon {
@@ -17,6 +17,7 @@ public class DProxyClient extends DProxyCommon {
 	public void init() {
 		super.init();
 		RenderingRegistry.registerEntityRenderingHandler(EntityFox.class, new RenderFox(new ModelFox(), 0.4F));
+		
 		// TODO don't crash if chicken is not present
 		if(Loader.isModLoaded("CodeChickenCore")) {
 			GuiContainerManager.addTooltipHandler(new DTooltipHandler());
@@ -25,8 +26,8 @@ public class DProxyClient extends DProxyCommon {
 	
 	@SubscribeEvent
     public void onItemTooltip(ItemTooltipEvent event) {
-    	if(event.itemStack.getItem() instanceof IItemFuture) {
-    		((IItemFuture)event.itemStack.getItem()).appendTooltip(event.itemStack, event.entity.worldObj, event.toolTip);
+    	if(event.itemStack.getItem() instanceof ItemFuture) {
+    		((ItemFuture)event.itemStack.getItem()).appendTooltip(event.itemStack, event.entity.worldObj, event.toolTip);
     	}
     }
 	

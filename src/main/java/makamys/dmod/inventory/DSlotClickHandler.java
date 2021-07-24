@@ -1,6 +1,6 @@
 package makamys.dmod.inventory;
 
-import makamys.dmod.future.item.IItemFuture;
+import makamys.dmod.future.item.ItemFuture;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
@@ -33,10 +33,10 @@ public class DSlotClickHandler {
 				ItemStack cursor = player.inventory.getItemStack();
 				
 				ItemStack stack = slot.getStack();
-				if(cursor != null && cursor.getItem() instanceof IItemFuture) {
-					eventconsumed |= ((IItemFuture)cursor.getItem()).onStackClicked(cursor, slot, button, player);
-				} else if(stack != null && stack.getItem() instanceof IItemFuture) {
-					eventconsumed |= ((IItemFuture)stack.getItem()).onClicked(stack, cursor, slot, button, player);
+				if(cursor != null && cursor.getItem() instanceof ItemFuture) {
+					eventconsumed |= ((ItemFuture)cursor.getItem()).onStackClicked(cursor, slot, button, player);
+				} else if(stack != null && stack.getItem() instanceof ItemFuture) {
+					eventconsumed |= ((ItemFuture)stack.getItem()).onClicked(stack, cursor, slot, button, player);
 				}
 				if(eventconsumed) {
 					slot.onSlotChanged();

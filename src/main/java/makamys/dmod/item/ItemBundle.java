@@ -9,7 +9,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import makamys.dmod.DMod;
 import makamys.dmod.DModItems;
-import makamys.dmod.future.item.IItemFuture;
 import makamys.dmod.future.inventory.SlotFuture;
 import makamys.dmod.future.item.ItemFuture;
 import makamys.dmod.future.item.ItemStackFuture;
@@ -28,7 +27,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraft.client.resources.I18n;
 
-public class ItemBundle extends Item implements IConfigurable, IItemFuture {
+public class ItemBundle extends ItemFuture implements IConfigurable {
 	
 	public static final int MAX_STORAGE = 64;
 	private static final int field_30859 = 4;
