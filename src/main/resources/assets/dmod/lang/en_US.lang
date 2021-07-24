@@ -1,2 +1,4 @@
 item.dmod.bundle.name=Bundle
 item.dmod.bundle.fullness=%s/%s
+
+entity.dmod.fox.name=Fox
