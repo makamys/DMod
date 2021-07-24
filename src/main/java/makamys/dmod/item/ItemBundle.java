@@ -24,6 +24,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraft.client.resources.I18n;
 
@@ -32,6 +33,8 @@ public class ItemBundle extends Item implements IConfigurable, IItemFuture {
 	public static final int MAX_STORAGE = 64;
 	private static final int field_30859 = 4;
 	private static final int ITEM_BAR_COLOR = 0x6666FF;
+	
+	private IIcon iconFilled;
 	
 	public ItemBundle() {
 		setMaxStackSize(1);
@@ -43,11 +46,17 @@ public class ItemBundle extends Item implements IConfigurable, IItemFuture {
    @SideOnly(Side.CLIENT)
    public void registerIcons(IIconRegister iconRegister) {
 	   super.itemIcon = iconRegister.registerIcon(DMod.MODID + ":bundle");
+	   iconFilled = iconRegister.registerIcon(DMod.MODID + ":bundle_filled");
    }
 
 	@Override
 	public boolean isEnabled() {
 		return true;
+	}
+	
+	@Override
+	public IIcon getIconIndex(ItemStack stack) {
+		return getAmountFilled(stack) > 0 ? iconFilled : itemIcon;
 	}
 	
 	public static float getAmountFilled(ItemStack stack) {
