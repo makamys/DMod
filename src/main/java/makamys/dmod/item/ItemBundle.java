@@ -135,15 +135,23 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 			return TypedActionResult.fail(itemStack);
 		}
 	}*/
+	
+	@Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return getBundleOccupancy(stack) > 0;
+    }
+    
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        return 1.0 - (Math.min(1 + 12 * getBundleOccupancy(stack) / 64, 13) / 13.0);
+    }
 
-	public boolean isItemBarVisible(ItemStack stack) {
-		return getBundleOccupancy(stack) > 0;
+	@Override
+	public boolean getItemBarHasColor(ItemStack stack) {
+		return true;
 	}
-
-	public int getItemBarStep(ItemStack stack) {
-		return Math.min(1 + 12 * getBundleOccupancy(stack) / 64, 13);
-	}
-
+	
+	@Override
 	public int getItemBarColor(ItemStack stack) {
 		return ITEM_BAR_COLOR;
 	}

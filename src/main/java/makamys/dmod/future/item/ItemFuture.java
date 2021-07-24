@@ -33,5 +33,14 @@ public abstract class ItemFuture extends Item {
 	public static boolean canBeNested(Item dis) {
 		return true; // TODO don't allow shulker box, configurable blacklist?
 	}
+
+	public boolean getItemBarHasColor(ItemStack stack) {
+		return false;
+	}
+
+	public int getItemBarColor(ItemStack stack) {
+		return 0x00FF00;
+	}
+	
 	
 }

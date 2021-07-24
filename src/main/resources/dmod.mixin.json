@@ -8,7 +8,8 @@
     	"MixinEntityLiving",
     	"MixinEntityWolf",
     	"MixinEntityLivingBase",
-    	"MixinContainer"
+    	"MixinContainer",
+    	"MixinRenderItem"
     ],
     "plugin": "makamys.dmod.MixinConfigPlugin"
 }
