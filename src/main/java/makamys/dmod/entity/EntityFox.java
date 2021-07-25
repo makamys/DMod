@@ -1956,7 +1956,6 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		FLEE_DODGE(50),
 		SEARCH_WEAPON_WHEN_AGGRESSIVE(50),
 		ESCALATE_AGRESSION(50),
-		LOOTING_CHICKEN(50),
 		INTRINSIC_LOOTING(50),
 		
 		SWORD_BLOCK(70),
