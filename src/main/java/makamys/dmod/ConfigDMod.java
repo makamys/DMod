@@ -17,13 +17,13 @@ import net.minecraftforge.common.config.Configuration;
 public class ConfigDMod {
 	
 	public static List<Item> foxBreedingItems;
-	public static List<Item> bundleCraftingItems;
 	public static List<WeightedRandomItem<Item>> foxMouthItems;
 	public static List<Class<Entity>> rabbitEntities;
 	
 	public static boolean wolvesTargetFoxes;
 	public static boolean lootingFoxFix;
 	
+	public static List<Item> bundleCraftingItems;
 	public static boolean compactBundleGUI;
 	
 	private static List<Item> resolveItemListOrDefault(Configuration config, String propName, String propCat, String[] propDefault, String propComment, Item... defaults){
@@ -82,7 +82,7 @@ public class ConfigDMod {
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
         lootingFoxFix = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "Make looting enchants of fox weapons have an effect");
     
-        compactBundleGUI = config.getBoolean("compactBundleGUI", "interface", false, "Remove extra spacing between rows in the bundle tooltip.");
+        compactBundleGUI = config.getBoolean("compactBundleGUI", "bundle", false, "Remove extra spacing between rows in the bundle tooltip.");
         
         if (config.hasChanged()) 
         {
