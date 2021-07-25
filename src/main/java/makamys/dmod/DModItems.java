@@ -13,13 +13,18 @@ public class DModItems {
 	
 	public static final Item bundle = initItem(new ItemBundle());
 	
-	public static void init() {
-    	registerRecipes();
+	public static void preInit() {
+    	
+	}
+	
+	public static void postInit() {
+		registerRecipes();
 	}
 	
 	private static void registerRecipes() {
-		// TODO use rabbit hide
-		GameRegistry.addShapedRecipe(new ItemStack(bundle), new Object[] {"SLS", "L L", "LLL", 'L', Items.leather, 'S', Items.string});
+		for(Item bundleCraftingItem : ConfigDMod.bundleCraftingItems) {
+			GameRegistry.addShapedRecipe(new ItemStack(bundle), new Object[] {"SLS", "L L", "LLL", 'L', bundleCraftingItem, 'S', Items.string});
+		}
 	}
 	
 	private static Item initItem(Item item) {

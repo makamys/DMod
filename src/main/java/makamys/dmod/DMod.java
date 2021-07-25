@@ -8,6 +8,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
@@ -31,7 +32,7 @@ public class DMod
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-    	DModItems.init();
+    	DModItems.preInit();
     }
     
     @EventHandler
@@ -41,6 +42,12 @@ public class DMod
     	MinecraftForge.EVENT_BUS.register(proxy);
         
     	proxy.init();
+    }
+    
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+    	ConfigDMod.reload(true);
+    	DModItems.postInit();
     }
     
     @EventHandler

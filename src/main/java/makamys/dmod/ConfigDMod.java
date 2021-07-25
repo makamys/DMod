@@ -17,6 +17,7 @@ import net.minecraftforge.common.config.Configuration;
 public class ConfigDMod {
 	
 	public static List<Item> foxBreedingItems;
+	public static List<Item> bundleCraftingItems;
 	public static List<WeightedRandomItem<Item>> foxMouthItems;
 	public static List<Class<Entity>> rabbitEntities;
 	
@@ -74,6 +75,8 @@ public class ConfigDMod {
 	        		resolveEntityClassListOrDefault(config, "rabbitEntities", "Fox", new String[]{"etfuturum.rabbit"}, "");
 	        foxMouthItems = Arrays.stream(config.getStringList("foxMouthItems", "Fox", new String[] {"emerald=5", "egg=15", "etfuturum:rabbit_foot=10", "etfuturum:rabbit_hide=10", "wheat=20", "leather=20", "feather=20"}, "item=weight pairs deciding the relative likelyhood of foxes spawning with certain items. Entries containing items that can't be resolved will be ignored."))
 	        		.map(str -> parseWeightedItemEntry(str)).filter(p -> p != null).collect(Collectors.toList());
+	        bundleCraftingItems = 
+	        		resolveItemListOrDefault(config, "bundleCraftingItems", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Falls back to leather if none of the items can be resolved", Items.leather);
         }
         
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
