@@ -107,15 +107,6 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 			return false;
 		}
 	}
-
-	// TODO
-	@Override
-	public boolean onItemUse(ItemStack p_77648_1_, EntityPlayer p_77648_2_, World p_77648_3_, int p_77648_4_,
-			int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_) {
-		// TODO Auto-generated method stub
-		return super.onItemUse(p_77648_1_, p_77648_2_, p_77648_3_, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_8_,
-				p_77648_9_, p_77648_10_);
-	}
 	
 	@Override
 	public ItemStack onItemRightClick(ItemStack p_77659_1_, World p_77659_2_, EntityPlayer user) {
@@ -125,23 +116,6 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 		}
 		return itemStack;
 	}
-	
-	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
-			float hitX, float hitY, float hitZ) {
-		// TODO Auto-generated method stub
-		return super.onItemUseFirst(stack, player, world, x, y, z, side, hitX, hitY, hitZ);
-	}
-	/*
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		ItemStack itemStack = user.getStackInHand(hand);
-		if (dropAllBundledItems(itemStack, user)) {
-			user.incrementStat(Stats.USED.getOrCreateStat(this));
-			return TypedActionResult.success(itemStack, world.isClient());
-		} else {
-			return TypedActionResult.fail(itemStack);
-		}
-	}*/
 	
 	@Override
     public boolean showDurabilityBar(ItemStack stack) {
