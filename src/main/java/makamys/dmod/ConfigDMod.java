@@ -23,6 +23,8 @@ public class ConfigDMod {
 	public static boolean wolvesTargetFoxes;
 	public static boolean lootingFoxFix;
 	
+	public static boolean compactBundleGUI;
+	
 	private static List<Item> resolveItemListOrDefault(Configuration config, String propName, String propCat, String[] propDefault, String propComment, Item... defaults){
 		String[] list = config.getStringList(propName, propCat, propDefault, propComment);
 		List<Item> items = new ArrayList<>();
@@ -77,6 +79,8 @@ public class ConfigDMod {
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
         lootingFoxFix = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "Make looting enchants of fox weapons have an effect");
     
+        compactBundleGUI = config.getBoolean("compactBundleGUI", "interface", false, "Remove extra spacing between rows in the bundle tooltip.");
+        
         if (config.hasChanged()) 
         {
             config.save();

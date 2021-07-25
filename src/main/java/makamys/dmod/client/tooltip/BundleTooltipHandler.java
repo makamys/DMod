@@ -1,8 +1,5 @@
 package makamys.dmod.client.tooltip;
 
-
-import static codechicken.lib.gui.GuiDraw.drawRect;
-
 import java.awt.Dimension;
 import java.util.List;
 
@@ -14,6 +11,7 @@ import codechicken.lib.gui.GuiDraw.ITooltipLineHandler;
 import codechicken.nei.guihook.GuiContainerManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import makamys.dmod.ConfigDMod;
 import makamys.dmod.DMod;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderHelper;
@@ -25,23 +23,32 @@ import net.minecraft.util.ResourceLocation;
 public class BundleTooltipHandler implements ITooltipLineHandler {
 
 	public static final ResourceLocation TEXTURE = new ResourceLocation(DMod.MODID, "textures/gui/container/bundle.png");
-	private static final int field_32381 = 4;
-	private static final int field_32382 = 1;
-	private static final int field_32383 = 128;
-	private static final int field_32384 = 18;
-	private static final int field_32385 = 20;
+	private static int field_32381 = 4;
+	private static int field_32382 = 1;
+	private static int field_32383 = 128;
+	private static int SLOT_WIDTH = 18;
+	private static int SLOT_HEIGHT = 20;
 	
 	private List<ItemStack> inventory;
 	private int occupancy;
 	
+	private static Sprites sprites = new Sprites();
+	
 	public BundleTooltipHandler(List<ItemStack> stacks, int slots) {
 		this.inventory = stacks;
 		this.occupancy = slots;
+		
+		int newSlotHeight = ConfigDMod.compactBundleGUI ? 18 : 20;
+		if(newSlotHeight != SLOT_HEIGHT) {
+			SLOT_HEIGHT = newSlotHeight;
+			sprites = new Sprites();
+		}
 	}
 	
 	@Override
 	public Dimension getSize() {
-		return new Dimension(this.getColumns() * 18 + 2, this.getRows() * 20 + 2 + 4);
+		return new Dimension(this.getColumns() * 18 + 2, this.getRows() * SLOT_HEIGHT + 2 + 4
+				+ (ConfigDMod.compactBundleGUI ? 1 : 0));
 	}
 
 	@Override
@@ -57,7 +64,7 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 		for (int l = 0; l < j; ++l) {
 			for (int m = 0; m < i; ++m) {
 				int n = x + m * 18 + 1;
-				int o = y + l * 20 + 1;
+				int o = y + l * SLOT_HEIGHT + 1;
 				this.drawSlot(n, o, k++, bl, GuiDraw.fontRenderer, GuiContainerManager.drawItems, GuiDraw.renderEngine);
 			}
 		}
@@ -72,13 +79,13 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 			RenderItem itemRenderer, TextureManager textureManager) {
 		if (index >= this.inventory.size()) {
 			this.draw(x, y, textureManager,
-					shouldBlock ? Sprite.BLOCKED_SLOT : Sprite.SLOT);
+					shouldBlock ? sprites.BLOCKED_SLOT : sprites.SLOT);
 		} else {
 			ItemStack itemStack = (ItemStack) this.inventory.get(index);
 			// calling drawItem sets some kind of state we need, which needs to
 			// be set before this.draw()... this is my workaround
 			GuiContainerManager.drawItem(x + 1, y + 1, itemStack);
-			this.draw(x, y, textureManager, Sprite.SLOT);
+			this.draw(x, y, textureManager, sprites.SLOT);
 			GuiContainerManager.drawItem(x + 1, y + 1, itemStack);
 			if (index == 0) {
 				GuiDraw.drawRect(x + 1, y + 1, 16, 16, 0x80FFFFFF);//highlight
@@ -89,27 +96,29 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 
 	private void drawOutline(int x, int y, int columns, int rows,
 			TextureManager textureManager) {
-		this.draw(x, y, textureManager, Sprite.BORDER_CORNER_TOP);
+		this.draw(x, y, textureManager, sprites.BORDER_CORNER_TOP);
 		this.draw(x + columns * 18 + 1, y, textureManager,
-				Sprite.BORDER_CORNER_TOP);
+				sprites.BORDER_CORNER_TOP);
 
+		int bottomOff = ConfigDMod.compactBundleGUI ? 1 : 0;
+		
 		int j;
 		for (j = 0; j < columns; ++j) {
 			this.draw(x + 1 + j * 18, y, textureManager,
-					Sprite.BORDER_HORIZONTAL_TOP);
-			this.draw(x + 1 + j * 18, y + rows * 20, textureManager,
-					Sprite.BORDER_HORIZONTAL_BOTTOM);
+					sprites.BORDER_HORIZONTAL_TOP);
+			this.draw(x + 1 + j * 18, y + rows * SLOT_HEIGHT + bottomOff, textureManager,
+					sprites.BORDER_HORIZONTAL_BOTTOM);
 		}
 
 		for (j = 0; j < rows; ++j) {
-			this.draw(x, y + j * 20 + 1, textureManager, Sprite.BORDER_VERTICAL);
-			this.draw(x + columns * 18 + 1, y + j * 20 + 1, textureManager,
-					Sprite.BORDER_VERTICAL);
+			this.draw(x, y + j * SLOT_HEIGHT + 1, textureManager, sprites.BORDER_VERTICAL);
+			this.draw(x + columns * 18 + 1, y + j * SLOT_HEIGHT + 1, textureManager,
+					sprites.BORDER_VERTICAL);
 		}
 
-		this.draw(x, y + rows * 20, textureManager, Sprite.BORDER_CORNER_BOTTOM);
-		this.draw(x + columns * 18 + 1, y + rows * 20, textureManager,
-				Sprite.BORDER_CORNER_BOTTOM);
+		this.draw(x, y + rows * SLOT_HEIGHT + bottomOff, textureManager, sprites.BORDER_CORNER_BOTTOM);
+		this.draw(x + columns * 18 + 1, y + rows * SLOT_HEIGHT + bottomOff, textureManager,
+				sprites.BORDER_CORNER_BOTTOM);
 	}
 
 	private void draw(int x, int y, TextureManager textureManager,
@@ -126,17 +135,24 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 	private int getRows() {
 		return (int) Math.ceil(((double) this.inventory.size() + 1.0D) / (double) this.getColumns());
 	}
-
+	
+	private static class Sprites {
+		public Sprite
+			SLOT = new Sprite(0, 0, 18, SLOT_HEIGHT),
+			BLOCKED_SLOT = new Sprite(0, 40, 18, SLOT_HEIGHT),
+			BORDER_VERTICAL = new Sprite(0, 18, 1, SLOT_HEIGHT),
+			BORDER_HORIZONTAL_TOP = new Sprite(0, SLOT_HEIGHT, 18, 1),
+			BORDER_HORIZONTAL_BOTTOM = new Sprite(0, 60, 18, 1),
+			BORDER_CORNER_TOP = new Sprite(0, SLOT_HEIGHT, 1, 1),
+			BORDER_CORNER_BOTTOM = new Sprite(0, 60, 1, 1);
+	}
+	
 	@SideOnly(Side.CLIENT)
-	private static enum Sprite {
-		SLOT(0, 0, 18, 20), BLOCKED_SLOT(0, 40, 18, 20), BORDER_VERTICAL(0, 18, 1, 20),
-		BORDER_HORIZONTAL_TOP(0, 20, 18, 1), BORDER_HORIZONTAL_BOTTOM(0, 60, 18, 1), BORDER_CORNER_TOP(0, 20, 1, 1),
-		BORDER_CORNER_BOTTOM(0, 60, 1, 1);
-
-		public final int u;
-		public final int v;
-		public final int width;
-		public final int height;
+	private static class Sprite {
+		public int u;
+		public int v;
+		public int width;
+		public int height;
 
 		private Sprite(int u, int v, int width, int height) {
 			this.u = u;
