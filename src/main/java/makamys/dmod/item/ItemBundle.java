@@ -273,15 +273,6 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 			return var10000.map(NBTTagCompound.class::cast).map(ItemStack::loadItemStackFromNBT);
 		}
 	}
-/*
-	public Optional<TooltipData> getTooltipData(ItemStack stack) {
-		DefaultedList<ItemStack> defaultedList = DefaultedList.of();
-		Stream var10000 = getBundledStacks(stack);
-		Objects.requireNonNull(defaultedList);
-		var10000.forEach(defaultedList::add);
-		return Optional.of(new BundleTooltipData(defaultedList, getBundleOccupancy(stack)));
-	}
-*/
 	
 	@SideOnly(Side.CLIENT)
 	@cpw.mods.fml.common.Optional.Method(modid = "CodeChickenCore")

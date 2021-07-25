@@ -25,9 +25,6 @@ public abstract class ItemFuture extends Item {
 		return false;
 	}
 	
-	@SideOnly(Side.CLIENT)
-	public void appendTooltip(ItemStack stack, World world, List<String> tooltip) {}
-	
 	public static ItemStack finishUsing(Item dis, ItemStack stack, World world, EntityLiving user) {
 		return dis instanceof ItemFood ? EntityLivingFuture.eatFood(user, world, stack) : stack;
 	}
@@ -43,6 +40,9 @@ public abstract class ItemFuture extends Item {
 	public int getItemBarColor(ItemStack stack) {
 		return 0x00FF00;
 	}
+	
+	@SideOnly(Side.CLIENT)
+	public void appendTooltip(ItemStack stack, World world, List<String> tooltip) {}
 	
 	@cpw.mods.fml.common.Optional.Method(modid = "CodeChickenCore")
 	@SideOnly(Side.CLIENT)
