@@ -13,6 +13,7 @@ import makamys.dmod.future.inventory.SlotFuture;
 import makamys.dmod.future.item.ItemFuture;
 import makamys.dmod.future.item.ItemStackFuture;
 import makamys.dmod.future.nbt.NBTTagListFuture;
+import makamys.dmod.util.StatRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -41,6 +43,7 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 		setUnlocalizedName(DMod.MODID + "." + "bundle");
 		setCreativeTab(CreativeTabs.tabTools);
 		setTextureName("bundle");
+		StatRegistry.instance.registerItem(this);
 	}
 	
    @SideOnly(Side.CLIENT)
@@ -118,8 +121,7 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 	public ItemStack onItemRightClick(ItemStack p_77659_1_, World p_77659_2_, EntityPlayer user) {
 		ItemStack itemStack = user.getHeldItem();
 		if (dropAllBundledItems(itemStack, user)) {
-			// TODO stats
-			//user.incrementStat(Stats.USED.getOrCreateStat(this));
+			user.addStat(StatList.objectUseStats[Item.getIdFromItem(this)], 1);
 		}
 		return itemStack;
 	}
