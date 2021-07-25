@@ -60,6 +60,7 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.enableGUIStandardItemLighting();
+        GuiContainerManager.enable2DRender();
 		
 		for (int l = 0; l < j; ++l) {
 			for (int m = 0; m < i; ++m) {
@@ -69,10 +70,10 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 			}
 		}
 		
+		this.drawOutline(x, y, i, j, GuiDraw.renderEngine);
+		
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.disableStandardItemLighting();
-		
-		this.drawOutline(x, y, i, j, GuiDraw.renderEngine);
 	}
 
 	private void drawSlot(int x, int y, int index, boolean shouldBlock, FontRenderer textRenderer,
@@ -82,15 +83,11 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 					shouldBlock ? sprites.BLOCKED_SLOT : sprites.SLOT);
 		} else {
 			ItemStack itemStack = (ItemStack) this.inventory.get(index);
-			// calling drawItem sets some kind of state we need, which needs to
-			// be set before this.draw()... this is my workaround
-			GuiContainerManager.drawItem(x + 1, y + 1, itemStack);
 			this.draw(x, y, textureManager, sprites.SLOT);
 			GuiContainerManager.drawItem(x + 1, y + 1, itemStack);
 			if (index == 0) {
 				GuiDraw.drawRect(x + 1, y + 1, 16, 16, 0x80FFFFFF);//highlight
 			}
-
 		}
 	}
 
