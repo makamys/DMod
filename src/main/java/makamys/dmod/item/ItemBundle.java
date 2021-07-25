@@ -120,10 +120,8 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 		if (dropAllBundledItems(itemStack, user)) {
 			// TODO stats
 			//user.incrementStat(Stats.USED.getOrCreateStat(this));
-			return itemStack;
-		} else {
-			return null;
 		}
+		return itemStack;
 	}
 	
 	@Override
