@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import codechicken.lib.gui.GuiDraw.ITooltipLineHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import makamys.dmod.ConfigDMod;
 import makamys.dmod.DMod;
 import makamys.dmod.DModItems;
 import makamys.dmod.client.tooltip.BundleTooltipHandler;
@@ -81,7 +82,7 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 				if(removed != null) {
 					addToBundle(stack, SlotFuture.insertStack(slot, removed));
 				}
-			} else if (ItemFuture.canBeNested(itemStack.getItem())) {
+			} else if (canAcceptItem(itemStack.getItem())) {
 				int i = (64 - getBundleOccupancy(stack)) / getItemOccupancy(itemStack);
 				addToBundle(stack, SlotFuture.takeStackRange(slot, itemStack.stackSize, i, player));
 			}
@@ -142,7 +143,7 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 	}
 
 	private static int addToBundle(ItemStack bundle, ItemStack stack) {
-		if (stack != null && ItemFuture.canBeNested(stack.getItem())) {
+		if (stack != null && canAcceptItem(stack.getItem())) {
 			NBTTagCompound NBTTagCompound = ItemStackFuture.getOrCreateNbt(bundle);
 			if (!NBTTagCompound.hasKey("Items")) {
 				NBTTagCompound.setTag("Items", new NBTTagList());
@@ -178,6 +179,10 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 		} else {
 			return 0;
 		}
+	}
+	
+	private static boolean canAcceptItem(Item item) {
+		return !ConfigDMod.bundleItemBlacklist.contains(item);
 	}
 
 	private static Optional<NBTTagCompound> canMergeStack(ItemStack stack, NBTTagList items) {

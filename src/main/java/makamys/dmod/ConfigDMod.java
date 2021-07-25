@@ -3,7 +3,9 @@ package makamys.dmod;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import makamys.dmod.util.WeightedRandomItem;
@@ -24,6 +26,7 @@ public class ConfigDMod {
 	public static boolean lootingFoxFix;
 	
 	public static List<Item> bundleCraftingItems;
+	public static Set<Item> bundleItemBlacklist;
 	public static boolean compactBundleGUI;
 	
 	private static List<Item> resolveItemListOrDefault(Configuration config, String propName, String propCat, String[] propDefault, String propComment, Item... defaults){
@@ -77,6 +80,8 @@ public class ConfigDMod {
 	        		.map(str -> parseWeightedItemEntry(str)).filter(p -> p != null).collect(Collectors.toList());
 	        bundleCraftingItems = 
 	        		resolveItemListOrDefault(config, "bundleCraftingItems", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Falls back to leather if none of the items can be resolved", Items.leather);
+	        bundleItemBlacklist = 
+	        		new HashSet<>(resolveItemListOrDefault(config, "bundleItemBlacklist", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Items that should not be allowed in a bundle"));
         }
         
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
