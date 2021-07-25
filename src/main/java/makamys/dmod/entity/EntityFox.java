@@ -145,9 +145,9 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	}
 
 	protected void initTasks() {
-		 this.followChickenAndRabbitTask = new EntityAINearestAttackableTargetEx(this, EntityLiving.class, 10, true, false, (livingEntity) -> {
+		 this.followChickenAndRabbitTask = new EntityAINearestAttackableTargetEx(this, EntityLiving.class, 10, true, false, DUtil.entitySelector(livingEntity -> {
 		 	return livingEntity instanceof EntityChicken || ConfigDMod.rabbitEntities.contains(livingEntity.getClass());
-		 });
+		 }));
 		/*this.followBabyTurtleGoal = new FollowTargetGoal(this, TurtleEntity.class, 10, false, false, TurtleEntity.BABY_TURTLE_ON_LAND_FILTER);
 		this.followFishGoal = new FollowTargetGoal(this, FishEntity.class, 20, false, false, (livingEntity) -> {
 			return livingEntity instanceof SchoolingFishEntity;
@@ -911,18 +911,18 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	 */
 
 	static {
-		PICKABLE_DROP_FILTER = (entityItem) -> {
+		PICKABLE_DROP_FILTER = DUtil.entitySelector(entityItem -> {
 			return !EntityItemFuture.cannotPickUp((EntityItem)entityItem) && entityItem.isEntityAlive();
-		};
-		FOOD_DROP_FILTER = (entityItem) -> {
+		});
+		FOOD_DROP_FILTER = DUtil.entitySelector(entityItem -> {
 			return ((EntityItem)entityItem).getEntityItem().getItem() instanceof ItemFood && entityItem.isEntityAlive();
-		};
-		TOOL_DROP_FILTER = (entityItem) -> {
+		});
+		TOOL_DROP_FILTER = DUtil.entitySelector(entityItem -> {
 			return ((EntityItem)entityItem).getEntityItem().getItem() instanceof ItemTool && entityItem.isEntityAlive();
-		};
-		SWORD_DROP_FILTER = (entityItem) -> {
+		});
+		SWORD_DROP_FILTER = DUtil.entitySelector(entityItem -> {
 			return ((EntityItem)entityItem).getEntityItem().getItem() instanceof ItemSword && entityItem.isEntityAlive();
-		};
+		});
 		JUST_ATTACKED_SOMETHING_FILTER = (entity) -> {
 			if (!(entity instanceof EntityLiving)) {
 				return false;
@@ -1488,7 +1488,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 		TargetPredicate targetPredicate;
 
 		public AIDefendFriend(Class targetEntityClass, boolean checkVisibility, boolean checkCanNavigate, Predicate<Entity> targetPredicate) {
-			super(EntityFox.this, targetEntityClass, 10, checkVisibility, checkCanNavigate, e -> targetPredicate.test(e));
+			super(EntityFox.this, targetEntityClass, 10, checkVisibility, checkCanNavigate, DUtil.entitySelector(e -> targetPredicate.test(e)));
 			this.targetPredicate = (new TargetPredicate()).setBaseMaxDistance(this.getTargetDistance()).setPredicate(targetPredicate);
 			if(!checkVisibility) {
 				// rationale for this: tall grass blocks the view of foxes. since they are so short, this greatly limits their helpfulness in

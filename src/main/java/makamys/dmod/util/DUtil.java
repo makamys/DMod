@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import cpw.mods.fml.relauncher.ReflectionHelper;
+import net.minecraft.command.IEntitySelector;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -49,5 +52,16 @@ public class DUtil {
 			}
 		}
 		return list;
+	}
+
+	/** Helper function that lets you create an IEntitySelector as a lambda.
+	 * Not using this will cause a crash in a production environment, because lambdas don't get obfuscated. */
+	public static IEntitySelector entitySelector(Predicate<Entity> predicate) {
+		return new IEntitySelector() {
+			@Override
+			public boolean isEntityApplicable(Entity entity) {
+				return predicate.test(entity);
+			}
+		};
 	}
 }
