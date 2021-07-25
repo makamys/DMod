@@ -1,6 +1,8 @@
 package makamys.dmod.client.tooltip;
 
 
+import static codechicken.lib.gui.GuiDraw.drawRect;
+
 import java.awt.Dimension;
 import java.util.List;
 
@@ -63,7 +65,7 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
         RenderHelper.disableStandardItemLighting();
 		
-		//this.drawOutline(x, y, i, j, mc.getTextureManager());
+		this.drawOutline(x, y, i, j, GuiDraw.renderEngine);
 	}
 
 	private void drawSlot(int x, int y, int index, boolean shouldBlock, FontRenderer textRenderer,
@@ -73,40 +75,42 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 					shouldBlock ? Sprite.BLOCKED_SLOT : Sprite.SLOT);
 		} else {
 			ItemStack itemStack = (ItemStack) this.inventory.get(index);
+			// calling drawItem sets some kind of state we need, which needs to
+			// be set before this.draw()... this is my workaround
 			GuiContainerManager.drawItem(x + 1, y + 1, itemStack);
 			this.draw(x, y, textureManager, Sprite.SLOT);
 			GuiContainerManager.drawItem(x + 1, y + 1, itemStack);
 			if (index == 0) {
-				//HandledScreen.drawSlotHighlight(matrices, x + 1, y + 1, z);
+				GuiDraw.drawRect(x + 1, y + 1, 16, 16, 0x80FFFFFF);//highlight
 			}
 
 		}
 	}
-/*
-	private void drawOutline(int x, int y, int columns, int rows, MatrixStack matrices, int z,
+
+	private void drawOutline(int x, int y, int columns, int rows,
 			TextureManager textureManager) {
-		this.draw(matrices, x, y, z, textureManager, BundleTooltipComponent.Sprite.BORDER_CORNER_TOP);
-		this.draw(matrices, x + columns * 18 + 1, y, z, textureManager,
-				BundleTooltipComponent.Sprite.BORDER_CORNER_TOP);
+		this.draw(x, y, textureManager, Sprite.BORDER_CORNER_TOP);
+		this.draw(x + columns * 18 + 1, y, textureManager,
+				Sprite.BORDER_CORNER_TOP);
 
 		int j;
 		for (j = 0; j < columns; ++j) {
-			this.draw(matrices, x + 1 + j * 18, y, z, textureManager,
-					BundleTooltipComponent.Sprite.BORDER_HORIZONTAL_TOP);
-			this.draw(matrices, x + 1 + j * 18, y + rows * 20, z, textureManager,
-					BundleTooltipComponent.Sprite.BORDER_HORIZONTAL_BOTTOM);
+			this.draw(x + 1 + j * 18, y, textureManager,
+					Sprite.BORDER_HORIZONTAL_TOP);
+			this.draw(x + 1 + j * 18, y + rows * 20, textureManager,
+					Sprite.BORDER_HORIZONTAL_BOTTOM);
 		}
 
 		for (j = 0; j < rows; ++j) {
-			this.draw(matrices, x, y + j * 20 + 1, z, textureManager, BundleTooltipComponent.Sprite.BORDER_VERTICAL);
-			this.draw(matrices, x + columns * 18 + 1, y + j * 20 + 1, z, textureManager,
-					BundleTooltipComponent.Sprite.BORDER_VERTICAL);
+			this.draw(x, y + j * 20 + 1, textureManager, Sprite.BORDER_VERTICAL);
+			this.draw(x + columns * 18 + 1, y + j * 20 + 1, textureManager,
+					Sprite.BORDER_VERTICAL);
 		}
 
-		this.draw(matrices, x, y + rows * 20, z, textureManager, BundleTooltipComponent.Sprite.BORDER_CORNER_BOTTOM);
-		this.draw(matrices, x + columns * 18 + 1, y + rows * 20, z, textureManager,
-				BundleTooltipComponent.Sprite.BORDER_CORNER_BOTTOM);
-	}*/
+		this.draw(x, y + rows * 20, textureManager, Sprite.BORDER_CORNER_BOTTOM);
+		this.draw(x + columns * 18 + 1, y + rows * 20, textureManager,
+				Sprite.BORDER_CORNER_BOTTOM);
+	}
 
 	private void draw(int x, int y, TextureManager textureManager,
 			Sprite sprite) {
