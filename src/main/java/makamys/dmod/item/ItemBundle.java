@@ -1,14 +1,18 @@
 package makamys.dmod.item;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import codechicken.lib.gui.GuiDraw.ITooltipLineHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import makamys.dmod.DMod;
 import makamys.dmod.DModItems;
+import makamys.dmod.client.tooltip.BundleTooltipHandler;
 import makamys.dmod.future.inventory.SlotFuture;
 import makamys.dmod.future.item.ItemFuture;
 import makamys.dmod.future.item.ItemStackFuture;
@@ -278,6 +282,14 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 		return Optional.of(new BundleTooltipData(defaultedList, getBundleOccupancy(stack)));
 	}
 */
+	
+	@SideOnly(Side.CLIENT)
+	@cpw.mods.fml.common.Optional.Method(modid = "CodeChickenCore")
+	@Override
+	public List<ITooltipLineHandler> getTooltipHandlers(ItemStack stack) {
+		return Arrays.asList(new BundleTooltipHandler(getBundledStacks(stack).collect(Collectors.toList()), getBundleOccupancy(stack)));
+	}
+	
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void appendTooltip(ItemStack stack, World world, List<String> tooltip) {

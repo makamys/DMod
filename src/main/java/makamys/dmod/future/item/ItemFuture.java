@@ -1,7 +1,9 @@
 package makamys.dmod.future.item;
 
+import java.util.Arrays;
 import java.util.List;
 
+import codechicken.lib.gui.GuiDraw.ITooltipLineHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import makamys.dmod.future.entity.EntityLivingFuture;
@@ -42,5 +44,10 @@ public abstract class ItemFuture extends Item {
 		return 0x00FF00;
 	}
 	
+	@cpw.mods.fml.common.Optional.Method(modid = "CodeChickenCore")
+	@SideOnly(Side.CLIENT)
+	public List<ITooltipLineHandler> getTooltipHandlers(ItemStack stack){
+		return Arrays.asList();
+	}
 	
 }
