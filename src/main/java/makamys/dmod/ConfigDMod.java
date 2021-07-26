@@ -72,9 +72,9 @@ public class ConfigDMod {
 	}
 	
 	private static <E extends Enum> E getEnum(Configuration config, String propName, String propCat, E propDefault, String propComment) {
-		Map<String, E> enumMap = EnumUtils.getEnumMap(propDefault.getClass());
+		Map enumMap = EnumUtils.getEnumMap(propDefault.getClass());
 		String[] valuesStr = (String[])enumMap.keySet().toArray(new String[]{});
-		return enumMap.get(config.getString(propName, propCat, propDefault.toString(), propComment, valuesStr));
+		return (E)enumMap.get(config.getString(propName, propCat, propDefault.toString(), propComment, valuesStr));
 	}
 	
 	public static void reload(boolean resolve) {
