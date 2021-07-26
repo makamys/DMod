@@ -1,14 +1,14 @@
 [
 {
   "modid": "${modid}",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "name": "D-Mod",
+  "description": "Yet another backport mod. Featuring foxes and bundles.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["makamys"],
+  "credits": "Mojang for providing the original features",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
