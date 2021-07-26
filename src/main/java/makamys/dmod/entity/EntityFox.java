@@ -890,7 +890,17 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 	}
 	
 	public boolean hasAbility(Ability ability) {
-		return this.getExperience() >= ability.minExp;
+		switch(ConfigDMod.foxAbilityMode) {
+		case NORMAL:
+			return this.getExperience() >= ability.minExp;
+		case UNLOCK_ALL:
+			return true;
+		case UNLOCK_NONE:
+			return false;
+		default:
+			throw new IllegalArgumentException();
+		}
+		
 	}
 	
 	public int getTieredAbilityLevel(Ability...abilities) {
@@ -1941,6 +1951,8 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 			return bgb != null && BiomeDictionary.isBiomeOfType(bgb, BiomeDictionary.Type.SNOWY) ? SNOW : RED;
 		}
 	}
+	
+	public static enum AbilityMode { NORMAL, UNLOCK_ALL, UNLOCK_NONE }
 	
 	public static enum Ability {
 		WOUNDED_SCREECH(5),

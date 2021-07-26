@@ -5,9 +5,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.EnumUtils;
+
+import makamys.dmod.entity.EntityFox;
 import makamys.dmod.util.WeightedRandomItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -21,6 +25,7 @@ public class ConfigDMod {
 	public static List<Item> foxBreedingItems;
 	public static List<WeightedRandomItem<Item>> foxMouthItems;
 	public static List<Class<Entity>> rabbitEntities;
+	public static EntityFox.AbilityMode foxAbilityMode;
 	
 	public static boolean wolvesTargetFoxes;
 	public static boolean lootingFoxFix;
@@ -66,6 +71,12 @@ public class ConfigDMod {
 		return items;
 	}
 	
+	private static <E extends Enum> E getEnum(Configuration config, String propName, String propCat, E propDefault, String propComment) {
+		Map<String, E> enumMap = EnumUtils.getEnumMap(propDefault.getClass());
+		String[] valuesStr = (String[])enumMap.keySet().toArray(new String[]{});
+		return enumMap.get(config.getString(propName, propCat, propDefault.toString(), propComment, valuesStr));
+	}
+	
 	public static void reload(boolean resolve) {
 		Configuration config = new Configuration(new File(Launch.minecraftHome, "config/dmod.cfg"));
         
@@ -88,6 +99,8 @@ public class ConfigDMod {
         lootingFoxFix = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "Make looting enchants of fox weapons have an effect");
     
         compactBundleGUI = config.getBoolean("compactBundleGUI", "bundle", false, "Remove extra spacing between rows in the bundle tooltip.");
+        // TODO tweak the level requirements of each individual ability
+        foxAbilityMode = getEnum(config, "foxAbilityMode", "fox", EntityFox.AbilityMode.NORMAL, "NORMAL: Foxes unlock abilities as they level up\nUNLOCK_ALL: All abilities are unlocked from the start\nUNLOCK_NONE: No abilities will ever be unlocked\nNote: changing this won't affect the amount of exp foxes have, just whether the abilities will be enabled or not");
         
         if (config.hasChanged()) 
         {
