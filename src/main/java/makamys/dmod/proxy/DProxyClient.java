@@ -6,7 +6,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import makamys.dmod.DMod;
 import makamys.dmod.client.render.ModelFox;
 import makamys.dmod.client.render.RenderFox;
-import makamys.dmod.compat.CodeChickenCoreCompat;
+import makamys.dmod.compat.NEICompat;
 import makamys.dmod.entity.EntityFox;
 import makamys.dmod.future.item.ItemFuture;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -19,10 +19,10 @@ public class DProxyClient extends DProxyCommon {
 		RenderingRegistry.registerEntityRenderingHandler(EntityFox.class, new RenderFox(new ModelFox(), 0.4F));
 		
 		// TODO don't crash if chicken is not present
-		if(Loader.isModLoaded("CodeChickenCore")) {
-			CodeChickenCoreCompat.init();
+		if(Loader.isModLoaded("NotEnoughItems")) {
+			NEICompat.init();
 		} else {
-			DMod.LOGGER.warn("CodeChickenCore was not found. Some optional features will not work.");
+			DMod.LOGGER.warn("NotEnoughItems was not found. Some optional features will not work.");
 		}
 	}
 	
