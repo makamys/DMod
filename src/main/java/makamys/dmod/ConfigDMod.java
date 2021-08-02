@@ -99,8 +99,8 @@ public class ConfigDMod {
 	        		new HashSet<>(resolveItemListOrDefault(config, "bundleItemBlacklist", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Items that should not be allowed in a bundle"));
         }
         
-        enableFox = config.getBoolean("enableFox", "features", true, "");
-        enableBundle = config.getBoolean("enableBundle", "features", true, "");
+        enableFox = config.getBoolean("enableFox", "_features", true, "");
+        enableBundle = config.getBoolean("enableBundle", "_features", true, "");
         
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
         lootingFoxFix = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "Make looting enchants of fox weapons have an effect");
