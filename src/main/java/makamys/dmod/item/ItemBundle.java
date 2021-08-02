@@ -48,7 +48,9 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 		setUnlocalizedName(DMod.MODID + "." + "bundle");
 		setCreativeTab(CreativeTabs.tabTools);
 		setTextureName("bundle");
-		StatRegistry.instance.registerItem(this);
+		if(isEnabled()) {
+			StatRegistry.instance.registerItem(this);
+		}
 	}
 	
    @SideOnly(Side.CLIENT)
