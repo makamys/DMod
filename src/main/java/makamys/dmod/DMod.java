@@ -25,7 +25,7 @@ public class DMod
     @Instance(MODID)
 	public static DMod instance;
     
-    @SidedProxy(clientSide = "makamys.dmod.proxy.DProxyClient", serverSide = "makamys.proxy.DProxyCommon")
+    @SidedProxy(clientSide = "makamys.dmod.proxy.DProxyClient", serverSide = "makamys.dmod.proxy.DProxyCommon")
     public static DProxyCommon proxy;
     
     public static final Logger LOGGER = LogManager.getLogger("dmod"); 
