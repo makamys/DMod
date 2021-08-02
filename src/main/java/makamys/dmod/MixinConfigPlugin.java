@@ -5,8 +5,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.spongepowered.asm.lib.tree.ClassNode;
+import org.spongepowered.asm.mixin.MixinEnvironment;
+import org.spongepowered.asm.mixin.MixinEnvironment.Side;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+
+import net.minecraft.client.Minecraft;
 
 public class MixinConfigPlugin implements IMixinConfigPlugin {
 	
@@ -31,6 +35,14 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
                 "makamys.dmod.mixin.MixinEntityLivingBase"
                 ).contains(mixinClassName)){
             return ConfigDMod.lootingFoxFix;
+        } else if(Arrays.asList(
+                "makamys.dmod.mixin.MixinRenderItem"
+                ).contains(mixinClassName)){
+            return MixinEnvironment.getCurrentEnvironment().getSide() == Side.CLIENT && ConfigDMod.durabilityBarColor;
+        } else if(Arrays.asList(
+                "makamys.dmod.mixin.MixinContainer"
+                ).contains(mixinClassName)){
+            return ConfigDMod.enableBundle;
         } else {
             return true;
         }
