@@ -18,7 +18,10 @@ repositories {
 		name = "chickenbones"
 		url = "http://chickenbones.net/maven/"
 	}
-    maven {
+}
+
+repositories {
+	maven {
         name = 'sponge'
         url = 'https://repo.spongepowered.org/maven/'
     }
@@ -45,24 +48,28 @@ jar {
             'MixinConfigs': project.modid + '.mixin.json',
             'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
             'TweakOrder': 0,
-            
-            // If these two are not set, Forge will not detect the mod, it will only run the mixins
-            'FMLCorePluginContainsFMLMod': 'true',
-            'ForceLoadAsMod': 'true',
-            
-            'FMLAT': "tconstruct_tabs_at.cfg",
         )
     }
 
     from(sourceSets.main.output);
-    
-    from outRefMapFile; // 1.7.10 mixin compatibility
 
     // embed libraries in jar
     from configurations.embed.collect {
         exclude '**/LICENSE.txt'
         it.isDirectory() ? it : zipTree(it)
     }
+}
+
+jar {
+	manifest {
+        attributes (
+			// If these two are not set, Forge will not detect the mod, it will only run the mixins
+            'FMLCorePluginContainsFMLMod': 'true',
+            'ForceLoadAsMod': 'true',
+		)
+	}
+	
+	from outRefMapFile; // 1.7.10 mixin compatibility
 }
 
 // 1.7.10 mixin compatibility
