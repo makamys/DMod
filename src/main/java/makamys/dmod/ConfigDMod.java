@@ -96,14 +96,14 @@ public class ConfigDMod {
 	        bundleCraftingItems = 
 	        		resolveItemListOrDefault(config, "bundleCraftingItems", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Falls back to leather if none of the items can be resolved", Items.leather);
 	        bundleItemBlacklist = 
-	        		new HashSet<>(resolveItemListOrDefault(config, "bundleItemBlacklist", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Items that should not be allowed in a bundle"));
+	        		new HashSet<>(resolveItemListOrDefault(config, "bundleItemBlacklist", "bundle", new String[]{"etfuturum:shulker_box"}, "Items that should not be allowed in a bundle"));
         }
         
         enableFox = config.getBoolean("enableFox", "_features", true, "");
         enableBundle = config.getBoolean("enableBundle", "_features", true, "");
         
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
-        lootingFoxFix = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "Make looting enchants of fox weapons have an effect");
+        lootingFoxFix = config.getBoolean("lootingFoxFix", "Mixins", true, "Make looting enchants of fox weapons have an effect");
         durabilityBarColor = config.getBoolean("durabilityBarColor", "Mixins", true, "Change the durability bar color of certain items (bundles)");
         
         compactBundleGUI = config.getBoolean("compactBundleGUI", "bundle", false, "Remove extra spacing between rows in the bundle tooltip.");
