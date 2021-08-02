@@ -34,13 +34,13 @@ configurations {
 
 apply plugin: 'forge'
 
-version = project.minecraft_version + "-" + project.version
 group = project.group
-archivesBaseName = project.modid
+archivesBaseName = "$project.modid-$project.minecraft_version"
 
 minecraft {
     version = project.minecraft_version + "-" + project.forge_version
     runDir = "run"
+	replace '@VERSION@', project.version
 }
 
 // These settings allow you to choose what version of Java you want to be compatible with. Forge 1.7.10 runs on Java 6 to 8.

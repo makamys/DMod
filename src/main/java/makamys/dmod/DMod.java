@@ -20,7 +20,7 @@ import net.minecraftforge.common.MinecraftForge;
 public class DMod
 {
     public static final String MODID = "dmod";
-    public static final String VERSION = "0.0";
+    public static final String VERSION = "@VERSION@";
     
     @Instance(MODID)
 	public static DMod instance;
