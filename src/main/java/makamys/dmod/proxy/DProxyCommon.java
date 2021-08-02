@@ -33,12 +33,14 @@ public class DProxyCommon {
 	public Cache<EntityItem, EntityPlayer> itemDropperMap = CacheBuilder.newBuilder().maximumSize(1000).build();
 	
 	public void init() {
-		EntityRegistry.registerModEntity(EntityFox.class, "fox", 0, DMod.instance, 64, 1, true);
-        
-        List<BiomeGenBase> foxBiomes = DUtil.getBiomesMatchingTag(BiomeDictionary.Type.CONIFEROUS);
-    	DMod.LOGGER.debug("Fox spawn biomes: " + String.join(", ", foxBiomes.stream().map(b -> b.biomeName + " (" + b.getClass().getName() + ")").collect(Collectors.toList())));
-        EntityRegistry.addSpawn(EntityFox.class, 8, 2, 4, EnumCreatureType.creature, foxBiomes.toArray(new BiomeGenBase[] {}));
-        EggHelper.addEgg(EntityFox.class, 14005919, 13396256);
+		if(ConfigDMod.enableFox) {
+			EntityRegistry.registerModEntity(EntityFox.class, "fox", 0, DMod.instance, 64, 1, true);
+	        
+	        List<BiomeGenBase> foxBiomes = DUtil.getBiomesMatchingTag(BiomeDictionary.Type.CONIFEROUS);
+	    	DMod.LOGGER.debug("Fox spawn biomes: " + String.join(", ", foxBiomes.stream().map(b -> b.biomeName + " (" + b.getClass().getName() + ")").collect(Collectors.toList())));
+	        EntityRegistry.addSpawn(EntityFox.class, 8, 2, 4, EnumCreatureType.creature, foxBiomes.toArray(new BiomeGenBase[] {}));
+	        EggHelper.addEgg(EntityFox.class, 14005919, 13396256);
+		}
 	}
 	
 	@SubscribeEvent

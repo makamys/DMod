@@ -59,7 +59,7 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
 
 	@Override
 	public boolean isEnabled() {
-		return true;
+		return ConfigDMod.enableBundle;
 	}
 	
 	@Override

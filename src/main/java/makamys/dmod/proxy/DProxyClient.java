@@ -3,6 +3,7 @@ package makamys.dmod.proxy;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import makamys.dmod.ConfigDMod;
 import makamys.dmod.DMod;
 import makamys.dmod.client.render.ModelFox;
 import makamys.dmod.client.render.RenderFox;
@@ -16,7 +17,10 @@ public class DProxyClient extends DProxyCommon {
 	@Override
 	public void init() {
 		super.init();
-		RenderingRegistry.registerEntityRenderingHandler(EntityFox.class, new RenderFox(new ModelFox(), 0.4F));
+		
+		if(ConfigDMod.enableFox) {
+			RenderingRegistry.registerEntityRenderingHandler(EntityFox.class, new RenderFox(new ModelFox(), 0.4F));
+		}
 		
 		// TODO don't crash if chicken is not present
 		if(Loader.isModLoaded("NotEnoughItems")) {

@@ -29,8 +29,10 @@ public class ConfigDMod {
 	
 	public static boolean wolvesTargetFoxes;
 	public static boolean lootingFoxFix;
-	
+
+	public static boolean enableFox;
 	public static boolean enableBundle;
+
 	public static List<Item> bundleCraftingItems;
 	public static Set<Item> bundleItemBlacklist;
 	public static boolean compactBundleGUI;
@@ -97,12 +99,15 @@ public class ConfigDMod {
 	        		new HashSet<>(resolveItemListOrDefault(config, "bundleItemBlacklist", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Items that should not be allowed in a bundle"));
         }
         
+        enableFox = config.getBoolean("enableFox", "features", true, "");
+        enableBundle = config.getBoolean("enableBundle", "features", true, "");
+        
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
         lootingFoxFix = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "Make looting enchants of fox weapons have an effect");
         durabilityBarColor = config.getBoolean("durabilityBarColor", "Mixins", true, "Change the durability bar color of certain items (bundles)");
         
-        enableBundle = config.getBoolean("enableBundle", "bundle", true, "");
         compactBundleGUI = config.getBoolean("compactBundleGUI", "bundle", false, "Remove extra spacing between rows in the bundle tooltip.");
+        
         // TODO tweak the level requirements of each individual ability
         foxAbilityMode = getEnum(config, "foxAbilityMode", "fox", EntityFox.AbilityMode.NORMAL, "NORMAL: Foxes unlock abilities as they level up\nUNLOCK_ALL: All abilities are unlocked from the start\nUNLOCK_NONE: No abilities will ever be unlocked\nNote: changing this won't affect the amount of exp foxes have, just whether the abilities will be enabled or not");
         
