@@ -1,10 +1,10 @@
 apply plugin: 'forge'
 
 group = project.group
-archivesBaseName = "$project.modid-$project.minecraft_version"
+archivesBaseName = "${project.modid}-${project.minecraft_version}"
 
 minecraft {
-    version = project.minecraft_version + "-" + project.forge_version
+    version = "${project.minecraft_version}-${project.forge_version}"
     runDir = "run"
 	replace '@VERSION@', project.version
 }
@@ -40,12 +40,12 @@ dependencies {
 	embed 'org.spongepowered:mixin:0.7+'
 }
 
-def outRefMapFile = tasks.compileJava.temporaryDir.toString() + "/" + project.modid + ".mixin.refmap.json" // 1.7.10 mixin compatibility
+def outRefMapFile = "${tasks.compileJava.temporaryDir}/${project.modid}.mixin.refmap.json" // 1.7.10 mixin compatibility
 
 jar {
     manifest {
         attributes (
-            'MixinConfigs': project.modid + '.mixin.json',
+            'MixinConfigs': "${project.modid}.mixin.json",
             'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker',
             'TweakOrder': 0,
         )
@@ -73,7 +73,7 @@ jar {
 }
 
 // 1.7.10 mixin compatibility
-def outSrgFile = tasks.compileJava.temporaryDir.toString() + "/outSrg.srg"
+def outSrgFile = "${tasks.compileJava.temporaryDir}/outSrg.srg"
 
 afterEvaluate {
     tasks.compileJava.options.compilerArgs += ["-AreobfSrgFile=${tasks.reobf.srg}", "-AoutSrgFile=${outSrgFile}", "-AoutRefMapFile=${outRefMapFile}"];
