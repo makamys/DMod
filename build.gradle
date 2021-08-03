@@ -1,3 +1,6 @@
+/** The root of the build. Exposed for flexibility, but you shouldn't edit it
+    unless you have to. Edit project.gradle instead. */
+
 buildscript {
     repositories {
         mavenCentral()
@@ -20,13 +23,4 @@ plugins {
     id 'maven-publish'
 }
 
-apply from: "forge-1.7-mixin.gradle"
-
-dependencies {
-	// TODO make this work
-	// compile "codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev"
-}
-
-jar.manifest.attributes (
-	'FMLAT': "${project.modid}_at.cfg",
-)
+apply from: "buildscript/forge-1.7.gradle"
