@@ -34,7 +34,7 @@ dependencies {
 	compile "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
 }
 
-if(project.enable_mixin) {
+if(project.enable_mixin.toBoolean()) {
 	apply from: "buildscript/forge-1.7-mixin.gradle"
 }
 
