@@ -33,6 +33,7 @@ public class DMod
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
     	DModItems.preInit();
+    	UpdateCheckHelper.init(MODID);
     }
     
     @EventHandler
