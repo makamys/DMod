@@ -27,7 +27,7 @@ public class DSlotClickHandler {
 					button = -1;
 				}
 			}
-			if(button >= 0 && button <= 2) {
+			if(button >= 0 && button <= 2 && slotNumber >= 0) {
 				Slot slot = container.getSlot(slotNumber);
 				EntityPlayer player = slotClickPlayer;
 				ItemStack cursor = player.inventory.getItemStack();
