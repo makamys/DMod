@@ -14,6 +14,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import makamys.dmod.proxy.DProxyCommon;
 import makamys.dmod.util.StatRegistry;
+import makamys.mclib.updatechecklibhelper.UpdateCheckLibHelper;
 import net.minecraftforge.common.MinecraftForge;
 
 @Mod(modid = DMod.MODID, version = DMod.VERSION)
@@ -28,12 +29,13 @@ public class DMod
     @SidedProxy(clientSide = "makamys.dmod.proxy.DProxyClient", serverSide = "makamys.dmod.proxy.DProxyCommon")
     public static DProxyCommon proxy;
     
-    public static final Logger LOGGER = LogManager.getLogger("dmod"); 
+    public static final Logger LOGGER = LogManager.getLogger("dmod");
+    private static final UpdateCheckLibHelper UCL_HELPER = new UpdateCheckLibHelper("@UCL_VERSION@", "@UPDATE_URL@");
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
     	DModItems.preInit();
-    	UpdateCheckHelper.init(MODID);
+    	UCL_HELPER.preInit();
     }
     
     @EventHandler

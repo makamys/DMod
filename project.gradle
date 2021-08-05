@@ -1,16 +1,3 @@
-repositories {
-	maven { url 'https://jitpack.io' }
-}
-
-minecraft {
-    srgExtra "PK: makamys/mclib makamys/satchels/lib/makamys/mclib"
-}
-
-dependencies {
-	shade files('libs/makamys.mclib-sloppydeploader-1.7.10-0.0.jar')
-	compile 'com.github.makamys:UpdateCheckLib:v1.0'
-}
-
 dependencies {
 	// TODO make this work
 	// compile "codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev"
@@ -19,3 +6,5 @@ dependencies {
 jar.manifest.attributes (
 	'FMLAT': "${project.modid}_at.cfg",
 )
+
+apply from: "makalibs.gradle"

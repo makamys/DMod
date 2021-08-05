@@ -3,7 +3,7 @@
 apply plugin: 'forge'
 
 group = project.group
-archivesBaseName = "${project.modid}-${project.minecraft_version}"
+archivesBaseName = "${project.archives_base}-${project.minecraft_version}"
 
 minecraft {
     version = "${project.minecraft_version}-${project.forge_version}"
@@ -29,11 +29,6 @@ configurations {
     compile.extendsFrom(shade)
 }
 
-dependencies {
-	compile "codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev"
-	compile "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
-}
-
 if(project.enable_mixin.toBoolean()) {
 	apply from: "buildscript/forge-1.7-mixin.gradle"
 }
@@ -57,14 +52,14 @@ jar {
 }
 
 processResources {
-    // This will ensure that this task is redone when the versions change.
+    // This will ensure that this task is redone when the versions or any
+	// user-defined properties change.
     inputs.property "version", version
     inputs.property "mcversion", project.minecraft.version
+	inputs.properties project.ext.getProperties()
 
-    // Replace values in only mcmod.info.
-    filesMatching('mcmod.info') {
-        // Replace version and mcversion.
-        expand 'modid':project.modid, 'version':version, 'mcversion':project.minecraft.version
+    filesMatching('*.info') {
+        expand project.properties
     }
 }
 

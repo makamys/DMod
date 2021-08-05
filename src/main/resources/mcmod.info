@@ -4,7 +4,7 @@
   "name": "D-Mod",
   "description": "Yet another backport mod. Featuring foxes and bundles.",
   "version": "${version}",
-  "mcversion": "${mcversion}",
+  "mcversion": "${minecraft_version}",
   "url": "",
   "updateUrl": "",
   "authorList": ["makamys"],
