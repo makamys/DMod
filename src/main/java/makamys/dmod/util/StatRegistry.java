@@ -20,6 +20,8 @@ public class StatRegistry {
 	
 	private static List<RegistryInfo> items = new ArrayList<>();
 	
+	private boolean applied = false;
+	
 	public static void registerItem(Item item) {
         if (item != null) {
         	items.add(new RegistryInfo(item));
@@ -50,11 +52,15 @@ public class StatRegistry {
                 StatList.itemStats.add(info.stat);
             }
     	}
+    	applied = true;
     }
     
     @EventHandler
     public void onServerStopped(FMLServerStoppedEvent event) {
-    	clearIDs();
+        if(applied) {
+        	clearIDs();
+        	applied = false;
+        }
     }
     
     private static class RegistryInfo {
