@@ -84,7 +84,9 @@ public class BundleTooltipHandler implements ITooltipLineHandler {
 		} else {
 			ItemStack itemStack = (ItemStack) this.inventory.get(index);
 			this.draw(x, y, textureManager, sprites.SLOT);
+			GuiContainerManager.drawItems.zLevel += 250f;
 			GuiContainerManager.drawItem(x + 1, y + 1, itemStack);
+			GuiContainerManager.drawItems.zLevel -= 250f;
 			if (index == 0) {
 				GuiDraw.drawRect(x + 1, y + 1, 16, 16, 0x80FFFFFF);//highlight
 			}
