@@ -15,11 +15,11 @@ Foxes also have some extra features implemented. Untamed, they behave the same a
 
 Full documentation coming soon : ) For the time being you can look [here](https://github.com/makamys/DMod/blob/21d63d86e357626f3d212447e34f2f1fd4495cf6/src/main/java/makamys/dmod/entity/EntityFox.java#L1957-L1987) to get a general picture.
 
-This system can be disabled or configured to unlock all abilities from the start.
+This system can be disabled, or configured to unlock all abilities from the start.
 
 # Dependencies
 
-* Item icons in bundle tooltips will only be drawn if [NEI](https://www.curseforge.com/minecraft/mc-mods/notenoughitems) (I recommend the [GTNH fork](https://www.curseforge.com/minecraft/mc-mods/notenoughitems-gtnh)) is installed.
+* Item icons in bundle tooltips will only be drawn if [NEI](https://www.curseforge.com/minecraft/mc-mods/notenoughitems) is installed (I recommend the [GTNH fork](https://www.curseforge.com/minecraft/mc-mods/notenoughitems-gtnh)).
 * [Et Futurum Requiem](https://www.curseforge.com/minecraft/mc-mods/et-futurum-requiem) is highly recommended as it backports sweet berries (useful for foxes) and rabbits (useful for bundles).
 
 # License
