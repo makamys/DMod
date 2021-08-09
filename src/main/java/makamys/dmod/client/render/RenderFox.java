@@ -2,7 +2,6 @@ package makamys.dmod.client.render;
 
 import org.lwjgl.opengl.GL11;
 
-import codechicken.lib.math.MathHelper;
 import makamys.dmod.entity.EntityFox;
 import makamys.dmod.future.util.MathHelperFuture;
 import net.minecraft.block.Block;
@@ -87,8 +86,8 @@ public class RenderFox extends RenderLiving
             ModelFox mf = (ModelFox)mainModel;
             GL11.glTranslatef(mf.head.rotationPointX/16f, mf.head.rotationPointY/16f, mf.head.rotationPointZ/16f);
             
-            GL11.glRotatef((float)MathHelper.todeg * mf.head.rotateAngleY, 0f, 1f, 0f);
-            GL11.glRotatef((float)MathHelper.todeg * mf.head.rotateAngleX, 1f, 0f, 0f);
+            GL11.glRotatef((float)Math.toDegrees(mf.head.rotateAngleY), 0f, 1f, 0f);
+            GL11.glRotatef((float)Math.toDegrees(mf.head.rotateAngleX), 1f, 0f, 0f);
             
             GL11.glTranslatef(0f, 0.3f, -0.35f);
 
