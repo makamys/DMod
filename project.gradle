@@ -1,6 +1,14 @@
+repositories {
+	maven {
+		name = "gt"
+		url = "http://gregtech.overminddl1.com/"
+	}
+}
+
 dependencies {
 	// TODO make this work
 	// compile "codechicken:NotEnoughItems:1.7.10-1.0.5.120:dev"
+	compile "ganymedes01.etfuturum:Et_Futurum_Requiem:2.1.2:dev"
 }
 
 jar.manifest.attributes (
