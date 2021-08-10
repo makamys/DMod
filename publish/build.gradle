@@ -16,6 +16,8 @@ def githubOK = project.hasProperty("githubToken")
 def curseOK = project.hasProperty("curseToken") && project.hasProperty("gameVersion")
 def modrinthOK = project.hasProperty("modrinthToken") && project.hasProperty("gameVersion")
 
+def debugPublish = project.hasProperty("debugPublish") && project.debugPublish.toBoolean()
+
 task build {}
 task assemble {}
 
@@ -29,7 +31,7 @@ if(githubOK){
 		targetCommitish "master" // by default this is set to "master"
 		releaseName "${project.releaseName} ${buildVersion}"
 		body changeLog // by default this is empty
-		draft false // by default this is false
+		draft project.debugPublish // by default this is false
 		prerelease false // by default this is false
 		releaseAssets getFiles() // this points to which files you want to upload as assets with your release
 
@@ -71,7 +73,7 @@ if(project.hasProperty("gameVersion")){
 				additionalFiles.each { addArtifact(it) }
 			}
 			options {
-				debug = false
+				debug = project.debugPublish
 				javaIntegration = false
 				forgeGradleIntegration = false
 				javaVersionAutoDetect = false
