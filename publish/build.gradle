@@ -140,12 +140,12 @@ task listFiles {
 
 project.gameVersions.collect({toBaseVersion(it)}).each { ver ->
 	def dir = getVersionProjectPath(ver)
-	task ("cleanAndBuild-$ver", type: Exec) {
+	task ("cleanBuild-$ver", type: Exec) {
 		workingDir dir
 		commandLine 'sh', '-c', "rm build/libs/* && ./gradlew build"
 	}
 }
 
-task cleanAndBuildAll(dependsOn: project.gameVersions.collect({"cleanAndBuild-$it"})) {
+task cleanBuildAll(dependsOn: project.gameVersions.collect({"cleanBuild-$it"})) {
 
 }
