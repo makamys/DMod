@@ -78,7 +78,7 @@ if(project.hasProperty("gameVersion")){
 				additionalFiles.each { addArtifact(it) }
 			}
 			options {
-				debug = project.debugPublish
+				debug = debugPublish
 				javaIntegration = false
 				forgeGradleIntegration = false
 				javaVersionAutoDetect = false
