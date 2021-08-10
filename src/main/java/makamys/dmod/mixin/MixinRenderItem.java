@@ -17,12 +17,12 @@ public abstract class MixinRenderItem {
 	
 	ItemStack lastStack;
 	
-	@Inject(method = "renderItemOverlayIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V", at = @At(value = "HEAD", args = "log=true"))
+	@Inject(method = "renderItemOverlayIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V", at = @At(value = "HEAD"))
 	private void preRenderItemOverlayIntoGUI(FontRenderer fontRenderer, TextureManager textureManager, ItemStack stack, int x, int y, String string, CallbackInfo ci) {
 		lastStack = stack;
 	}
 	
-	@ModifyVariable(method = "renderItemOverlayIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V", at = @At(value = "STORE", args = "log=true"), name = "l", print = true)
+	@ModifyVariable(method = "renderItemOverlayIntoGUI(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V", at = @At(value = "STORE"), name = "l")
 	private int getBarColor(int old) {
 		if(lastStack.getItem() instanceof ItemFuture) {
 			ItemFuture item = (ItemFuture)lastStack.getItem();
