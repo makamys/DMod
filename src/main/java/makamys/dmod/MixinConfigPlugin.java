@@ -39,7 +39,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
                 return true;
             case TRUE:
                 if(isBacklytraPresent()) {
-                    DMod.LOGGER.info("Detected Backlytra, disabling fox looting mixin for compatibility.");
+                    System.out.println("Detected Backlytra, disabling fox looting mixin for compatibility.");
                     return false;
                 } else {
                     return true;
