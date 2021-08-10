@@ -6,6 +6,8 @@ plugins {
 
 import com.modrinth.minotaur.TaskModrinthUpload
 import groovy.json.JsonSlurper
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 
 def buildVersion = new File("${projectDir}/version.txt").getText('UTF-8')
 def changeLog = new File("${projectDir}/changelog.md").getText('UTF-8')
@@ -31,14 +33,17 @@ if(githubOK){
 		targetCommitish "master" // by default this is set to "master"
 		releaseName "${project.releaseName} ${buildVersion}"
 		body changeLog // by default this is empty
-		draft false // by default this is false
+		draft true // by default this is false
 		prerelease false // by default this is false
 		releaseAssets getFiles() // this points to which files you want to upload as assets with your release
 
 		overwrite false // by default false; if set to true, will delete an existing release with the same tag and name
 		dryRun debugPublish // by default false; you can use this to see what actions would be taken without making a release
 		apiEndpoint "https://api.github.com" // should only change for github enterprise users
-		client // This is the okhttp client used for http requests
+		client new OkHttpClient.Builder()
+			.writeTimeout(5, TimeUnit.MINUTES)
+			.readTimeout(5, TimeUnit.MINUTES)
+			.build() // Added because I kept getting SocketTimeoutExceptions
 	}
 } else {
 	println("Not configuring GitHub publish because project arguments are missing.")
