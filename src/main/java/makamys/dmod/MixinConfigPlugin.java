@@ -34,7 +34,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
         } else if(Arrays.asList(
                 "makamys.dmod.mixin.MixinEntityLivingBase"
                 ).contains(mixinClassName)){
-            return ConfigDMod.lootingFoxFix;
+            return ConfigDMod.lootingFoxFix && !isBacklytraPresent();
         } else if(Arrays.asList(
                 "makamys.dmod.mixin.MixinRenderItem"
                 ).contains(mixinClassName)){
@@ -70,6 +70,15 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
         // TODO Auto-generated method stub
         
+    }
+    
+    private static boolean isBacklytraPresent() {
+        try {
+            Class.forName("com.unascribed.backlytra.asm.BacklytraLoadingPlugin");
+            return true;
+        } catch(Exception e) {
+            return false;
+        }
     }
 
 }

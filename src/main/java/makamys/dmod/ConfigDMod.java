@@ -103,7 +103,7 @@ public class ConfigDMod {
         enableBundle = config.getBoolean("enableBundle", "_features", true, "");
         
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
-        lootingFoxFix = config.getBoolean("lootingFoxFix", "Mixins", true, "Make looting enchants of fox weapons have an effect");
+        lootingFoxFix = config.getBoolean("lootingFoxFix", "Mixins", true, "Make looting enchants of fox weapons have an effect. (Incompatible with Backlytra. This option will automatically get disabled if it's present.");
         durabilityBarColor = config.getBoolean("durabilityBarColor", "Mixins", true, "Change the durability bar color of certain items (bundles)");
         
         compactBundleGUI = config.getBoolean("compactBundleGUI", "bundle", false, "Remove extra spacing between rows in the bundle tooltip.");
