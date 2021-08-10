@@ -121,7 +121,7 @@ def getVersionProjectPath(ver){
 def getFiles(ver) {
 	def files = []
 	new File("${getVersionProjectPath(ver)}/build/libs").eachFile(groovy.io.FileType.FILES, {
-		if(!it.name.endsWith("-sources.jar")){
+		if(!(it.name.endsWith("-sources.jar") || it.name.endsWith("-dev.jar"))){
 			files << it
 		}
 	})
