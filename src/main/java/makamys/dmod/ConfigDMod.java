@@ -26,6 +26,7 @@ public class ConfigDMod {
 	public static List<WeightedRandomItem<Item>> foxMouthItems;
 	public static List<Class<Entity>> rabbitEntities;
 	public static EntityFox.AbilityMode foxAbilityMode;
+	public static float foxExpModifier;
 	
 	public static boolean wolvesTargetFoxes;
 	public static ForceableBoolean lootingFoxFix;
@@ -116,6 +117,7 @@ public class ConfigDMod {
         
         // TODO tweak the level requirements of each individual ability
         foxAbilityMode = getEnum(config, "foxAbilityMode", "fox", EntityFox.AbilityMode.NORMAL, "NORMAL: Foxes unlock abilities as they level up\nUNLOCK_ALL: All abilities are unlocked from the start\nUNLOCK_NONE: No abilities will ever be unlocked\nNote: changing this won't affect the amount of exp foxes have, just whether the abilities will be enabled or not");
+        foxExpModifier = config.getFloat("foxExpModifier", "Fox", 1f, 0f, Float.POSITIVE_INFINITY, "The EXP foxes earn will get multiplied by this value.");
         
         if (config.hasChanged()) 
         {
