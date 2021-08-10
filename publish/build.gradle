@@ -5,10 +5,12 @@ plugins {
 }
 
 import com.modrinth.minotaur.TaskModrinthUpload
+import groovy.json.JsonSlurper
 
-def buildVersion = new File("${projectDir}/../version.txt").getText('UTF-8')
+def buildVersion = new File("${projectDir}/version.txt").getText('UTF-8')
 def changeLog = new File("${projectDir}/changelog.md").getText('UTF-8')
-ext.gameVersions = file("gameVersions.txt").getText('UTF-8').split(" ")
+def gameVersionsMap = new JsonSlurper().parseText(file("gameVersions.json").getText('UTF-8'))
+ext.gameVersions = gameVersionsMap.keySet()
 
 def githubOK = project.hasProperty("githubToken")
 def curseOK = project.hasProperty("curseToken") && project.hasProperty("gameVersion")
@@ -101,9 +103,17 @@ def toBaseVersion(ver){
 	return String.join(".", ver.tokenize(".").subList(0, 2))
 }
 
+def getVersionProjectPath(ver){
+	if(project.versionedProjectDirectories.toBoolean()){
+		return "${projectDir}/../${ver}"
+	} else {
+		return "${projectDir}/.."
+	}
+}
+
 def getFiles(ver) {
 	def files = []
-	new File("${projectDir}/../${ver}/build/libs").eachFile(groovy.io.FileType.FILES, {
+	new File("${getVersionProjectPath(ver)}/build/libs").eachFile(groovy.io.FileType.FILES, {
 		if(!it.name.endsWith("-sources.jar")){
 			files << it
 		}
@@ -122,6 +132,20 @@ def getFiles() {
 // for debug
 task listFiles {
 	doLast {
-		println(getFiles());
+		project.gameVersions.collect({toBaseVersion(it)}).each {
+			println("$it: ${getFiles(it)}")
+		}
 	}
+}
+
+project.gameVersions.collect({toBaseVersion(it)}).each { ver ->
+	def dir = getVersionProjectPath(ver)
+	task ("cleanAndBuild-$ver", type: Exec) {
+		workingDir dir
+		commandLine 'sh', '-c', "rm build/libs/* && ./gradlew build"
+	}
+}
+
+task cleanAndBuildAll(dependsOn: project.gameVersions.collect({"cleanAndBuild-$it"})) {
+
 }
