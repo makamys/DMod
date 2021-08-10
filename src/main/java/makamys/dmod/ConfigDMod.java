@@ -28,7 +28,7 @@ public class ConfigDMod {
 	public static EntityFox.AbilityMode foxAbilityMode;
 	
 	public static boolean wolvesTargetFoxes;
-	public static boolean lootingFoxFix;
+	public static ForceableBoolean lootingFoxFix;
 
 	public static boolean enableFox;
 	public static boolean enableBundle;
@@ -76,9 +76,15 @@ public class ConfigDMod {
 	}
 	
 	private static <E extends Enum> E getEnum(Configuration config, String propName, String propCat, E propDefault, String propComment) {
+	    return getEnum(config, propName, propCat, propDefault, propComment, false);
+	}
+	
+	private static <E extends Enum> E getEnum(Configuration config, String propName, String propCat, E propDefault, String propComment, boolean lowerCase) {
 		Map enumMap = EnumUtils.getEnumMap(propDefault.getClass());
 		String[] valuesStr = (String[])enumMap.keySet().toArray(new String[]{});
-		return (E)enumMap.get(config.getString(propName, propCat, propDefault.toString(), propComment, valuesStr));
+		String defaultString = propDefault.toString();
+		if(lowerCase) defaultString = defaultString.toLowerCase();
+		return (E)enumMap.get(config.getString(propName, propCat, defaultString, propComment, valuesStr).toUpperCase());
 	}
 	
 	public static void reload(boolean resolve) {
@@ -103,7 +109,7 @@ public class ConfigDMod {
         enableBundle = config.getBoolean("enableBundle", "_features", true, "");
         
         wolvesTargetFoxes = config.getBoolean("wolvesTargetFoxes", "Mixins", true, "");
-        lootingFoxFix = config.getBoolean("lootingFoxFix", "Mixins", true, "Make looting enchants of fox weapons have an effect. (Incompatible with Backlytra. This option will automatically get disabled if it's present.");
+        lootingFoxFix = getEnum(config, "lootingFoxFix", "Mixins", ForceableBoolean.TRUE, "Make looting enchants of fox weapons have an effect. (Incompatible with Backlytra. This option will automatically get disabled if it's present, unless set to 'force'.)", true);
         durabilityBarColor = config.getBoolean("durabilityBarColor", "Mixins", true, "Change the durability bar color of certain items (bundles)");
         
         compactBundleGUI = config.getBoolean("compactBundleGUI", "bundle", false, "Remove extra spacing between rows in the bundle tooltip.");
@@ -137,5 +143,7 @@ public class ConfigDMod {
     	}
 		return null;
 	}
+	
+	public static enum ForceableBoolean { TRUE, FALSE, FORCE }
 	
 }
