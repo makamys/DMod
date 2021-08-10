@@ -148,6 +148,6 @@ project.gameVersions.collect({toBaseVersion(it)}).each { ver ->
 	}
 }
 
-task cleanBuildAll(dependsOn: project.gameVersions.collect({"cleanBuild-$it"})) {
+task cleanBuildAll(dependsOn: project.gameVersions.collect({"cleanBuild-${toBaseVersion(it)}"})) {
 
 }
