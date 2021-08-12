@@ -28,7 +28,8 @@ This system can be disabled, or configured to unlock all abilities from the star
 # Incompatibilities
 
 * Hodgepodge: set `preventPickupLoot=false` or else foxes won't be able to pick up items
-* BugTorch: crashes in GTNH if certain mixins to the Block class are enabled (The exact list is unknown. The culprit seems to be Witching Gadgets.)
+* BugTorch: crashes in GTNH if certain mixins to the Block class are enabled while D-Mod's `lootingFoxFix` is enabled. (The exact list is unknown. The culprit seems to be Witching Gadgets.)
+* Backlytra: crashes if D-Mod's `lootingFoxFix` is enabled. This option will automatically get disabled if Backlytra is present since there's no other workaround for this.
 
 # License
 
