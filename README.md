@@ -25,6 +25,11 @@ This system can be disabled, or configured to unlock all abilities from the star
 * Item icons in bundle tooltips will only be drawn if [NEI](https://www.curseforge.com/minecraft/mc-mods/notenoughitems) is installed (I recommend the [GTNH fork](https://www.curseforge.com/minecraft/mc-mods/notenoughitems-gtnh)).
 * [Et Futurum Requiem](https://www.curseforge.com/minecraft/mc-mods/et-futurum-requiem) is highly recommended as it backports sweet berries (useful for foxes) and rabbits (useful for bundles).
 
+# Incompatibilities
+
+* Hodgepodge: set `preventPickupLoot=false` or else foxes won't be able to pick up items
+* BugTorch: crashes in GTNH if certain mixins to the Block class are enabled (The exact list is unknown. The culprit seems to be Witching Gadgets.)
+
 # License
 
 This mod is licensed under [the Unlicense](https://github.com/makamys/DMod/blob/master/LICENSE). It largely consists of ported Mojang code though, so keep that in mind.
