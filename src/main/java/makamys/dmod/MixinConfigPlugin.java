@@ -34,6 +34,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
         } else if(Arrays.asList(
                 "makamys.dmod.mixin.MixinEntityLivingBase"
                 ).contains(mixinClassName)){
+            if(ConfigDMod.enableFox) return false;
             switch(ConfigDMod.lootingFoxFix) {
             case FORCE:
                 return true;
