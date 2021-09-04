@@ -3,10 +3,12 @@ package makamys.dmod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
+import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -14,7 +16,10 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import makamys.dmod.proxy.DProxyCommon;
 import makamys.dmod.util.StatRegistry;
-import makamys.mclib.updatechecklibhelper.UpdateCheckLibHelper;
+import makamys.mclib.core.MCLib;
+import makamys.mclib.core.MCLibModules;
+import makamys.mclib.sloppydeploader.SloppyDepLoaderAPI;
+import makamys.mclib.sloppydeploader.SloppyDependency;
 import net.minecraftforge.common.MinecraftForge;
 
 @Mod(modid = DMod.MODID, version = DMod.VERSION)
@@ -30,12 +35,15 @@ public class DMod
     public static DProxyCommon proxy;
     
     public static final Logger LOGGER = LogManager.getLogger("dmod");
-    private static final UpdateCheckLibHelper UCL_HELPER = new UpdateCheckLibHelper("@UCL_VERSION@", "@UPDATE_URL@");
-
+    
+    static {
+    	MCLib.init();
+    }
+    
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
     	DModItems.preInit();
-    	UCL_HELPER.preInit();
+    	MCLibModules.updateCheckAPI.submitModTask(MODID, "@UPDATE_URL@");
     }
     
     @EventHandler

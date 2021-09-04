@@ -9,11 +9,9 @@ minecraft {
 }
 
 dependencies {
-	shade 'com.github.makamys:MCLib:0.1.3'
-	compile 'com.github.makamys:UpdateCheckLib:1.0'
+	shade 'com.github.makamys:MCLib:0.2'
 }
 
 minecraft {
-	replace '@UCL_VERSION@', project.ucl_version
 	replace '@UPDATE_URL@', project.update_url
 }
