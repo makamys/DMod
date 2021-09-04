@@ -29,53 +29,53 @@ import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 public class DProxyCommon {
-	
-	public Cache<EntityItem, EntityPlayer> itemDropperMap = CacheBuilder.newBuilder().maximumSize(1000).build();
-	
-	public void init() {
-		if(ConfigDMod.enableFox) {
-			EntityRegistry.registerModEntity(EntityFox.class, "fox", 0, DMod.instance, 64, 1, true);
-	        
-	        List<BiomeGenBase> foxBiomes = DUtil.getBiomesMatchingTag(BiomeDictionary.Type.CONIFEROUS);
-	    	DMod.LOGGER.debug("Fox spawn biomes: " + String.join(", ", foxBiomes.stream().map(b -> b.biomeName + " (" + b.getClass().getName() + ")").collect(Collectors.toList())));
-	        EntityRegistry.addSpawn(EntityFox.class, 8, 2, 4, EnumCreatureType.creature, foxBiomes.toArray(new BiomeGenBase[] {}));
-	        EggHelper.addEgg(EntityFox.class, 14005919, 13396256);
-		}
-	}
-	
-	@SubscribeEvent
+    
+    public Cache<EntityItem, EntityPlayer> itemDropperMap = CacheBuilder.newBuilder().maximumSize(1000).build();
+    
+    public void init() {
+        if(ConfigDMod.enableFox) {
+            EntityRegistry.registerModEntity(EntityFox.class, "fox", 0, DMod.instance, 64, 1, true);
+            
+            List<BiomeGenBase> foxBiomes = DUtil.getBiomesMatchingTag(BiomeDictionary.Type.CONIFEROUS);
+            DMod.LOGGER.debug("Fox spawn biomes: " + String.join(", ", foxBiomes.stream().map(b -> b.biomeName + " (" + b.getClass().getName() + ")").collect(Collectors.toList())));
+            EntityRegistry.addSpawn(EntityFox.class, 8, 2, 4, EnumCreatureType.creature, foxBiomes.toArray(new BiomeGenBase[] {}));
+            EggHelper.addEgg(EntityFox.class, 14005919, 13396256);
+        }
+    }
+    
+    @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
-    	ConfigDMod.reload(true);
+        ConfigDMod.reload(true);
     }
     
     @SubscribeEvent
     public void onLivingFall(LivingFallEvent event) {
-    	if(event.entity instanceof EntityAnimalFuture) {
-    		event.distance = ((EntityAnimalFuture)event.entity).computeFallDistance(event.distance);
-    	}
+        if(event.entity instanceof EntityAnimalFuture) {
+            event.distance = ((EntityAnimalFuture)event.entity).computeFallDistance(event.distance);
+        }
     }
     
     @SubscribeEvent
     public void onLivingDrops(LivingDropsEvent event) {
-    	if(event.source.getEntity() instanceof EntityFox) {
-    		EntityFox fox = (EntityFox)event.source.getEntity();
-    		int looting = fox.getLootingLevel();
-    		EntityLivingBase victim = event.entityLiving;
-    		if(victim instanceof EntityChicken) {
-    			int extraChicken = victim.getRNG().nextInt(1 + looting);
-    			for(EntityItem entityItem : event.drops) {
-    				Item item = entityItem.getEntityItem().getItem();
-    				if(item == Items.cooked_chicken || item == Items.chicken) {
-    					entityItem.getEntityItem().stackSize += extraChicken;
-    				}
-    			}
-    		}
-    	}
+        if(event.source.getEntity() instanceof EntityFox) {
+            EntityFox fox = (EntityFox)event.source.getEntity();
+            int looting = fox.getLootingLevel();
+            EntityLivingBase victim = event.entityLiving;
+            if(victim instanceof EntityChicken) {
+                int extraChicken = victim.getRNG().nextInt(1 + looting);
+                for(EntityItem entityItem : event.drops) {
+                    Item item = entityItem.getEntityItem().getItem();
+                    if(item == Items.cooked_chicken || item == Items.chicken) {
+                        entityItem.getEntityItem().stackSize += extraChicken;
+                    }
+                }
+            }
+        }
     }
     
     @SubscribeEvent
     public void onItemTossEvent(ItemTossEvent event) {
-    	itemDropperMap.put(event.entityItem, event.player);
+        itemDropperMap.put(event.entityItem, event.player);
     }
-	
+    
 }

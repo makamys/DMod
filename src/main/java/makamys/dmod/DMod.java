@@ -29,7 +29,7 @@ public class DMod
     public static final String VERSION = "@VERSION@";
     
     @Instance(MODID)
-	public static DMod instance;
+    public static DMod instance;
     
     @SidedProxy(clientSide = "makamys.dmod.proxy.DProxyClient", serverSide = "makamys.dmod.proxy.DProxyCommon")
     public static DProxyCommon proxy;
@@ -37,37 +37,37 @@ public class DMod
     public static final Logger LOGGER = LogManager.getLogger("dmod");
     
     static {
-    	MCLib.init();
+        MCLib.init();
     }
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-    	DModItems.preInit();
-    	MCLibModules.updateCheckAPI.submitModTask(MODID, "@UPDATE_URL@");
+        DModItems.preInit();
+        MCLibModules.updateCheckAPI.submitModTask(MODID, "@UPDATE_URL@");
     }
     
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-    	instance = this;
-    	MinecraftForge.EVENT_BUS.register(proxy);
+        instance = this;
+        MinecraftForge.EVENT_BUS.register(proxy);
         
-    	proxy.init();
+        proxy.init();
     }
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-    	ConfigDMod.reload(true);
-    	DModItems.postInit();
+        ConfigDMod.reload(true);
+        DModItems.postInit();
     }
     
     @EventHandler
     public void onServerStarting(FMLServerStartingEvent event) {
-    	StatRegistry.instance.onServerStarting(event);
+        StatRegistry.instance.onServerStarting(event);
     }
     
     @EventHandler
     public void onServerStopped(FMLServerStoppedEvent event) {
-    	StatRegistry.instance.onServerStopped(event);
+        StatRegistry.instance.onServerStopped(event);
     }
 }

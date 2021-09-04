@@ -13,28 +13,28 @@ import makamys.dmod.future.item.ItemFuture;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 public class DProxyClient extends DProxyCommon {
-	
-	@Override
-	public void init() {
-		super.init();
-		
-		if(ConfigDMod.enableFox) {
-			RenderingRegistry.registerEntityRenderingHandler(EntityFox.class, new RenderFox(new ModelFox(), 0.4F));
-		}
-		
-		// TODO don't crash if chicken is not present
-		if(Loader.isModLoaded("NotEnoughItems")) {
-			NEICompat.init();
-		} else {
-			DMod.LOGGER.warn("NotEnoughItems was not found. Some optional features will not work.");
-		}
-	}
-	
-	@SubscribeEvent
-    public void onItemTooltip(ItemTooltipEvent event) {
-    	if(event.itemStack.getItem() instanceof ItemFuture) {
-    		((ItemFuture)event.itemStack.getItem()).appendTooltip(event.itemStack, event.entity.worldObj, event.toolTip);
-    	}
+    
+    @Override
+    public void init() {
+        super.init();
+        
+        if(ConfigDMod.enableFox) {
+            RenderingRegistry.registerEntityRenderingHandler(EntityFox.class, new RenderFox(new ModelFox(), 0.4F));
+        }
+        
+        // TODO don't crash if chicken is not present
+        if(Loader.isModLoaded("NotEnoughItems")) {
+            NEICompat.init();
+        } else {
+            DMod.LOGGER.warn("NotEnoughItems was not found. Some optional features will not work.");
+        }
     }
-	
+    
+    @SubscribeEvent
+    public void onItemTooltip(ItemTooltipEvent event) {
+        if(event.itemStack.getItem() instanceof ItemFuture) {
+            ((ItemFuture)event.itemStack.getItem()).appendTooltip(event.itemStack, event.entity.worldObj, event.toolTip);
+        }
+    }
+    
 }

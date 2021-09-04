@@ -24,9 +24,9 @@ public class EntityAIFollowOwnerEx extends EntityAIBase
 
     public EntityAIFollowOwnerEx(EntityLiving p_i1625_1_, double p_i1625_2_, float p_i1625_4_, float p_i1625_5_, double minTeleportDistSq)
     {
-    	if(!(p_i1625_1_ instanceof ITameable)) {
-    		throw new IllegalArgumentException("The pet entity must implement ITameable");
-    	}
+        if(!(p_i1625_1_ instanceof ITameable)) {
+            throw new IllegalArgumentException("The pet entity must implement ITameable");
+        }
         this.thePet = p_i1625_1_;
         this.thePetI = (ITameable)p_i1625_1_;
         this.theWorld = p_i1625_1_.worldObj;
@@ -40,7 +40,7 @@ public class EntityAIFollowOwnerEx extends EntityAIBase
     
     public EntityAIFollowOwnerEx(EntityLiving p_i1625_1_, double p_i1625_2_, float p_i1625_4_, float p_i1625_5_)
     {
-    	this(p_i1625_1_, p_i1625_2_, p_i1625_4_, p_i1625_5_, Double.POSITIVE_INFINITY);
+        this(p_i1625_1_, p_i1625_2_, p_i1625_4_, p_i1625_5_, Double.POSITIVE_INFINITY);
     }
 
     /**

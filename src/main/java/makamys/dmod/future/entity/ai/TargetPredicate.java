@@ -79,7 +79,7 @@ public class TargetPredicate {
 
             if (!this.includeTeammates && baseEntity.isTeammate(targetEntity)) {
                return false;
-            }*/	
+            }*/ 
 
             if (this.baseMaxDistance > 0.0D) {
                double d = /*this.useDistanceScalingFactor ? targetEntity.getAttackDistanceScalingFactor(baseEntity) : */1.0D;

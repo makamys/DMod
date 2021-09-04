@@ -100,9 +100,9 @@ public abstract class EntityAIMoveToTargetPos extends EntityAIBase {
       int i = this.range;
       int j = this.maxYDifference;
       int mobX = MathHelper.floor_double(mob.posX);
-	  int mobY = MathHelper.floor_double(mob.posY);
-	  int mobZ = MathHelper.floor_double(mob.posZ);
-	  int bx, by, bz;
+      int mobY = MathHelper.floor_double(mob.posY);
+      int mobZ = MathHelper.floor_double(mob.posZ);
+      int bx, by, bz;
 
       for(int k = this.lowestY; k <= j; k = k > 0 ? -k : 1 - k) {
          for(int l = 0; l < i; ++l) {
@@ -124,7 +124,7 @@ public abstract class EntityAIMoveToTargetPos extends EntityAIBase {
    }
 
    private boolean isTargetPos(World world, BlockPos pos) {
-	   return this.isTargetPos(world, pos.getX(), pos.getY(), pos.getZ());
+       return this.isTargetPos(world, pos.getX(), pos.getY(), pos.getZ());
    }
    
    protected abstract boolean isTargetPos(World world, int bx, int by, int bz);

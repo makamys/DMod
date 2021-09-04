@@ -45,7 +45,7 @@ public class EntityAIFleeSunModern extends EntityAIBase
         }
         else
         {
-        	return this.targetShadedPos();
+            return this.targetShadedPos();
         }
     }
     

@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import net.minecraft.client.Minecraft;
 
 public class MixinConfigPlugin implements IMixinConfigPlugin {
-	
+    
     @Override
     public void onLoad(String mixinPackage) {
-    	ConfigDMod.reload(false);
+        ConfigDMod.reload(false);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
         if(Arrays.asList(
                 "makamys.dmod.mixin.MixinEntityWolf"
                 ).contains(mixinClassName)){
-            return ConfigDMod.wolvesTargetFoxes;	
+            return ConfigDMod.wolvesTargetFoxes;    
         } else if(Arrays.asList(
                 "makamys.dmod.mixin.MixinEntityLivingBase"
                 ).contains(mixinClassName)){

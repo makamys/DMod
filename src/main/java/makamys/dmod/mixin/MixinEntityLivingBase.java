@@ -17,21 +17,21 @@ import net.minecraft.util.DamageSource;
 
 @Mixin(EntityLivingBase.class)
 public abstract class MixinEntityLivingBase {
-	
-	DamageSource lastDamageSource;
-	
-	@Inject(method = "onDeath", at = @At("HEAD"))
-	public void preOnDeath(DamageSource src, CallbackInfo ci) {
-		lastDamageSource = src;
-	}
-	
-	@ModifyVariable(method = "onDeath", at = @At("STORE"), name = "i", ordinal = 0)
-	public int lootingModifier(int value) {
-		Entity entity = lastDamageSource.getEntity();
-		if(entity instanceof EntityFox) {
-			value = ((EntityFox)entity).getLootingLevel();
-		}
-		return value;
-	}
-	
+    
+    DamageSource lastDamageSource;
+    
+    @Inject(method = "onDeath", at = @At("HEAD"))
+    public void preOnDeath(DamageSource src, CallbackInfo ci) {
+        lastDamageSource = src;
+    }
+    
+    @ModifyVariable(method = "onDeath", at = @At("STORE"), name = "i", ordinal = 0)
+    public int lootingModifier(int value) {
+        Entity entity = lastDamageSource.getEntity();
+        if(entity instanceof EntityFox) {
+            value = ((EntityFox)entity).getLootingLevel();
+        }
+        return value;
+    }
+    
 }

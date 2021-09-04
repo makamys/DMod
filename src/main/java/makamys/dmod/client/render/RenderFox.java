@@ -50,7 +50,7 @@ public class RenderFox extends RenderLiving
     
     // what the heck are these MCP names
     protected void rotateCorpse(EntityFox foxEntity, float animationProgress, float bodyYaw, float tickDelta) {
-    	super.rotateCorpse(foxEntity, animationProgress, bodyYaw, tickDelta);
+        super.rotateCorpse(foxEntity, animationProgress, bodyYaw, tickDelta);
         if (foxEntity.isChasing() || foxEntity.isWalking()) {
            float i = -MathHelperFuture.lerp(tickDelta, foxEntity.prevRotationPitch, foxEntity.rotationPitch);
            GL11.glRotatef(i, 1f, 0f, 0f);
@@ -59,7 +59,7 @@ public class RenderFox extends RenderLiving
     
     @Override
     protected void rotateCorpse(EntityLivingBase entity, float animationProgress, float bodyYaw, float tickDelta) {
-    	rotateCorpse((EntityFox)entity, animationProgress, bodyYaw, tickDelta);
+        rotateCorpse((EntityFox)entity, animationProgress, bodyYaw, tickDelta);
     }
     
     protected void renderEquippedItems(EntityLivingBase p_77029_1_, float p_77029_2_)
@@ -101,36 +101,36 @@ public class RenderFox extends RenderLiving
                 GL11.glTranslatef(0.3f, 1f, 1.5f);
             }
             else {
-            	if (p_77029_1_.hasAbility(EntityFox.Ability.IMPROVED_HELD_ITEM_RENDERING)
-            			&& itemstack.getItem().isFull3D())
-	            {
-	                f1 = 0.625F * 0.7f;
-	
-	                if (itemstack.getItem().shouldRotateAroundWhenRendering())
-	                {
-	                    GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
-	                    GL11.glTranslatef(0.0F, -0.125F, 0.0F);
-	                }
-	                
-	                GL11.glTranslatef(0.02f + (itemstack.getItem() instanceof ItemSword ? 0f : 0.32f), 0.0f, 0f);
-	                GL11.glScalef(f1, -f1, f1);
-	                float swing = 0f;
-	                if(p_77029_1_.hasAbility(EntityFox.Ability.SWORD_SWING_ANIMATION)) {
-		                swing = p_77029_1_.getSwingProgress(p_77029_2_);
-		                if(p_77029_1_.finishedSwings % 2 == 1) {
-		                	swing = 1f - swing;
-		                }
-	                }
-	                GL11.glRotatef(-swing*180f, 0.0F, 1.0F, 0.0F);
-	            }
-	            else
-	            {
-	                f1 = 0.335F;
-	                GL11.glScalef(f1, f1, f1);
-	                GL11.glTranslatef(0.72f,-0.15f,-0.45f);
-	                GL11.glRotatef(-45.0F + 90f, 0.0F, 1.0F, 0.0F);
-	            }
-            	GL11.glRotatef(-45F, 0.0F, 1.0F, 0.0F);
+                if (p_77029_1_.hasAbility(EntityFox.Ability.IMPROVED_HELD_ITEM_RENDERING)
+                        && itemstack.getItem().isFull3D())
+                {
+                    f1 = 0.625F * 0.7f;
+    
+                    if (itemstack.getItem().shouldRotateAroundWhenRendering())
+                    {
+                        GL11.glRotatef(180.0F, 0.0F, 0.0F, 1.0F);
+                        GL11.glTranslatef(0.0F, -0.125F, 0.0F);
+                    }
+                    
+                    GL11.glTranslatef(0.02f + (itemstack.getItem() instanceof ItemSword ? 0f : 0.32f), 0.0f, 0f);
+                    GL11.glScalef(f1, -f1, f1);
+                    float swing = 0f;
+                    if(p_77029_1_.hasAbility(EntityFox.Ability.SWORD_SWING_ANIMATION)) {
+                        swing = p_77029_1_.getSwingProgress(p_77029_2_);
+                        if(p_77029_1_.finishedSwings % 2 == 1) {
+                            swing = 1f - swing;
+                        }
+                    }
+                    GL11.glRotatef(-swing*180f, 0.0F, 1.0F, 0.0F);
+                }
+                else
+                {
+                    f1 = 0.335F;
+                    GL11.glScalef(f1, f1, f1);
+                    GL11.glTranslatef(0.72f,-0.15f,-0.45f);
+                    GL11.glRotatef(-45.0F + 90f, 0.0F, 1.0F, 0.0F);
+                }
+                GL11.glRotatef(-45F, 0.0F, 1.0F, 0.0F);
                 
                 GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
                 

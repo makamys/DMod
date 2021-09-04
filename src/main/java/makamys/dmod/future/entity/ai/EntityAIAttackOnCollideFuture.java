@@ -160,7 +160,7 @@ public class EntityAIAttackOnCollideFuture extends EntityAIBase
     }
     
     protected void attack(EntityLivingBase target, double squaredDistance) {
-    	double d1 = (double)(this.attacker.width * 2.0F * this.attacker.width * 2.0F + target.width);
+        double d1 = (double)(this.attacker.width * 2.0F * this.attacker.width * 2.0F + target.width);
         if (squaredDistance <= d1 && this.attackTick <= 20)
         {
             this.attackTick = 20;

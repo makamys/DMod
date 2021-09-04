@@ -24,7 +24,7 @@ public class ModernEntityLookHelper extends EntityLookHelper
 
     public ModernEntityLookHelper(EntityLiving p_i1613_1_)
     {
-    	super(p_i1613_1_);
+        super(p_i1613_1_);
         this.entity = p_i1613_1_;
     }
 
@@ -71,9 +71,9 @@ public class ModernEntityLookHelper extends EntityLookHelper
     @Override
     public void onUpdateLook()
     {
-    	if(shouldStayHorizontal()) {
-    		this.entity.rotationPitch = 0.0F;
-    	}
+        if(shouldStayHorizontal()) {
+            this.entity.rotationPitch = 0.0F;
+        }
 
         if (this.isLooking)
         {
@@ -109,7 +109,7 @@ public class ModernEntityLookHelper extends EntityLookHelper
     }
     
     protected boolean shouldStayHorizontal() {
-    	return true;
+        return true;
     }
 
     private float updateRotation(float p_75652_1_, float p_75652_2_, float p_75652_3_)

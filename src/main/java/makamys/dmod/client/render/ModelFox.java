@@ -26,7 +26,7 @@ public class ModelFox extends ModelBase
     private float partialTicks;
 
     public ModelFox(){
-    	this.textureWidth = 48;
+        this.textureWidth = 48;
         this.textureHeight = 32;
         this.head = new ModelRenderer(this, 1, 5);
         this.head.addBox(-3.0F, -2.0F, -5.0F, 8, 6, 6, 0.0F);
@@ -182,20 +182,20 @@ public class ModelFox extends ModelBase
      * "far" arms and legs can swing at most.
      */
     public void setRotationAngles(float p_78087_1_, float p_78087_2_, float h, float i, float j, float p_78087_6_, Entity p_78087_7_)
-    {	
-    	EntityFox foxEntity = (EntityFox)p_78087_7_;
-    	
+    {   
+        EntityFox foxEntity = (EntityFox)p_78087_7_;
+        
         if (!foxEntity.isPlayerSleeping() && !foxEntity.isWalking() && !foxEntity.isInSneakingPose()) {
             this.head.rotateAngleX = j * 0.017453292F;
             float swing = 0f;
             if(foxEntity.hasAbility(EntityFox.Ability.SWORD_SWING_ANIMATION)) {
-	            swing = foxEntity.getSwingProgress(partialTicks);
-	            if(swing != 0f) {
-		            if(foxEntity.finishedSwings % 2 == 0) {
-		            	swing = 1f - swing;
-		            }
-		        	swing = (swing / 2f - 1/4f);
-	            }
+                swing = foxEntity.getSwingProgress(partialTicks);
+                if(swing != 0f) {
+                    if(foxEntity.finishedSwings % 2 == 0) {
+                        swing = 1f - swing;
+                    }
+                    swing = (swing / 2f - 1/4f);
+                }
             }
             this.head.rotateAngleY = i * 0.017453292F + swing * ((float)Math.PI);
          }
