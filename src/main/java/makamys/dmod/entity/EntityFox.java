@@ -291,7 +291,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
     }
 
     private boolean canEat(ItemStack stack) {
-        return stack != null && stack.getItem() instanceof ItemFood && (this.getAttackTarget() == null || EntityFox.this.hasAbility(Ability.WOUNDED_AI) && EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f) && this.onGround && !this.isPlayerSleeping();
+        return stack != null && stack.getItem() instanceof ItemFood && (this.getAttackTarget() == null || (EntityFox.this.hasAbility(Ability.WOUNDED_AI) && EntityFox.this.getHealth() < EntityFox.this.getMaxHealth() / 2f)) && this.onGround && !this.isPlayerSleeping();
     }
 
     protected void initEquipment() {
