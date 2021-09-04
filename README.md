@@ -14,11 +14,11 @@ Currently implemented:
 
 ## Foxes
 
-Foxes also have some extra features implemented. Untamed, they behave the same as they do in new vanilla versions. But as they defeat enemies, they gain EXP and unlock various new abilities and AI improvements. The major ones being: getting healed when fed food, following the owner after being fed a sweet berry, and possessing Looting I intrinsically (does not stack with swords that have Looting). Foxes pass down their EXP to their children.
+Foxes have some (optional) extra features implemented. Untamed, they behave the same as they do in new vanilla versions. But as they defeat enemies, they gain EXP and unlock various new abilities and AI improvements.
 
-Full documentation coming soon : ) For the time being you can look [here](https://github.com/makamys/DMod/blob/21d63d86e357626f3d212447e34f2f1fd4495cf6/src/main/java/makamys/dmod/entity/EntityFox.java#L1957-L1987) to get a general picture.
+The major ones are getting healed when fed food, following the owner after being fed a sweet berry, and possessing Looting I intrinsically (does not stack with swords that have Looting). Foxes pass down their EXP to their children.
 
-This system can be disabled, or configured to unlock all abilities from the start.
+More info [in the wiki](https://github.com/makamys/DMod/wiki/Fox).
 
 # Dependencies
 
