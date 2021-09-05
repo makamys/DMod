@@ -34,3 +34,10 @@ More info [in the wiki](https://github.com/makamys/DMod/wiki/Fox).
 # License
 
 This mod is licensed under [the Unlicense](https://github.com/makamys/DMod/blob/master/LICENSE). It largely consists of ported Mojang code though, so keep that in mind.
+
+# Contributing
+
+When running in an IDE, add these program arguments
+```
+--tweakClass org.spongepowered.asm.launch.MixinTweaker --mixin dmod.mixin.json
+```
