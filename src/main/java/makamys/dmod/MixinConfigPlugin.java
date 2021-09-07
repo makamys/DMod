@@ -34,18 +34,21 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
         } else if(Arrays.asList(
                 "makamys.dmod.mixin.MixinEntityLivingBase"
                 ).contains(mixinClassName)){
-            if(ConfigDMod.enableFox) return false;
-            switch(ConfigDMod.lootingFoxFix) {
-            case FORCE:
-                return true;
-            case TRUE:
-                if(isBacklytraPresent()) {
-                    System.out.println("Detected Backlytra, disabling fox looting mixin for compatibility.");
-                    return false;
-                } else {
+            if(ConfigDMod.enableFox) {
+                switch(ConfigDMod.lootingFoxFix) {
+                case FORCE:
                     return true;
+                case TRUE:
+                    if(isBacklytraPresent()) {
+                        System.out.println("Detected Backlytra, disabling fox looting mixin for compatibility.");
+                        return false;
+                    } else {
+                        return true;
+                    }
+                default:
+                    return false;
                 }
-            default:
+            } else {
                 return false;
             }
         } else if(Arrays.asList(
