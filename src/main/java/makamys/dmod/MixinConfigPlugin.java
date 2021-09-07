@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment.Side;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
+import makamys.dmod.ConfigDMod.ForceableBoolean;
 import net.minecraft.client.Minecraft;
 
 public class MixinConfigPlugin implements IMixinConfigPlugin {
@@ -34,23 +35,7 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
         } else if(Arrays.asList(
                 "makamys.dmod.mixin.MixinEntityLivingBase"
                 ).contains(mixinClassName)){
-            if(ConfigDMod.enableFox) {
-                switch(ConfigDMod.lootingFoxFix) {
-                case FORCE:
-                    return true;
-                case TRUE:
-                    if(isBacklytraPresent()) {
-                        System.out.println("Detected Backlytra, disabling fox looting mixin for compatibility.");
-                        return false;
-                    } else {
-                        return true;
-                    }
-                default:
-                    return false;
-                }
-            } else {
-                return false;
-            }
+            return ConfigDMod.enableFox && ConfigDMod.lootingFoxFix != ForceableBoolean.FALSE;
         } else if(Arrays.asList(
                 "makamys.dmod.mixin.MixinRenderItem"
                 ).contains(mixinClassName)){
@@ -86,15 +71,6 @@ public class MixinConfigPlugin implements IMixinConfigPlugin {
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
         // TODO Auto-generated method stub
         
-    }
-    
-    private static boolean isBacklytraPresent() {
-        try {
-            Class.forName("com.unascribed.backlytra.asm.BacklytraLoadingPlugin");
-            return true;
-        } catch(Exception e) {
-            return false;
-        }
     }
 
 }
