@@ -57,7 +57,7 @@ public class DMod
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        ConfigDMod.reload(true);
+        ConfigDMod.reload();
         DModItems.postInit();
     }
     

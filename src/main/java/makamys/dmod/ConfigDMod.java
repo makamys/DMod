@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.EnumUtils;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderState;
 import makamys.dmod.entity.EntityFox;
 import makamys.dmod.util.WeightedRandomItem;
 import net.minecraft.entity.Entity;
@@ -88,23 +90,10 @@ public class ConfigDMod {
         return (E)enumMap.get(config.getString(propName, propCat, defaultString, propComment, valuesStr).toUpperCase());
     }
     
-    public static void reload(boolean resolve) {
+    public static void reload() {
         Configuration config = new Configuration(new File(Launch.minecraftHome, "config/dmod.cfg"));
         
         config.load();
-
-        if(resolve) {
-            foxBreedingItems =
-                    resolveItemListOrDefault(config, "foxBreedingItems", "Fox", new String[]{"etfuturum:sweet_berries"}, "Falls back to wheat if none of the items can be resolved", Items.wheat);
-            rabbitEntities =
-                    resolveEntityClassListOrDefault(config, "rabbitEntities", "Fox", new String[]{"etfuturum.rabbit"}, "");
-            foxMouthItems = Arrays.stream(config.getStringList("foxMouthItems", "Fox", new String[] {"emerald=5", "egg=15", "etfuturum:rabbit_foot=10", "etfuturum:rabbit_hide=10", "wheat=20", "leather=20", "feather=20"}, "item=weight pairs deciding the relative likelyhood of foxes spawning with certain items. Entries containing items that can't be resolved will be ignored."))
-                    .map(str -> parseWeightedItemEntry(str)).filter(p -> p != null).collect(Collectors.toList());
-            bundleCraftingItems = 
-                    resolveItemListOrDefault(config, "bundleCraftingItems", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Falls back to leather if none of the items can be resolved", Items.leather);
-            bundleItemBlacklist = 
-                    new HashSet<>(resolveItemListOrDefault(config, "bundleItemBlacklist", "bundle", new String[]{"etfuturum:shulker_box"}, "Items that should not be allowed in a bundle"));
-        }
         
         enableFox = config.getBoolean("enableFox", "_features", true, "");
         enableBundle = config.getBoolean("enableBundle", "_features", true, "");
@@ -118,6 +107,19 @@ public class ConfigDMod {
         // TODO tweak the level requirements of each individual ability
         foxAbilityMode = getEnum(config, "foxAbilityMode", "fox", EntityFox.AbilityMode.NORMAL, "NORMAL: Foxes unlock abilities as they level up\nUNLOCK_ALL: All abilities are unlocked from the start\nUNLOCK_NONE: No abilities will ever be unlocked\nNote: changing this won't affect the amount of exp foxes have, just whether the abilities will be enabled or not");
         foxExpModifier = config.getFloat("foxExpModifier", "Fox", 1f, 0f, Float.POSITIVE_INFINITY, "The EXP foxes earn will get multiplied by this value.");
+        
+        if(Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION)) {
+            foxBreedingItems =
+                    resolveItemListOrDefault(config, "foxBreedingItems", "Fox", new String[]{"etfuturum:sweet_berries"}, "Falls back to wheat if none of the items can be resolved", Items.wheat);
+            rabbitEntities =
+                    resolveEntityClassListOrDefault(config, "rabbitEntities", "Fox", new String[]{"etfuturum.rabbit"}, "");
+            foxMouthItems = Arrays.stream(config.getStringList("foxMouthItems", "Fox", new String[] {"emerald=5", "egg=15", "etfuturum:rabbit_foot=10", "etfuturum:rabbit_hide=10", "wheat=20", "leather=20", "feather=20"}, "item=weight pairs deciding the relative likelyhood of foxes spawning with certain items. Entries containing items that can't be resolved will be ignored."))
+                    .map(str -> parseWeightedItemEntry(str)).filter(p -> p != null).collect(Collectors.toList());
+            bundleCraftingItems = 
+                    resolveItemListOrDefault(config, "bundleCraftingItems", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Falls back to leather if none of the items can be resolved", Items.leather);
+            bundleItemBlacklist = 
+                    new HashSet<>(resolveItemListOrDefault(config, "bundleItemBlacklist", "bundle", new String[]{"etfuturum:shulker_box"}, "Items that should not be allowed in a bundle"));
+        }
         
         if (config.hasChanged()) 
         {

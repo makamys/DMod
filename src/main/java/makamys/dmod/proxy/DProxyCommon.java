@@ -45,7 +45,7 @@ public class DProxyCommon {
     
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
-        ConfigDMod.reload(true);
+        ConfigDMod.reload();
     }
     
     @SubscribeEvent
