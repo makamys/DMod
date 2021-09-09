@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.EnumUtils;
 
@@ -15,6 +16,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import makamys.dmod.entity.EntityFox;
 import makamys.dmod.util.WeightedRandomItem;
+import makamys.mclib.config.item.BackpackConfigHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Items;
@@ -37,9 +39,10 @@ public class ConfigDMod {
     public static boolean enableBundle;
 
     public static List<Item> bundleCraftingItems;
-    public static Set<Item> bundleItemBlacklist;
     public static boolean compactBundleGUI;
     public static boolean durabilityBarColor;
+    
+    public static BackpackConfigHelper backpackHelper;
     
     private static List<Item> resolveItemListOrDefault(Configuration config, String propName, String propCat, String[] propDefault, String propComment, Item... defaults){
         String[] list = config.getStringList(propName, propCat, propDefault, propComment);
@@ -117,8 +120,10 @@ public class ConfigDMod {
                     .map(str -> parseWeightedItemEntry(str)).filter(p -> p != null).collect(Collectors.toList());
             bundleCraftingItems = 
                     resolveItemListOrDefault(config, "bundleCraftingItems", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Falls back to leather if none of the items can be resolved", Items.leather);
-            bundleItemBlacklist = 
-                    new HashSet<>(resolveItemListOrDefault(config, "bundleItemBlacklist", "bundle", new String[]{"etfuturum:shulker_box"}, "Items that should not be allowed in a bundle"));
+            backpackHelper = new BackpackConfigHelper(Arrays.asList(config.getStringList("bundleItemBlacklist", "bundle", Stream.of(
+                    new String[]{"etfuturum:shulker_box"},
+                    BackpackConfigHelper.NON_NESTABLE_BACKPACK_BLACKLIST).flatMap(Stream::of).toArray(String[]::new),
+                    "Items that aren't allowed in bundles" + BackpackConfigHelper.CONFIG_DESCRIPTION_SUFFIX)));
         }
         
         if (config.hasChanged()) 

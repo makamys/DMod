@@ -84,7 +84,7 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
                 if(removed != null) {
                     addToBundle(stack, SlotFuture.insertStack(slot, removed));
                 }
-            } else if (canAcceptItem(itemStack.getItem())) {
+            } else if (canAcceptItemStack(itemStack)) {
                 int i = (64 - getBundleOccupancy(stack)) / getItemOccupancy(itemStack);
                 addToBundle(stack, SlotFuture.takeStackRange(slot, itemStack.stackSize, i, player));
             }
@@ -145,7 +145,7 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
     }
 
     private static int addToBundle(ItemStack bundle, ItemStack stack) {
-        if (stack != null && canAcceptItem(stack.getItem())) {
+        if (stack != null && canAcceptItemStack(stack)) {
             NBTTagCompound NBTTagCompound = ItemStackFuture.getOrCreateNbt(bundle);
             if (!NBTTagCompound.hasKey("Items")) {
                 NBTTagCompound.setTag("Items", new NBTTagList());
@@ -183,8 +183,8 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
         }
     }
     
-    private static boolean canAcceptItem(Item item) {
-        return !ConfigDMod.bundleItemBlacklist.contains(item);
+    private static boolean canAcceptItemStack(ItemStack is) {
+        return ConfigDMod.backpackHelper.isAllowed(is);
     }
 
     private static Optional<NBTTagCompound> canMergeStack(ItemStack stack, NBTTagList items) {
