@@ -9,7 +9,7 @@ minecraft {
 }
 
 dependencies {
-	shade 'com.github.makamys:MCLib:0.2:d78ddd3'
+	shade 'com.github.makamys:MCLib:d78ddd3'
 }
 
 minecraft {
