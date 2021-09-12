@@ -9,7 +9,9 @@ minecraft {
 }
 
 dependencies {
-	shade 'com.github.makamys:MCLib:d78ddd3'
+	shade('com.github.makamys:MCLib:d78ddd3'){
+		exclude group: "codechicken"
+	}
 }
 
 minecraft {
