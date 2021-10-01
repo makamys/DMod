@@ -14,7 +14,7 @@ public class EggHelper {
     
     public static void addEgg(Class<? extends Entity> clazz, int color1, int color2) {
         int eggID = getNextFreeEggSlot();
-        EntityList.IDtoClassMapping.put(eggID, EntityFox.class);
+        EntityList.IDtoClassMapping.put(eggID, clazz);
         EntityList.entityEggs.put(eggID, new EntityEggInfo(eggID, color1, color2));
         addedEggIDs.put(clazz, eggID);
     }
