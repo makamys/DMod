@@ -28,8 +28,7 @@ More info [in the wiki](https://github.com/makamys/DMod/wiki/Fox).
 # Incompatibilities
 
 * [Hodgepodge](https://github.com/GTNewHorizons/Hodgepodge): set `preventPickupLoot=false` or else foxes won't be able to pick up items
-* [BugTorch](https://github.com/jss2a98aj/BugTorch): crashes in GTNH if certain mixins to the Block class are enabled while D-Mod's `lootingFoxFix` is enabled. (The exact list is unknown. The culprit seems to be Witching Gadgets.)
-* [Backlytra](https://github.com/unascribed/Backlytra): crashes if D-Mod's `lootingFoxFix` is enabled. Fixed by [Mixingasm](https://github.com/makamys/Mixingasm).
+* Various coremods will crash during startup due to an incompatibility with Mixin. For example, [Backlytra](https://github.com/unascribed/Backlytra) crashes if D-Mod's `lootingFoxFix` is enabled. This is fixed by [Mixingasm](https://github.com/makamys/Mixingasm).
 
 # License
 
