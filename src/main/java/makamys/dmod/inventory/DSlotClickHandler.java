@@ -1,5 +1,6 @@
 package makamys.dmod.inventory;
 
+import makamys.dmod.DMod;
 import makamys.dmod.future.item.ItemFuture;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -28,18 +29,23 @@ public class DSlotClickHandler {
                 }
             }
             if(button >= 0 && button <= 2 && slotNumber >= 0) {
-                Slot slot = container.getSlot(slotNumber);
-                EntityPlayer player = slotClickPlayer;
-                ItemStack cursor = player.inventory.getItemStack();
-                
-                ItemStack stack = slot.getStack();
-                if(cursor != null && cursor.getItem() instanceof ItemFuture) {
-                    eventconsumed |= ((ItemFuture)cursor.getItem()).onStackClicked(cursor, slot, button, player);
-                } else if(stack != null && stack.getItem() instanceof ItemFuture) {
-                    eventconsumed |= ((ItemFuture)stack.getItem()).onClicked(stack, cursor, slot, button, player);
-                }
-                if(eventconsumed) {
-                    slot.onSlotChanged();
+                if(slotNumber < container.inventorySlots.size()) {
+                    Slot slot = container.getSlot(slotNumber);
+                    EntityPlayer player = slotClickPlayer;
+                    ItemStack cursor = player.inventory.getItemStack();
+                    
+                    ItemStack stack = slot.getStack();
+                    if(cursor != null && cursor.getItem() instanceof ItemFuture) {
+                        eventconsumed |= ((ItemFuture)cursor.getItem()).onStackClicked(cursor, slot, button, player);
+                    } else if(stack != null && stack.getItem() instanceof ItemFuture) {
+                        eventconsumed |= ((ItemFuture)stack.getItem()).onClicked(stack, cursor, slot, button, player);
+                    }
+                    if(eventconsumed) {
+                        slot.onSlotChanged();
+                    }
+                } else {
+                    DMod.LOGGER.warn("Invalid index in DSlotClickHandler.onSlotClick: slotNumber=" + slotNumber + ", but container " + container + " only has " + container.inventorySlots.size() + " slots.");
+                    // TODO figure out why this can happen. (TrashSlot?)
                 }
             }
         }
