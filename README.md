@@ -1,4 +1,5 @@
 [![downloads](https://img.shields.io/badge/-⬇%20releases-brightgreen)](https://github.com/makamys/DMod/releases)
+[![builds](https://img.shields.io/badge/-🛈%20builds-blue)](https://makamys.github.io/docs/CI-Downloads/CI-Downloads.html)
 [![CurseForge](https://shields.io/badge/CurseForge-555555?logo=curseforge)](https://www.curseforge.com/minecraft/mc-mods/dmod)
 
 # D-Mod
