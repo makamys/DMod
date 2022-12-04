@@ -94,6 +94,10 @@ public class ConfigDMod {
     }
     
     public static void reload() {
+        reload(false);
+    }
+    
+    public static void reload(boolean early) {
         Configuration config = new Configuration(new File(Launch.minecraftHome, "config/dmod.cfg"));
         
         config.load();
@@ -111,7 +115,7 @@ public class ConfigDMod {
         foxAbilityMode = getEnum(config, "foxAbilityMode", "fox", EntityFox.AbilityMode.NORMAL, "NORMAL: Foxes unlock abilities as they level up\nUNLOCK_ALL: All abilities are unlocked from the start\nUNLOCK_NONE: No abilities will ever be unlocked\nNote: changing this won't affect the amount of exp foxes have, just whether the abilities will be enabled or not");
         foxExpModifier = config.getFloat("foxExpModifier", "Fox", 1f, 0f, Float.POSITIVE_INFINITY, "The EXP foxes earn will get multiplied by this value.");
         
-        if(Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION)) {
+        if(!early) {
             foxBreedingItems =
                     resolveItemListOrDefault(config, "foxBreedingItems", "Fox", new String[]{"etfuturum:sweet_berries"}, "Falls back to wheat if none of the items can be resolved", Items.wheat);
             rabbitEntities =
