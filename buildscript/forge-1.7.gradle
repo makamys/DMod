@@ -2,8 +2,27 @@
 
 apply plugin: 'forge'
 
+ext.publishDir = project.multiproject_structure.toBoolean() ? "${projectDir}/../publish" : "${projectDir}/publish"
 
-project.version = new File(project.multiproject_structure.toBoolean() ? "${projectDir}/../version.txt" : "${projectDir}/publish/version.txt").getText('UTF-8').trim()
+def getCommitVersion(){
+	try {
+		def commitHashProc = "python3 ${ext.publishDir}/get_version.py".execute()
+		commitHashProc.waitFor()
+		if(commitHashProc.exitValue() == 0){
+			def commitHash = commitHashProc.text.trim()
+			
+			return commitHash
+		} else {
+			println commitHashProc.err.text
+			throw new Exception("get_version.py exited with non-zero return value")
+		}
+	} catch(Exception e){
+		println "Failed to run get_version.py: " + e.getMessage()
+	}
+	return "UNKNOWN" // fallback
+}
+
+project.version = getCommitVersion()
 
 group = project.group
 archivesBaseName = "${project.archives_base}-${project.minecraft_version}"
@@ -36,7 +55,16 @@ if(project.enable_mixin.toBoolean()) {
 	apply from: "buildscript/forge-1.7-mixin.gradle"
 }
 
+project.ext.override_dependencies = false
+
 apply from: "project.gradle"
+
+if(!project.ext.override_dependencies) {
+	dependencies {
+		runtimeOnly "codechicken:CodeChickenLib:1.7.10-1.1.3.140:dev"
+		runtimeOnly "codechicken:CodeChickenCore:1.7.10-1.0.7.47:dev"
+	}
+}
 
 jar {
     from(sourceSets.main.output);
@@ -71,20 +99,31 @@ tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
 }
 
-// This task creates a .jar file containing the source code of this mod.
-task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
-    from sourceSets.main.allSource
+// Add git commit hash to MANIFEST.MF
+
+def getCommitHash(){
+	try {
+		def commitHashProc = "git describe --always --dirty".execute()
+		commitHashProc.waitFor()
+		if(commitHashProc.exitValue() == 0){
+			def commitHash = commitHashProc.text.trim()
+			
+			return commitHash
+		} else {
+			println commitHashProc.err.text
+			throw new Exception("git describe exited with non-zero return value")
+		}
+	} catch(Exception e){
+		println "Failed to get commit version: " + e.getMessage()
+	}
+	return "UNKNOWN" // fallback
 }
 
-// This task creates a .jar file containing a deobfuscated version of this mod, for other developers to use in a development environment.
-task devJar(type: Jar) {
-    classifier = "dev"
-    from sourceSets.main.output
-}
 
-// Creates the listed artifacts on building the mod.
-artifacts {
-    archives sourcesJar
-    archives devJar
+jar {
+    manifest {
+        attributes (
+            'Commit-ID': getCommitHash(),
+        )
+    }
 }

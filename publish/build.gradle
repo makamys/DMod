@@ -9,9 +9,28 @@ import groovy.json.JsonSlurper
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
-def buildVersion = new File("${projectDir}/version.txt").getText('UTF-8').trim()
-def changeLog = new File("${projectDir}/changelog.md").getText('UTF-8')
-def gameVersionsMap = new JsonSlurper().parseText(file("gameVersions.json").getText('UTF-8'))
+def getCommitVersion(){
+	try {
+		def commitHashProc = "python3 ${projectDir}/get_version.py".execute()
+		commitHashProc.waitFor()
+		if(commitHashProc.exitValue() == 0){
+			def commitHash = commitHashProc.text.trim()
+			
+			return commitHash
+		} else {
+			println commitHashProc.err.text
+			throw new Exception("get_version.py exited with non-zero return value")
+		}
+	} catch(Exception e){
+		println "Failed to run get_version.py: " + e.getMessage()
+	}
+	return "UNKNOWN" // fallback
+}
+
+def buildVersion = getCommitVersion()
+def changeLogFile = new File("${projectDir}/changelog.md")
+def changeLog = changeLogFile.exists() ? changeLogFile.getText('UTF-8') : ""
+ext.gameVersionsMap = new JsonSlurper().parseText(file("gameVersions.json").getText('UTF-8'))
 ext.gameVersions = gameVersionsMap.keySet()
 
 def githubOK = project.hasProperty("githubToken")
@@ -19,6 +38,8 @@ def curseOK = project.hasProperty("curseToken") && project.hasProperty("gameVers
 def modrinthOK = project.hasProperty("modrinthToken") && project.hasProperty("gameVersion")
 
 def debugPublish = project.hasProperty("debugPublish") && project.debugPublish.toBoolean()
+
+def useVPrefixForTag = project.hasProperty("useVPrefixForTag") && project.useVPrefixForTag.toBoolean()
 
 task build {}
 task assemble {}
@@ -29,7 +50,7 @@ if(githubOK){
 							 // You get this from your user settings > developer settings > Personal Access Tokens
 		owner project.githubOwner // default is the last part of your group. Eg group: "com.github.breadmoirai" => owner: "breadmoirai"
 		repo project.githubRepo // by default this is set to your project name
-		tagName "v${buildVersion}" // by default this is set to "v${project.version}"
+		tagName ((useVPrefixForTag ? "v" : "") + "${buildVersion}") // by default this is set to "v${project.version}"
 		targetCommitish "master" // by default this is set to "master"
 		releaseName "${project.releaseName} ${buildVersion}"
 		body changeLog // by default this is empty
@@ -145,11 +166,18 @@ task listFiles {
 	}
 }
 
-project.gameVersions.collect({toBaseVersion(it)}).each { ver ->
-	def dir = getVersionProjectPath(ver)
-	task ("cleanBuild-$ver", type: Exec) {
+def getBuildArgumentSets(ver) {
+	def projectConfig = new Properties()
+	projectConfig.load(file("../gradle.properties").newReader())
+	return projectConfig.enable_mixin ? ["", "-Pnomixin"] : [""]
+}
+
+project.gameVersions.each { ver ->
+	def baseVer = toBaseVersion(ver)
+	def dir = getVersionProjectPath(baseVer)
+	task ("cleanBuild-$baseVer", type: Exec) {
 		workingDir dir
-		commandLine 'sh', '-c', "rm build/libs/* && ./gradlew build"
+		commandLine 'sh', '-c', "rm -f build/libs/* && " + String.join(" && ", getBuildArgumentSets(ver).collect({"./gradlew build ${it}"}))
 	}
 }
 

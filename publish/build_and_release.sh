@@ -9,11 +9,14 @@ then
 	exit 2
 fi
 
-if [ "$#" -lt 2 ] || [ "$#" -gt 3 ]
+if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]
 then
 	echo "Usage: $0 GITHUB_TOKEN CURSEFORGE_TOKEN [MODRINTH_TOKEN]"
 	exit 1
 fi
+
+# exit when any command fails
+set -e
 
 GITHUB_TOKEN=$1
 CURSEFORGE_TOKEN=$2
@@ -26,10 +29,15 @@ MODRINTH_TOKEN=$3
 py prepare_publish.py
 ./gradlew githubRelease -PgithubToken=$GITHUB_TOKEN
 py update_updatejson.py
-./curseforge_all.sh -PcurseToken=$CURSEFORGE_TOKEN
+
+if [ -n "$CURSEFORGE_TOKEN" ]
+then
+	./curseforge_all.sh -PcurseToken=$CURSEFORGE_TOKEN
+fi
+
 /dev/null > changelog.md
 
-if [ -n "$MODRINTH_KEY" ]
+if [ -n "$MODRINTH_TOKEN" ]
 then
 	./modrinth_all.sh -PmodrinthToken=$MODRINTH_TOKEN
 fi
