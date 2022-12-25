@@ -149,7 +149,7 @@ public class ConfigDMod {
                     DMod.LOGGER.warn("Invalid weight (must be an integer): " + halves[1]);
                 }
             } else {
-                DMod.LOGGER.warn("No item called " + halves[0]);
+                DMod.LOGGER.debug("No item called " + halves[0]);
             }
         } else {
             DMod.LOGGER.warn("Incorrect pair: " + str);
