@@ -2,7 +2,6 @@ package makamys.dmod.future.entity;
 
 import makamys.dmod.future.entity.passive.EntityAnimalFuture;
 import makamys.dmod.future.item.ItemStackFuture;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

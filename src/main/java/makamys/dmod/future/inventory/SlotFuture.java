@@ -1,7 +1,5 @@
 package makamys.dmod.future.inventory;
 
-import java.util.Optional;
-
 import makamys.dmod.future.item.ItemStackFuture;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;

@@ -3,7 +3,6 @@ package makamys.dmod.future.entity.passive;
 import java.util.Random;
 
 import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
 
 public class PassiveEntityEmulator {

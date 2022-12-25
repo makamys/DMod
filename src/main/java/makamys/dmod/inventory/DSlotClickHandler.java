@@ -1,12 +1,12 @@
 package makamys.dmod.inventory;
 
+import static makamys.dmod.DModConstants.LOGGER;
+
 import makamys.dmod.future.item.ItemFuture;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-
-import static makamys.dmod.DModConstants.*;
 
 public class DSlotClickHandler {
 

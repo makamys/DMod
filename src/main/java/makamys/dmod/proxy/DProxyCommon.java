@@ -1,5 +1,7 @@
 package makamys.dmod.proxy;
 
+import static makamys.dmod.DModConstants.LOGGER;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,8 +28,6 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-
-import static makamys.dmod.DModConstants.*;
 
 public class DProxyCommon {
     

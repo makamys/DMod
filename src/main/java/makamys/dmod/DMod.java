@@ -1,14 +1,12 @@
 package makamys.dmod;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static makamys.dmod.DModConstants.MODID;
+import static makamys.dmod.DModConstants.VERSION;
 
-import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLConstructionEvent;
+import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -19,11 +17,7 @@ import makamys.dmod.proxy.DProxyCommon;
 import makamys.dmod.util.StatRegistry;
 import makamys.mclib.core.MCLib;
 import makamys.mclib.core.MCLibModules;
-import makamys.mclib.sloppydeploader.SloppyDepLoaderAPI;
-import makamys.mclib.sloppydeploader.SloppyDependency;
 import net.minecraftforge.common.MinecraftForge;
-
-import static makamys.dmod.DModConstants.*;
 
 @Mod(modid = MODID, version = VERSION)
 public class DMod

@@ -1,11 +1,5 @@
 package makamys.dmod.future.entity.passive;
 
-import java.util.concurrent.Callable;
-
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-
 public class AnimalEntityEmulator {
     
     /*public static boolean interact(EntityAnimal dis, EntityPlayer player, Callable<Boolean> superImpl) {

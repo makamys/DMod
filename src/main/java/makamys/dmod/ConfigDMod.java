@@ -1,19 +1,17 @@
 package makamys.dmod;
 
+import static makamys.dmod.DModConstants.LOGGER;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.EnumUtils;
 
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.LoaderState;
 import makamys.dmod.entity.EntityFox;
 import makamys.dmod.util.WeightedRandomItem;
 import makamys.mclib.config.item.BackpackConfigHelper;
@@ -23,8 +21,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.config.Configuration;
-
-import static makamys.dmod.DModConstants.*;
 
 public class ConfigDMod {
     

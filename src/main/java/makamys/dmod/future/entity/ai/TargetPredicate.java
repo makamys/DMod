@@ -4,8 +4,6 @@ import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.command.IEntitySelector;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 

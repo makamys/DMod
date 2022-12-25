@@ -1,9 +1,9 @@
 package makamys.dmod.ai;
 
+import static makamys.dmod.DModConstants.LOGGER;
+
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIPanic;
-
-import static makamys.dmod.DModConstants.*;
 
 public class EntityAIPanicWithTimeout extends EntityAIPanic {
 

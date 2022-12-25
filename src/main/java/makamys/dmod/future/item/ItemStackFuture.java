@@ -1,7 +1,5 @@
 package makamys.dmod.future.item;
 
-import java.util.Optional;
-
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

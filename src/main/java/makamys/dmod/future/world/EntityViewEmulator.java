@@ -2,7 +2,6 @@ package makamys.dmod.future.world;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Predicate;
 
 import com.google.common.collect.Lists;
 

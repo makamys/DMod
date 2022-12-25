@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import makamys.dmod.ConfigDMod.ForceableBoolean;
-import net.minecraft.client.Minecraft;
 
 public class MixinConfigPlugin implements IMixinConfigPlugin {
     

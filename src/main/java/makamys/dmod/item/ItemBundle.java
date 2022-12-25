@@ -1,5 +1,7 @@
 package makamys.dmod.item;
 
+import static makamys.dmod.DModConstants.MODID;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -19,6 +21,7 @@ import makamys.dmod.future.item.ItemStackFuture;
 import makamys.dmod.future.nbt.NBTTagListFuture;
 import makamys.dmod.util.StatRegistry;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -32,9 +35,6 @@ import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraft.client.resources.I18n;
-
-import static makamys.dmod.DModConstants.*;
 
 public class ItemBundle extends ItemFuture implements IConfigurable {
     

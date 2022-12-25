@@ -1,5 +1,7 @@
 package makamys.dmod.proxy;
 
+import static makamys.dmod.DModConstants.LOGGER;
+
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -10,8 +12,6 @@ import makamys.dmod.compat.NEICompat;
 import makamys.dmod.entity.EntityFox;
 import makamys.dmod.future.item.ItemFuture;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-
-import static makamys.dmod.DModConstants.*;
 
 public class DProxyClient extends DProxyCommon {
     

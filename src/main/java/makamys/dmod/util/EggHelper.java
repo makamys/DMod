@@ -3,7 +3,6 @@ package makamys.dmod.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import makamys.dmod.entity.EntityFox;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityList.EntityEggInfo;

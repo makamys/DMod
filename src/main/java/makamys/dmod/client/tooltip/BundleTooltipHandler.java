@@ -1,5 +1,7 @@
 package makamys.dmod.client.tooltip;
 
+import static makamys.dmod.DModConstants.MODID;
+
 import java.awt.Dimension;
 import java.util.List;
 
@@ -18,8 +20,6 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
-import static makamys.dmod.DModConstants.*;
 
 public class BundleTooltipHandler implements ITooltipLineHandler {
 
