@@ -23,19 +23,16 @@ import makamys.mclib.sloppydeploader.SloppyDepLoaderAPI;
 import makamys.mclib.sloppydeploader.SloppyDependency;
 import net.minecraftforge.common.MinecraftForge;
 
-@Mod(modid = DMod.MODID, version = DMod.VERSION)
+import static makamys.dmod.DModConstants.*;
+
+@Mod(modid = MODID, version = VERSION)
 public class DMod
-{
-    public static final String MODID = "dmod";
-    public static final String VERSION = "@VERSION@";
-    
+{   
     @Instance(MODID)
     public static DMod instance;
     
     @SidedProxy(clientSide = "makamys.dmod.proxy.DProxyClient", serverSide = "makamys.dmod.proxy.DProxyCommon")
     public static DProxyCommon proxy;
-    
-    public static final Logger LOGGER = LogManager.getLogger("dmod");
     
     static {
         MCLib.init();

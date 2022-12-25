@@ -11,7 +11,6 @@ import codechicken.lib.gui.GuiDraw.ITooltipLineHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import makamys.dmod.ConfigDMod;
-import makamys.dmod.DMod;
 import makamys.dmod.DModItems;
 import makamys.dmod.client.tooltip.BundleTooltipHandler;
 import makamys.dmod.future.inventory.SlotFuture;
@@ -35,6 +34,8 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraft.client.resources.I18n;
 
+import static makamys.dmod.DModConstants.*;
+
 public class ItemBundle extends ItemFuture implements IConfigurable {
     
     public static final int MAX_STORAGE = 64;
@@ -45,7 +46,7 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
     
     public ItemBundle() {
         setMaxStackSize(1);
-        setUnlocalizedName(DMod.MODID + "." + "bundle");
+        setUnlocalizedName(MODID + "." + "bundle");
         setCreativeTab(CreativeTabs.tabTools);
         setTextureName("bundle");
         if(isEnabled()) {
@@ -55,8 +56,8 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
     
    @SideOnly(Side.CLIENT)
    public void registerIcons(IIconRegister iconRegister) {
-       super.itemIcon = iconRegister.registerIcon(DMod.MODID + ":bundle");
-       iconFilled = iconRegister.registerIcon(DMod.MODID + ":bundle_filled");
+       super.itemIcon = iconRegister.registerIcon(MODID + ":bundle");
+       iconFilled = iconRegister.registerIcon(MODID + ":bundle_filled");
    }
 
     @Override
@@ -292,7 +293,7 @@ public class ItemBundle extends ItemFuture implements IConfigurable {
     @Override
     public void appendTooltip(ItemStack stack, World world, List<String> tooltip) {
         tooltip.add(
-                EnumChatFormatting.GRAY + I18n.format("item." + DMod.MODID + ".bundle.fullness", getBundleOccupancy(stack), 64));
+                EnumChatFormatting.GRAY + I18n.format("item." + MODID + ".bundle.fullness", getBundleOccupancy(stack), 64));
     }
 /*
     public void onItemEntityDestroyed(ItemEntity entity) {

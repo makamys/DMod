@@ -24,6 +24,8 @@ import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.config.Configuration;
 
+import static makamys.dmod.DModConstants.*;
+
 public class ConfigDMod {
     
     public static List<Item> foxBreedingItems;
@@ -54,11 +56,11 @@ public class ConfigDMod {
             }
         }
         if(items.isEmpty() && list.length > 0) {
-            DMod.LOGGER.debug("Couldn't resolve any of the items in " + propCat + "." + propName + ", falling back to defaults");
+            LOGGER.debug("Couldn't resolve any of the items in " + propCat + "." + propName + ", falling back to defaults");
             items = Arrays.asList(defaults);
         }
         
-        DMod.LOGGER.debug("Resolved " + propCat + "." + propName + " to " + items.stream().map(i -> i.getUnlocalizedName()).collect(Collectors.toList()));
+        LOGGER.debug("Resolved " + propCat + "." + propName + " to " + items.stream().map(i -> i.getUnlocalizedName()).collect(Collectors.toList()));
         return items;
     }
     
@@ -73,11 +75,11 @@ public class ConfigDMod {
             }
         }
         if(items.isEmpty() && list.length > 0) {
-            DMod.LOGGER.debug("Couldn't resolve any of the entity names in " + propCat + "." + propName + ", falling back to defaults");
+            LOGGER.debug("Couldn't resolve any of the entity names in " + propCat + "." + propName + ", falling back to defaults");
             items = Arrays.asList(defaults);
         }
         
-        DMod.LOGGER.debug("Resolved " + propCat + "." + propName + " to " + items.stream().map(e -> EntityList.classToStringMapping.get(e)).collect(Collectors.toList()));
+        LOGGER.debug("Resolved " + propCat + "." + propName + " to " + items.stream().map(e -> EntityList.classToStringMapping.get(e)).collect(Collectors.toList()));
         return items;
     }
     
@@ -146,13 +148,13 @@ public class ConfigDMod {
                     int weight = Integer.parseInt(halves[1]);
                     return new WeightedRandomItem<>(weight, item);
                 } catch(NumberFormatException e) {
-                    DMod.LOGGER.warn("Invalid weight (must be an integer): " + halves[1]);
+                    LOGGER.warn("Invalid weight (must be an integer): " + halves[1]);
                 }
             } else {
-                DMod.LOGGER.debug("No item called " + halves[0]);
+                LOGGER.debug("No item called " + halves[0]);
             }
         } else {
-            DMod.LOGGER.warn("Incorrect pair: " + str);
+            LOGGER.warn("Incorrect pair: " + str);
         }
         return null;
     }

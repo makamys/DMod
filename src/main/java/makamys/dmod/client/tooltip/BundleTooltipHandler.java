@@ -12,7 +12,6 @@ import codechicken.nei.guihook.GuiContainerManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import makamys.dmod.ConfigDMod;
-import makamys.dmod.DMod;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -20,9 +19,11 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import static makamys.dmod.DModConstants.*;
+
 public class BundleTooltipHandler implements ITooltipLineHandler {
 
-    public static final ResourceLocation TEXTURE = new ResourceLocation(DMod.MODID, "textures/gui/container/bundle.png");
+    public static final ResourceLocation TEXTURE = new ResourceLocation(MODID, "textures/gui/container/bundle.png");
     private static int field_32381 = 4;
     private static int field_32382 = 1;
     private static int field_32383 = 128;

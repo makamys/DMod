@@ -1,11 +1,12 @@
 package makamys.dmod.inventory;
 
-import makamys.dmod.DMod;
 import makamys.dmod.future.item.ItemFuture;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
+import static makamys.dmod.DModConstants.*;
 
 public class DSlotClickHandler {
 
@@ -44,7 +45,7 @@ public class DSlotClickHandler {
                         slot.onSlotChanged();
                     }
                 } else {
-                    DMod.LOGGER.warn("Invalid index in DSlotClickHandler.onSlotClick: slotNumber=" + slotNumber + ", but container " + container + " only has " + container.inventorySlots.size() + " slots.");
+                    LOGGER.warn("Invalid index in DSlotClickHandler.onSlotClick: slotNumber=" + slotNumber + ", but container " + container + " only has " + container.inventorySlots.size() + " slots.");
                     // TODO figure out why this can happen. (TrashSlot?)
                 }
             }

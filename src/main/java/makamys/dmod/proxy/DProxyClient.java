@@ -4,13 +4,14 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import makamys.dmod.ConfigDMod;
-import makamys.dmod.DMod;
 import makamys.dmod.client.render.ModelFox;
 import makamys.dmod.client.render.RenderFox;
 import makamys.dmod.compat.NEICompat;
 import makamys.dmod.entity.EntityFox;
 import makamys.dmod.future.item.ItemFuture;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+
+import static makamys.dmod.DModConstants.*;
 
 public class DProxyClient extends DProxyCommon {
     
@@ -26,7 +27,7 @@ public class DProxyClient extends DProxyCommon {
         if(Loader.isModLoaded("NotEnoughItems")) {
             NEICompat.init();
         } else {
-            DMod.LOGGER.warn("NotEnoughItems was not found. Some optional features will not work.");
+            LOGGER.warn("NotEnoughItems was not found. Some optional features will not work.");
         }
     }
     

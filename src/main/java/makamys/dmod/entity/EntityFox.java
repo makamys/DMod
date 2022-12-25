@@ -94,6 +94,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 
+import static makamys.dmod.DModConstants.*;
+
 public class EntityFox extends EntityAnimalFuture implements ITameable {
     private static final int OWNER = 18;
     private static final int OTHER_TRUSTED = 19;
@@ -207,7 +209,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 
     @Override
     public String getEatSound(ItemStack stack) {
-        return DMod.MODID + ":entity.fox.eat";
+        return MODID + ":entity.fox.eat";
     }
     
     private void trustAllPlayers() {
@@ -272,7 +274,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 
         super.onLivingUpdate();
         if (this.isAggressive() && this.rand.nextFloat() < 0.05F) {
-            this.playSound(DMod.MODID + ":entity.fox.aggro", 1.0F, 1.0F);
+            this.playSound(MODID + ":entity.fox.aggro", 1.0F, 1.0F);
         }
 
     }
@@ -596,7 +598,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
             EntityItem EntityItem = new EntityItem(this.worldObj, this.posX + rv.xCoord, this.posY + 1.0D, this.posZ + rv.zCoord, stack);
             EntityItem.delayBeforeCanPickup = 40;
             EntityItem.func_145799_b(getUniqueID().toString()); // is this OK?
-            this.playSound(DMod.MODID + ":entity.fox.spit", 1.0F, 1.0F);
+            this.playSound(MODID + ":entity.fox.spit", 1.0F, 1.0F);
             this.worldObj.spawnEntityInWorld(EntityItem);
         }
     }
@@ -759,7 +761,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 
     public void playLivingSound() {
         String soundEvent = this.getLivingSound();
-        if (soundEvent.equals(DMod.MODID + ":entity.fox.screech")) {
+        if (soundEvent.equals(MODID + ":entity.fox.screech")) {
             this.playSound(soundEvent, 2.0F, this.getSoundPitch());
         } else {
             super.playLivingSound();
@@ -768,25 +770,25 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 
     protected String getLivingSound() {
         if (this.isPlayerSleeping()) {
-            return DMod.MODID + ":entity.fox.sleep";
+            return MODID + ":entity.fox.sleep";
         } else {
             if (!this.worldObj.isDaytime() && this.rand.nextFloat() < 0.1F) {
                 List list = this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.boundingBox.expand(16.0D, 16.0D, 16.0D));
                 if (list.isEmpty()) {
-                    return DMod.MODID + ":entity.fox.screech";
+                    return MODID + ":entity.fox.screech";
                 }
             }
 
-            return DMod.MODID + ":entity.fox.ambient";
+            return MODID + ":entity.fox.ambient";
         }
     }
 
     protected String getHurtSound() {
-        return DMod.MODID + ":entity.fox.hurt";
+        return MODID + ":entity.fox.hurt";
     }
 
     protected String getDeathSound() {
-        return DMod.MODID + ":entity.fox.death";
+        return MODID + ":entity.fox.death";
     }
 
     private boolean canTrust(UUID uuid) {
@@ -837,10 +839,10 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
             expModifier *= 1f + this.getRNG().nextFloat() * 0.2f;
             expModifier *= ConfigDMod.foxExpModifier;
             this.addExperience(exp * expModifier);
-            DMod.LOGGER.debug("Earned " + exp * expModifier + " exp (now at " + this.getExperience() + ")");
+            LOGGER.debug("Earned " + exp * expModifier + " exp (now at " + this.getExperience() + ")");
         }
         if(result) {
-            EntityFox.this.playSound(DMod.MODID + ":entity.fox.bite", 1.0F, 1.0F);
+            EntityFox.this.playSound(MODID + ":entity.fox.bite", 1.0F, 1.0F);
         }
         return result;
     }
@@ -858,7 +860,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
                     this.playSound("random.anvil_land", 0.5F, 1.3f);
                     damage /= 2f;
                 } else if(this.hasAbility(WOUNDED_SCREECH) && this.getHealth() - damage <= EntityFox.this.getMaxHealth() / 4f && this.getHealth() > EntityFox.this.getMaxHealth() / 4f) {
-                    this.playSound(DMod.MODID + ":entity.fox.screech", 2F, getSoundPitch() * 1.4f);
+                    this.playSound(MODID + ":entity.fox.screech", 2F, getSoundPitch() * 1.4f);
                 }
             }
             return super.attackEntityFrom(source, damage);
@@ -1257,7 +1259,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
                     ++this.timer;
                 }
             } else if (!this.hasReached() && EntityFox.this.rand.nextFloat() < 0.05F) {
-                EntityFox.this.playSound(DMod.MODID + ":entity.fox.sniff", 1.0F, 1.0F);
+                EntityFox.this.playSound(MODID + ":entity.fox.sniff", 1.0F, 1.0F);
             }
 
             super.updateTask();
@@ -1571,7 +1573,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
                 this.lastAttackedTime = EntityFox.this.friend.getLastAttackerTime();
             }
             
-            EntityFox.this.playSound(DMod.MODID + ":entity.fox.aggro", 1.0F, 1.0F);
+            EntityFox.this.playSound(MODID + ":entity.fox.aggro", 1.0F, 1.0F);
             EntityFox.this.setAggressive(true);
             EntityFox.this.stopSleeping();
             super.startExecuting();

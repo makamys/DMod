@@ -1,8 +1,9 @@
 package makamys.dmod.ai;
 
-import makamys.dmod.DMod;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIPanic;
+
+import static makamys.dmod.DModConstants.*;
 
 public class EntityAIPanicWithTimeout extends EntityAIPanic {
 
@@ -29,7 +30,7 @@ public class EntityAIPanicWithTimeout extends EntityAIPanic {
     @Override
     public boolean continueExecuting() {
         if(isTimedOut()) {
-            DMod.LOGGER.warn("Terminated runaway panic task of " + theCreature + " because it passed the timeout of " + maxDuration + " ticks");
+            LOGGER.warn("Terminated runaway panic task of " + theCreature + " because it passed the timeout of " + maxDuration + " ticks");
         }
         return super.continueExecuting() && !isTimedOut();
     }
