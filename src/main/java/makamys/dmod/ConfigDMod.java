@@ -100,6 +100,8 @@ public class ConfigDMod {
     }
     
     public static void reload(boolean early) {
+        LOGGER.debug("Loading config (" + (early ? "Early" : "Late") + ")");
+        
         Configuration config = new Configuration(new File(Launch.minecraftHome, "config/dmod.cfg"));
         
         config.load();
