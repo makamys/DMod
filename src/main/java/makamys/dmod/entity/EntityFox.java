@@ -1852,7 +1852,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
         }
 
         @Override
-        public boolean shouldExecute() { 
+        public boolean shouldExecute() {
             if (EntityFox.this.getHeldItem() != null) {
                 return false;
             } else if ((EntityFox.this.getAttackTarget() == null && EntityFox.this.getAITarget() == null)) {
@@ -1892,10 +1892,11 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
         
         protected void moveToNearbyItemStack(boolean onlyIfNotHoldingItem) {
             List<EntityItem> list = getNearbyItemStacks();
-            ItemStack itemStack = EntityFox.this.getHeldItem();
-            EntityItem ei = (EntityItem)list.get(0);
-            if ((!onlyIfNotHoldingItem || prefersItem(ei.getEntityItem())) && !list.isEmpty()) {
-                EntityFox.this.getNavigator().tryMoveToEntityLiving(ei, getFetchSpeed());
+            if(!list.isEmpty()) {
+                EntityItem ei = (EntityItem)list.get(0);
+                if (!onlyIfNotHoldingItem || prefersItem(ei.getEntityItem())) {
+                    EntityFox.this.getNavigator().tryMoveToEntityLiving(ei, getFetchSpeed());
+                }
             }
         }
         
