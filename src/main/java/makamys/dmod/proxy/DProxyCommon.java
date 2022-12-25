@@ -26,7 +26,6 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.world.WorldEvent;
 
 public class DProxyCommon {
     
@@ -41,11 +40,6 @@ public class DProxyCommon {
             EntityRegistry.addSpawn(EntityFox.class, 8, 2, 4, EnumCreatureType.creature, foxBiomes.toArray(new BiomeGenBase[] {}));
             EggHelper.addEgg(EntityFox.class, 14005919, 13396256);
         }
-    }
-    
-    @SubscribeEvent
-    public void onWorldLoad(WorldEvent.Load event) {
-        ConfigDMod.reload();
     }
     
     @SubscribeEvent
