@@ -31,6 +31,12 @@ More info [in the wiki](https://github.com/makamys/DMod/wiki/Fox).
 * [Hodgepodge](https://github.com/GTNewHorizons/Hodgepodge): set `preventPickupLoot=false` or else foxes won't be able to pick up items
 * Various coremods will crash during startup due to an incompatibility with Mixin. For example, [Backlytra](https://github.com/unascribed/Backlytra) crashes if D-Mod's `lootingFoxFix` is enabled. This is fixed by [Mixingasm](https://github.com/makamys/Mixingasm).
 
+### About `nomixin` builds
+
+The mod comes in two flavors:
+* The regular version embeds Mixin 0.7.11, allowing the mod to run standalone. However, this makes the jar a bit larger, and can cause problems in certain use cases.
+* The version marked with `+nomixin` doesn't embed Mixin, which lets it avoid these problems. But it requires a separate [Mixin bootstrap mod](https://gist.github.com/makamys/7cb74cd71d93a4332d2891db2624e17c#mixin-bootstrap-mods) to be installed in order to run. If you have one installed already, getting this version is recommended.
+
 # License
 
 This mod is licensed under [the Unlicense](https://github.com/makamys/DMod/blob/master/LICENSE). It largely consists of ported Mojang code though, so keep that in mind.
