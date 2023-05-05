@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cpw.mods.fml.common.Loader;
-import ganymedes01.etfuturum.ModBlocks;
-import ganymedes01.etfuturum.ModItems;
+import cpw.mods.fml.common.registry.GameRegistry;
 import ganymedes01.etfuturum.blocks.BlockBerryBush;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
@@ -15,7 +15,7 @@ public class Compat {
     
     private static List<IBerryBushHandler> berryBushHandlers = new ArrayList<>();
     
-    static {
+    public static void init() {
         if(Loader.isModLoaded("etfuturum")) {
             registerBerryBushHandler(new EtFuturumBerryBushHandler());
         }
@@ -64,9 +64,17 @@ public class Compat {
     
     static class EtFuturumBerryBushHandler implements IBerryBushHandler {
 
+        private final Block sweetBerryBush;
+        private final Item sweetBerry;
+        
+        public EtFuturumBerryBushHandler() {
+            sweetBerryBush = GameRegistry.findBlock("etfuturum", "sweet_berry_bush");
+            sweetBerry = GameRegistry.findItem("etfuturum", "sweet_berries");
+        }
+        
         @Override
         public boolean isBerryBush(World world, int x, int y, int z) {
-            return world.getBlock(x, y, z) == ModBlocks.sweet_berry_bush;
+            return world.getBlock(x, y, z) == sweetBerryBush;
         }
 
         @Override
@@ -81,7 +89,7 @@ public class Compat {
 
         @Override
         public Item getSweetBerryItem() {
-            return ModItems.sweet_berries;
+            return sweetBerry;
         }
 
         @Override

@@ -12,6 +12,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import makamys.dmod.ConfigDMod;
 import makamys.dmod.DMod;
+import makamys.dmod.compat.Compat;
 import makamys.dmod.entity.EntityFox;
 import makamys.dmod.future.entity.passive.EntityAnimalFuture;
 import makamys.dmod.util.DUtil;
@@ -34,6 +35,8 @@ public class DProxyCommon {
     public Cache<EntityItem, EntityPlayer> itemDropperMap = CacheBuilder.newBuilder().maximumSize(1000).build();
     
     public void init() {
+        Compat.init();
+        
         if(ConfigDMod.enableFox) {
             EntityRegistry.registerModEntity(EntityFox.class, "fox", 0, DMod.instance, 64, 1, true);
             
