@@ -117,15 +117,15 @@ public class ConfigDMod {
         
         if(!early) {
             foxBreedingItems =
-                    resolveItemListOrDefault(config, "foxBreedingItems", "Fox", new String[]{"etfuturum:sweet_berries"}, "Falls back to wheat if none of the items can be resolved", Items.wheat);
+                    resolveItemListOrDefault(config, "foxBreedingItems", "Fox", new String[]{"etfuturum:sweet_berries", "lotr:item.blueberry", "lotr:item.blackberry", "lotr:item.raspberry", "lotr:item.cranberry", "lotr:item.elderberry"}, "Falls back to wheat if none of the items can be resolved", Items.wheat);
             rabbitEntities =
-                    resolveEntityClassListOrDefault(config, "rabbitEntities", "Fox", new String[]{"etfuturum.rabbit"}, "");
+                    resolveEntityClassListOrDefault(config, "rabbitEntities", "Fox", new String[]{"etfuturum.rabbit", "lotr.Rabbit"}, "");
             foxMouthItems = Arrays.stream(config.getStringList("foxMouthItems", "Fox", new String[] {"emerald=5", "egg=15", "etfuturum:rabbit_foot=10", "etfuturum:rabbit_hide=10", "wheat=20", "leather=20", "feather=20"}, "item=weight pairs deciding the relative likelyhood of foxes spawning with certain items. Entries containing items that can't be resolved will be ignored."))
                     .map(str -> parseWeightedItemEntry(str)).filter(p -> p != null).collect(Collectors.toList());
-            bundleCraftingItems = 
+            bundleCraftingItems =
                     resolveItemListOrDefault(config, "bundleCraftingItems", "bundle", new String[]{"etfuturum:rabbit_hide"}, "Falls back to leather if none of the items can be resolved", Items.leather);
             backpackHelper = new BackpackConfigHelper(Arrays.asList(config.getStringList("bundleItemBlacklist", "bundle", Stream.of(
-                    new String[]{"etfuturum:shulker_box"},
+                    new String[]{"etfuturum:shulker_box", "lotr:item.pouch", "lotr:item.daleCracker"},
                     BackpackConfigHelper.NON_NESTABLE_BACKPACK_BLACKLIST).flatMap(Stream::of).toArray(String[]::new),
                     "Items that aren't allowed in bundles" + BackpackConfigHelper.CONFIG_DESCRIPTION_SUFFIX)));
         }
