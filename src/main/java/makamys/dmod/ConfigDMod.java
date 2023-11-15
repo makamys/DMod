@@ -29,6 +29,11 @@ public class ConfigDMod {
     public static List<Class<Entity>> rabbitEntities;
     public static EntityFox.AbilityMode foxAbilityMode;
     public static float foxExpModifier;
+    public static int foxDataWatcherIdOwner;
+    public static int foxDataWatcherIdOtherTrusted;
+    public static int foxDataWatcherIdType;
+    public static int foxDataWatcherIdFoxFlags;
+    public static int foxDataWatcherIdExperience;
     
     public static boolean wolvesTargetFoxes;
     public static ForceableBoolean lootingFoxFix;
@@ -114,6 +119,12 @@ public class ConfigDMod {
         // TODO tweak the level requirements of each individual ability
         foxAbilityMode = getEnum(config, "foxAbilityMode", "fox", EntityFox.AbilityMode.NORMAL, "NORMAL: Foxes unlock abilities as they level up\nUNLOCK_ALL: All abilities are unlocked from the start\nUNLOCK_NONE: No abilities will ever be unlocked\nNote: changing this won't affect the amount of exp foxes have, just whether the abilities will be enabled or not");
         foxExpModifier = config.getFloat("foxExpModifier", "Fox", 1f, 0f, Float.POSITIVE_INFINITY, "The EXP foxes earn will get multiplied by this value.");
+        
+        foxDataWatcherIdOwner = config.getInt("0_owner", "fox.datawatcher_ids", 18, 0, Integer.MAX_VALUE, "Vanilla uses up slots 0..1 and 6..12. The maximum ID is 31 if no ID extension mod is present.");
+        foxDataWatcherIdOtherTrusted = config.getInt("1_otherTrusted", "fox.datawatcher_ids", 19, 0, Integer.MAX_VALUE, "");
+        foxDataWatcherIdType = config.getInt("2_type", "fox.datawatcher_ids", 20, 0, Integer.MAX_VALUE, "");
+        foxDataWatcherIdFoxFlags = config.getInt("3_foxFlags", "fox.datawatcher_ids", 21, 0, Integer.MAX_VALUE, "");
+        foxDataWatcherIdExperience = config.getInt("4_experience", "fox.datawatcher_ids", 22, 0, Integer.MAX_VALUE, "");
         
         if(!early) {
             foxBreedingItems =

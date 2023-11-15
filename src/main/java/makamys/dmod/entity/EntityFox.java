@@ -3,6 +3,11 @@ package makamys.dmod.entity;
 import static makamys.dmod.DModConstants.LOGGER;
 import static makamys.dmod.DModConstants.MODID;
 import static makamys.dmod.entity.EntityFox.Ability.*;
+import static makamys.dmod.ConfigDMod.foxDataWatcherIdOwner;
+import static makamys.dmod.ConfigDMod.foxDataWatcherIdOtherTrusted;
+import static makamys.dmod.ConfigDMod.foxDataWatcherIdType;
+import static makamys.dmod.ConfigDMod.foxDataWatcherIdFoxFlags;
+import static makamys.dmod.ConfigDMod.foxDataWatcherIdExperience;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -93,11 +98,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 
 public class EntityFox extends EntityAnimalFuture implements ITameable {
-    private static final int OWNER = 18;
-    private static final int OTHER_TRUSTED = 19;
-    private static final int TYPE = 20;
-    private static final int FOX_FLAGS = 21;
-    private static final int EXPERIENCE = 22;
     private static final IEntitySelector PICKABLE_DROP_FILTER;
     private static final IEntitySelector FOOD_DROP_FILTER;
     private static final IEntitySelector TOOL_DROP_FILTER;
@@ -135,11 +135,11 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
     
     protected void entityInit() {
         super.entityInit();
-        this.dataWatcher.addObject(OWNER, String.valueOf(""));
-        this.dataWatcher.addObject(OTHER_TRUSTED, String.valueOf(""));
-        this.dataWatcher.addObject(TYPE, Byte.valueOf((byte) 0));
-        this.dataWatcher.addObject(FOX_FLAGS, Byte.valueOf((byte) 0));
-        this.dataWatcher.addObject(EXPERIENCE, Float.valueOf(0));
+        this.dataWatcher.addObject(foxDataWatcherIdOwner, String.valueOf(""));
+        this.dataWatcher.addObject(foxDataWatcherIdOtherTrusted, String.valueOf(""));
+        this.dataWatcher.addObject(foxDataWatcherIdType, Byte.valueOf((byte) 0));
+        this.dataWatcher.addObject(foxDataWatcherIdFoxFlags, Byte.valueOf((byte) 0));
+        this.dataWatcher.addObject(foxDataWatcherIdExperience, Float.valueOf(0));
     }
 
     protected void initTasks() {
@@ -211,7 +211,7 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
     private void trustAllPlayers() {
         for(Object obj : ((WorldServer)worldObj).playerEntities) {
             UUID uuid = ((Entity)obj).getUniqueID();
-            this.dataWatcher.updateObject(OWNER, uuid.toString());
+            this.dataWatcher.updateObject(foxDataWatcherIdOwner, uuid.toString());
         }
     }
     
@@ -407,15 +407,15 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
     }
 
     public EntityFox.Type getFoxType() {
-        return EntityFox.Type.fromId(dataWatcher.getWatchableObjectByte(TYPE));
+        return EntityFox.Type.fromId(dataWatcher.getWatchableObjectByte(foxDataWatcherIdType));
     }
 
     private void setType(EntityFox.Type type) {
-        this.dataWatcher.updateObject(TYPE, Byte.valueOf((byte)type.getId()));
+        this.dataWatcher.updateObject(foxDataWatcherIdType, Byte.valueOf((byte)type.getId()));
     }
     
     private void setExperience(float exp) {
-        this.dataWatcher.updateObject(EXPERIENCE, exp);
+        this.dataWatcher.updateObject(foxDataWatcherIdExperience, exp);
     }
     
     private void addExperience(float exp) {
@@ -423,21 +423,21 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
     }
     
     public float getExperience() {
-        return this.dataWatcher.getWatchableObjectFloat(EXPERIENCE);
+        return this.dataWatcher.getWatchableObjectFloat(foxDataWatcherIdExperience);
     }
 
     private List<UUID> getTrustedUuids() {
         List<UUID> list = Lists.newArrayList();
-        list.add(DUtil.UUIDorNullFromString(this.dataWatcher.getWatchableObjectString(OWNER)));
-        list.add(DUtil.UUIDorNullFromString(this.dataWatcher.getWatchableObjectString(OTHER_TRUSTED)));
+        list.add(DUtil.UUIDorNullFromString(this.dataWatcher.getWatchableObjectString(foxDataWatcherIdOwner)));
+        list.add(DUtil.UUIDorNullFromString(this.dataWatcher.getWatchableObjectString(foxDataWatcherIdOtherTrusted)));
         return list;
     }
 
     private void addTrustedUuid(@Nullable UUID uuid) {
-        if (!this.dataWatcher.getWatchableObjectString(OWNER).isEmpty()) {
-            this.dataWatcher.updateObject(OTHER_TRUSTED, uuid.toString());
+        if (!this.dataWatcher.getWatchableObjectString(foxDataWatcherIdOwner).isEmpty()) {
+            this.dataWatcher.updateObject(foxDataWatcherIdOtherTrusted, uuid.toString());
         } else {
-            this.dataWatcher.updateObject(OWNER, uuid.toString());
+            this.dataWatcher.updateObject(foxDataWatcherIdOwner, uuid.toString());
         }
     }
     
@@ -531,15 +531,15 @@ public class EntityFox extends EntityAnimalFuture implements ITameable {
 
     private void setFoxFlag(int mask, boolean value) {
         if (value) {
-            this.dataWatcher.updateObject(FOX_FLAGS, (byte)((Byte)this.dataWatcher.getWatchableObjectByte(FOX_FLAGS) | mask));
+            this.dataWatcher.updateObject(foxDataWatcherIdFoxFlags, (byte)((Byte)this.dataWatcher.getWatchableObjectByte(foxDataWatcherIdFoxFlags) | mask));
         } else {
-            this.dataWatcher.updateObject(FOX_FLAGS, (byte)((Byte)this.dataWatcher.getWatchableObjectByte(FOX_FLAGS) & ~mask));
+            this.dataWatcher.updateObject(foxDataWatcherIdFoxFlags, (byte)((Byte)this.dataWatcher.getWatchableObjectByte(foxDataWatcherIdFoxFlags) & ~mask));
         }
 
     }
 
     private boolean getFoxFlag(int bitmask) {
-        return ((Byte)this.dataWatcher.getWatchableObjectByte(FOX_FLAGS) & bitmask) != 0;
+        return ((Byte)this.dataWatcher.getWatchableObjectByte(foxDataWatcherIdFoxFlags) & bitmask) != 0;
     }
     
     // TODO for dispenser support
